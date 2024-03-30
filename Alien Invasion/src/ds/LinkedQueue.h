@@ -44,20 +44,27 @@ Single Node Case:
 
 #include "Node.h"
 #include "QueueADT.h"
+#include "iostream"
 
-template <typename T>
-class LinkedQueue :public QueueADT<T>
-{
+using namespace std;
+
+template<typename T>
+class LinkedQueue : public QueueADT<T> {
 private:
-	Node<T>* backPtr;
-	Node<T>* frontPtr;
+    Node<T> *backPtr;
+    Node<T> *frontPtr;
 public:
-	LinkedQueue();
-	bool isEmpty() const;
-	bool enqueue(const T& newEntry);
-	bool dequeue(T& frntEntry);
-	bool peek(T& frntEntry)  const;
-	~LinkedQueue();
+    LinkedQueue();
+
+    bool isEmpty() const;
+
+    bool enqueue(const T &newEntry);
+
+    bool dequeue(T &frntEntry);
+
+    bool peek(T &frntEntry) const;
+
+    ~LinkedQueue();
 };
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -67,11 +74,10 @@ The constructor of the Queue class.
 
 */
 
-template <typename T>
-LinkedQueue<T>::LinkedQueue()
-{
-	backPtr = nullptr;
-	frontPtr = nullptr;
+template<typename T>
+LinkedQueue<T>::LinkedQueue() {
+    backPtr = nullptr;
+    frontPtr = nullptr;
 
 }
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -83,10 +89,9 @@ Sees whether this queue is empty.
 Input: None.
 Output: True if the queue is empty; otherwise false.
 */
-template <typename T>
-bool LinkedQueue<T>::isEmpty() const
-{
-	return (frontPtr == nullptr);
+template<typename T>
+bool LinkedQueue<T>::isEmpty() const {
+    return (frontPtr == nullptr);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -98,18 +103,19 @@ Input: newEntry .
 Output: True if the operation is successful; otherwise false.
 */
 
-template <typename T>
-bool LinkedQueue<T>::enqueue(const T& newEntry)
-{
-	Node<T>* newNodePtr = new Node<T>(newEntry);
-	// Insert the new node
-	if (isEmpty())	//special case if this is the first node to insert
-		frontPtr = newNodePtr; // The queue is empty
-	else
-		backPtr->setNext(newNodePtr); // The queue was not empty
+template<typename T>
+bool LinkedQueue<T>::enqueue(const T &newEntry) {
+    Node<T> *newNodePtr = new Node<T>(newEntry);
+    // Insert the new node
+    if (isEmpty())    //special case if this is the first node to insert
+        frontPtr = newNodePtr; // The queue is empty
+    else {
+        backPtr->setNext(newNodePtr); // The queue was not empty
+        newNodePtr->setPrev(backPtr);
+    }
 
-	backPtr = newNodePtr; // New node is the last node now
-	return true;
+    backPtr = newNodePtr; // New node is the last node now
+    return true;
 } // end enqueue
 
 
@@ -123,23 +129,26 @@ Input: None.
 Output: True if the operation is successful; otherwise false.
 */
 
-template <typename T>
-bool LinkedQueue<T>::dequeue(T& frntEntry)
-{
-	if (isEmpty())
-		return false;
+template<typename T>
+bool LinkedQueue<T>::dequeue(T &frntEntry) {
+    if (isEmpty())
+        return false;
 
-	Node<T>* nodeToDeletePtr = frontPtr;
-	frntEntry = frontPtr->getItem();
-	frontPtr = frontPtr->getNext();
-	// Queue is not empty; remove front
-	if (nodeToDeletePtr == backPtr)	 // Special case: last node in the queue
-		backPtr = nullptr;
+    Node<T> *nodeToDeletePtr = frontPtr;
+    frntEntry = frontPtr->getItem();
+    frontPtr = frontPtr->getNext();
 
-	// Free memory reserved for the dequeued node
-	delete nodeToDeletePtr;
+    if (frontPtr)
+        frontPtr->setPrev(nullptr);
 
-	return true;
+    // Queue is not empty; remove front
+    if (nodeToDeletePtr == backPtr)     // Special case: last node in the queue
+        backPtr = nullptr;
+
+    // Free memory reserved for the dequeued node
+    delete nodeToDeletePtr;
+
+    return true;
 }
 
 
@@ -154,32 +163,30 @@ Input: None.
 Output: The front of the queue.
 */
 
-template <typename T>
-bool LinkedQueue<T>::peek(T& frntEntry) const
-{
-	if (isEmpty())
-		return false;
+template<typename T>
+bool LinkedQueue<T>::peek(T &frntEntry) const {
+    if (isEmpty())
+        return false;
 
-	frntEntry = frontPtr->getItem();
-	return true;
+    frntEntry = frontPtr->getItem();
+    return true;
 
 }
 ///////////////////////////////////////////////////////////////////////////////////
 
-template <typename T>
-LinkedQueue<T>::~LinkedQueue()
-{
-	//Note that the cout statements here is just for learning purpose
-	//They should be normally removed from the destructor
-	cout << "\nStarting LinkedQueue destructor...";
-	cout << "\nFreeing all nodes in the queue...";
+template<typename T>
+LinkedQueue<T>::~LinkedQueue() {
+    //Note that the cout statements here are just for learning purpose
+    //They should be normally removed from the destructor
+    cout << "\nStarting LinkedQueue destructor...";
+    cout << "\nFreeing all nodes in the queue...";
 
-	//Free all nodes in the queue
-	T temp;
-	while (dequeue(temp));
+    //Free all nodes in the queue
+    T temp;
+    while (dequeue(temp));
 
-	cout << "\n Is LinkedQueue Empty now?? ==> " << boolalpha << isEmpty();
-	cout << "\nEnding LinkedQueue destructor..." << endl;
+    cout << "\n Is LinkedQueue Empty now?? ==> " << boolalpha << isEmpty();
+    cout << "\nEnding LinkedQueue destructor..." << endl;
 }
 
 #endif

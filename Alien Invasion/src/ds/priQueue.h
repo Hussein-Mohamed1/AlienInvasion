@@ -2,8 +2,8 @@
 #include "priNode.h"
 
 
-//This class impelements the priority queue as a sorted list (Linked List)
-//The item with highest priority is at the front of the queue
+//This class implements the priority queue as a sorted list (Linked List)
+//The item with the highest priority is at the front of the queue
 template <typename T>
 class priQueue
 {
@@ -51,8 +51,8 @@ public:
         if (isEmpty())
             return false;
 
-        topEntry = head->getItem();
-        pri = head->getPri();
+        topEntry = head->getItem(pri);
+
         return true;
     }
 
