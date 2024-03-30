@@ -127,16 +127,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="ArrayStack.h" />
-    <ClInclude Include="LinkedQueue.h" />
-    <ClInclude Include="Node.h" />
-    <ClInclude Include="priNode.h" />
-    <ClInclude Include="priQueue.h" />
-    <ClInclude Include="QueueADT.h" />
-    <ClInclude Include="StackADT.h" />
+    <ClCompile Include="src\ds\Source.cpp" />
+    <ClCompile Include="src\randGen.cpp" />
+    <ClCompile Include="src\simulationManager.cpp" />
+    <ClCompile Include="src\units\earthArmy.cpp" />
+    <ClCompile Include="src\units\Egunnery.cpp" />
+    <ClCompile Include="src\units\Esoldier.cpp" />
+    <ClCompile Include="src\units\unit.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source.cpp" />
+    <ClInclude Include="src\ds\ArrayStack.h" />
+    <ClInclude Include="src\ds\LinkedQueue.h" />
+    <ClInclude Include="src\ds\Node.h" />
+    <ClInclude Include="src\ds\priNode.h" />
+    <ClInclude Include="src\ds\priQueue.h" />
+    <ClInclude Include="src\ds\QueueADT.h" />
+    <ClInclude Include="src\ds\StackADT.h" />
+    <ClInclude Include="src\randGen.h" />
+    <ClInclude Include="src\simulationManager.h" />
+    <ClInclude Include="src\units\earthArmy.h" />
+    <ClInclude Include="src\units\Egunnery.h" />
+    <ClInclude Include="src\units\Esoldier.h" />
+    <ClInclude Include="src\units\unit.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

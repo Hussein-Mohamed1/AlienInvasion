@@ -1,10 +1,9 @@
 //
 // Created by youss on 3/30/2024.
-//
+#pragma once
 #include "../simulationManager.h"
-
-#ifndef ALIENINVASION_UNIT_H
-#define ALIENINVASION_UNIT_H
+#include <iostream>
+using namespace std;
 enum Type {
     EarthUnit, AlienUnit
 };
@@ -25,7 +24,7 @@ public:
 
     virtual bool addUnit(unit *) = 0;
 
-    virtual unit *removeUnit(unit *) = 0;
+    virtual void removeUnit(unit *) = 0;
 
     int getId() const;
 
@@ -114,4 +113,3 @@ void unit::setSimPtr(simulationManager *nSimPtr) {
 }
 
 
-#endif //ALIENINVASION_UNIT_H

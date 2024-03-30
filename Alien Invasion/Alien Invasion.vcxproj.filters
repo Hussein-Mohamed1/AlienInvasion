@@ -15,30 +15,66 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ArrayStack.h">
+    <ClInclude Include="src\ds\ArrayStack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StackADT.h">
+    <ClInclude Include="src\ds\LinkedQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Node.h">
+    <ClInclude Include="src\ds\Node.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="QueueADT.h">
+    <ClInclude Include="src\ds\priNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LinkedQueue.h">
+    <ClInclude Include="src\ds\priQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="priNode.h">
+    <ClInclude Include="src\ds\QueueADT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="priQueue.h">
+    <ClInclude Include="src\ds\StackADT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simulationManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\units\unit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\randGen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\units\earthArmy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\units\Egunnery.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\units\Esoldier.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source.cpp">
+    <ClCompile Include="src\ds\Source.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\simulationManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\units\unit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\randGen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\units\earthArmy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\units\Egunnery.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\units\Esoldier.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
