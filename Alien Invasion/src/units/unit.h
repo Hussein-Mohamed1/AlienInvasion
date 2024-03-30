@@ -25,7 +25,7 @@ public:
 
     virtual bool addUnit(unit *) = 0;
 
-    virtual unit *removeUnit(unit *) = 0;
+    virtual void removeUnit(unit *) = 0;
 
     int getId() const;
 
