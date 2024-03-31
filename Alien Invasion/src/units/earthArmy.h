@@ -1,24 +1,40 @@
 #pragma once
+
 #include "unit.h"
 #include "../ds/ArrayStack.h"
 #include "../ds/priQueue.h"
 #include "../ds/LinkedQueue.h"
+#include "../ds/ArrayStack.h"
+#include "Army.h"
+#include "Tank.h"
+
 class Esoldier;
+
 class Egunnery;
-enum earthType
-{
-	ES , EG, ET
+
+class alienArmy;
+
+enum earthType {
+    ES, EG, ET
 };
-class earthArmy : public unit
-{
-	LinkedQueue< Esoldier*> ESlist;
-	priQueue< Egunnery* > EGlist;
+
+class earthArmy : public Army {
+    int unitCount;
+    LinkedQueue<Esoldier *> ESlist;
+    priQueue<Egunnery *> EGlist;
+    ArrayStack<unit *> TankList;
+    alienArmy *alienArmyPtr;
 public:
-	bool attack(unit*);
-	bool addUnit( unit*);
-	void removeUnit(unit*);
-	void print() const;
-	earthType Typeof(unit*);
+
+    unit * attack(unit *enemy);
+
+    bool addUnit(unit *);
+
+    void removeUnit(unit *);
+
+    void print() const;
+
+    int getUnitCount() const;
 };
 
 
