@@ -1,5 +1,9 @@
 #pragma once
 #include "Egunnery.h"
+Egunnery::Egunnery(int id, Type type, int joinTime, double health, double power, int attackCapacity, simulationManager* simPtr) : unit(id, type, joinTime, health, power, attackCapacity, simPtr)
+{
+
+}
 bool Egunnery::attack(unit* AD1 , unit* AD2)
 {
 	double damagedH1;
@@ -12,6 +16,7 @@ bool Egunnery::attack(unit* AD1 , unit* AD2)
 		{
 			AD1->setHealth(damagedH1);
 			AD2->setHealth(damagedH2);
+			return false;
 		}
 		return true;
 }
