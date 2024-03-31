@@ -1,3 +1,4 @@
+#pragma once
 #include "Esoldier.h"
 #include <cmath>
 bool Esoldier::attack(unit* AS)

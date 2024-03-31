@@ -1,3 +1,4 @@
+#pragma once
 #include "Egunnery.h"
 bool Egunnery::attack(unit* AD1 , unit* AD2)
 {

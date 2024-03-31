@@ -1,3 +1,4 @@
+#pragma once
 #include "earthArmy.h"
 #include "Esoldier.h"
 #include "Egunnery.h"
