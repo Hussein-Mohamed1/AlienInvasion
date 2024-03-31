@@ -1,6 +1,6 @@
 #pragma once
-#include "earthArmy.h"
-class Esoldier :public earthArmy
+#include "unit.h"
+class Esoldier :public unit
 {
 	bool attack(unit*);
 	void print() const;

@@ -1,6 +1,6 @@
 #pragma once
 #include "earthArmy.h"
-class Egunnery :public earthArmy
+class Egunnery :public unit
 {
 public:
 	bool attack(unit*);
