@@ -1,3 +1,4 @@
+#pragma once
 #include "Egunnery.h"
 //bool Egunnery::EnemyDamage(unit* AD1 , unit* AD2)
 //{
