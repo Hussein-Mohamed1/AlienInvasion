@@ -53,14 +53,14 @@ void randGen::manageGeneration(fstream *infile)
 	prob = stoi(S);
 	//get ranges of health / power / capasity of Earth army
 	getline(*infile, S);
-	stringstream Ranges(S);
-	Ranges >> temps;
+	stringstream ranges(S);
+	ranges >> temps;
 	REP1 = stod(temps.substr(0, temps.find('-')));
 	REP2 = stod(temps.substr(temps.find('-')+1, temps.size()- temps.find('-') - 1));
-	Ranges >> temps;
+	ranges >> temps;
 	REH1 = stod(temps.substr(0, temps.find('-')));
 	REH2 = stod(temps.substr(temps.find('-') + 1, temps.size() - temps.find('-') - 1));
-	Ranges >> temps;
+	ranges >> temps;
 	REC1 = stoi(temps.substr(0, temps.find('-')));
 	REC2 = stoi(temps.substr(temps.find('-') + 1, temps.size() - temps.find('-') - 1));
 	//get ranges of health / power / capasity of Alien army
