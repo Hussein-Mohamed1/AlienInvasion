@@ -18,7 +18,7 @@ public:
 
 
 private:
-    bool attack(unit *);
+    bool EnemyDamage(unit *);
 };
 
 

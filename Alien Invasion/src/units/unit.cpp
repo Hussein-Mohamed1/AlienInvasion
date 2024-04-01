@@ -69,3 +69,14 @@ unit::unit(int id, Type type, int joinTime, double health, double power, int att
         : ID(id), type(type), joinTime(joinTime), health(health), power(power), attackCapacity(attackCapacity),
           simPtr(simPtr) {}
 
+bool unit::EnemyDamage(unit* Enemy)
+{
+    double Damage = (getPower() * (getHealth() / 100)) / sqrt(Enemy->getHealth());
+    double NewHealth = Enemy->getHealth() - Damage;
+    if (NewHealth > 0)
+    {
+        Enemy->setHealth(NewHealth);
+        return false;
+    }
+    return true;
+}

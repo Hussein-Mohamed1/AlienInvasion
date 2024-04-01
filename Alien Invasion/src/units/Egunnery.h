@@ -3,8 +3,8 @@
 class Egunnery :public unit
 {
 public:
-	bool attack(unit*);
-	bool attack(unit* , unit* );
+	//bool EnemyDamage(unit*);
+	//bool EnemyDamage(unit* , unit* );
 	void print() const ;
 };
 

@@ -3,7 +3,7 @@
 #include "Egunnery.h"
 
 // #include "alienArmy.h" @TODO include alien army - Youssef Noser
-unit *earthArmy::attack(unit *enemy) {
+unit *earthArmy::EnemyDamage(unit *enemy) {
 
 //    if (enemy->getType() == alienSoldier || enemy->getType() == Monster
 //                                            && unitCount <= 0.3 *

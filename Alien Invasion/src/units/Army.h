@@ -13,7 +13,7 @@ public:
 
     virtual void removeUnit(unit *) = 0;
 
-    virtual unit * attack(unit *) = 0;
+    virtual unit * EnemyDamage(unit *) = 0;
 };
 
 

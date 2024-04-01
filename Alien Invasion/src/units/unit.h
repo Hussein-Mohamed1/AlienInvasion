@@ -22,7 +22,7 @@ protected:
 public:
     unit(int id, Type type, int joinTime, double health, double power, int attackCapacity, simulationManager *simPtr);
 
-    virtual bool attack(unit *) = 0;
+    virtual bool EnemyDamage(unit*);
 
     virtual void print() const;
 

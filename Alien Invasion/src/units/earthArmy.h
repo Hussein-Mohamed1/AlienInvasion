@@ -26,7 +26,7 @@ class earthArmy : public Army {
     alienArmy *alienArmyPtr;
 public:
 
-    unit * attack(unit *enemy);
+    unit * EnemyDamage(unit *enemy);
 
     bool addUnit(unit *);
 
