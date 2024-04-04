@@ -3,13 +3,14 @@
 //
 
 #include "Tank.h"
+#include "../simulationManager.h"
 
-bool Tank::attack(unit *enemy) {
-    enemy->setHealth(((power * enemy->getHealth()) / 100) / sqrt(health));
-
-    if (enemy->getHealth() <= 0)
-        return true;
-
+bool Tank::damageEnemy(unit *enemy) {
+    if (enemy)
+        if (enemy->getType() == alienSoldier || enemy->getType() == MonsterType
+                                                && simPtr->getEarthUnitCount() <= 0.3 * simPtr->getAlienUnitCount()) {
+            unit::damageEnemy(enemy);
+            return true;
+        }
     return false;
-
 }
