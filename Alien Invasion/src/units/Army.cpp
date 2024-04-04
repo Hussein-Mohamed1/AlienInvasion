@@ -3,3 +3,11 @@
 //
 
 #include "Army.h"
+
+int Army::getUnitCount() const {
+    return unitCount;
+}
+
+void Army::setUnitCount(int unitCount) {
+    Army::unitCount = unitCount;
+}

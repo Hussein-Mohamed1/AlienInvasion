@@ -1,8 +1,8 @@
 #include "Monster.h"
 #include<iostream>
 
-void Monster::print() const
+void Monster::print()   const
 {
-	std::cout << "Moster --->\n";
+	std::cout << "Monster-->\n";
 	unit::print();
 }

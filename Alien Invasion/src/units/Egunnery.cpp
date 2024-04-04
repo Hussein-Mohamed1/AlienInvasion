@@ -1,6 +1,6 @@
 #pragma once
 #include "Egunnery.h"
-//bool Egunnery::EnemyDamage(unit* AD1 , unit* AD2)
+//bool Egunnery::damageEnemy(unit* AD1 , unit* AD2)
 //{
 //	double damagedH1;
 //	double damagedH2;
@@ -15,7 +15,7 @@
 //		}
 //		return true;
 //}
-//bool Egunnery::EnemyDamage(unit* AM )
+//bool Egunnery::damageEnemy(unit* AM )
 //{
 //	double damagedH = AM->getHealth() - ((this->getPower() * this->getHealth()) / (100)) / (sqrt(AM->getHealth()));
 //	if (damagedH > 0)
