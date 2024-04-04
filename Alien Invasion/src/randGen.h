@@ -1,6 +1,7 @@
 #pragma once
 #include "./units/unit.h"
-#include"simulationManager.h"
+
+class simulationManager;
 class randGen
 {
 	simulationManager* simM;
