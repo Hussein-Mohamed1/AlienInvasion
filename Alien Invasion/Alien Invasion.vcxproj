@@ -127,7 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\ds\main.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="src\randGen.cpp" />
     <ClCompile Include="src\simulationManager.cpp" />
     <ClCompile Include="src\units\earthArmy.cpp" />
