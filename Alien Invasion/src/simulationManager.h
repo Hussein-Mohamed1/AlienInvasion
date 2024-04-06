@@ -29,7 +29,6 @@ protected:
     alienArmy *alienArmyPtr;
     earthArmy *earthArmyPtr;
     LinkedQueue<unit *> tempList;
-    randGen randGenObj;
     randGen *RandomGenerator;
 public:
     simulationManager(operationMode); //initializes the simulation

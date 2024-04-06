@@ -1,22 +1,25 @@
 #include "iostream"
 #include "./src/simulationManager.h"
-
+#include <windows.h>
 
 int main() {
+    SetConsoleOutputCP(CP_UTF8);
     try {
-        simulationManager SimManger(Silent);
+        simulationManager simManager(Silent);
         for (int i = 0; i < 50; ++i) {
-            system("CLS");
-            cout << SimManger.getAlienUnitCount() << endl;
-            cout << SimManger.getEarthUnitCount() << endl;
-
+            int randNum = rand() % 100;
+            system("cls");
+            simManager.updateSimulation(i);
+            cout << "Current TimeStep is:" << i;
+            cout << "\n🔢 Current Random num is " << randNum << "\n";
+            cout << "👽 Alien Army Count is: " << simManager.getAlienUnitCount() << endl;
+            cout << "🌍 Earth Army Count is: " << simManager.getEarthUnitCount() << endl;
+            simManager.phase12TestFunction(randNum);
+            cout << "⏩ Press Enter to proceed to the next time step..." << endl;
             cin.get();
         }
-
-
     } catch (const runtime_error &e) {
-        cout << e.what();
+        cout << "⚠️ " << e.what() << endl;
         exit(0);
     }
-
 }

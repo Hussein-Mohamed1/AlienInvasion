@@ -10,7 +10,7 @@ using namespace std;
 enum Type {
     Gunnery, EarthSoldier, EarthTank, alienSoldier, DronePair, MonsterType
 };
-enum armytypr
+enum armytype
 {
     Earthunit , Alienunit
 };

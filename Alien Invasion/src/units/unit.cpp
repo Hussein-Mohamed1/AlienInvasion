@@ -9,7 +9,7 @@
 void unit::print() const {
     cout << "ID: " << ID << " type: " << type << " joinTime: " << joinTime << " health: "
          << health
-         << " power: " << power << " attackCapacity: " << attackCapacity << " simPtr: " << simPtr;
+            << " power: " << power << " attackCapacity: " << attackCapacity;
 }
 
 int unit::getId() const {

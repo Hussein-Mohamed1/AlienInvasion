@@ -10,7 +10,8 @@ class randGen
 public:
 	randGen();
 	double handelPer(double per, int num);
-	unit* generatUnit( armytypr  , int);
+
+    unit *generatUnit(armytype, int);
 	bool creatEunits();
 	bool creatAunits();
 	int getnumofunits();
