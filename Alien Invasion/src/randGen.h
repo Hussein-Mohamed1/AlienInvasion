@@ -6,17 +6,13 @@ class randGen
 	double perES, perET, perEG, perAS, perAM, perAD;
 	double RangeEH1, RangeEH2, RangeAH1, RangeAH2, RangeEP1, RangeEP2, RangeAP1, RangeAP2;
 	int unitscreated, RangeEC1, RangeEC2, RangeAC1, RangeAC2, prob;
-	static int id;
+	static int Eid , Aid;
 public:
 	randGen();
 	double handelPer(double per, int num);
-	unit* generatUnit( Type unit);
-	bool creatunits();
-	double getnumofES();
-	double getnumofET();
-	double getnumofEG();
-	double getnumofAS();
-	double getnumofAM();
-	double getnumofAD();
+	unit* generatUnit( armytypr  , int);
+	bool creatEunits();
+	bool creatAunits();
+	int getnumofunits();
 };
 

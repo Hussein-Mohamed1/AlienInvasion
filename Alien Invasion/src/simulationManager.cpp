@@ -16,9 +16,9 @@ simulationManager::simulationManager(operationMode operationModeVal) : operation
 
 }
 
-void simulationManager::updateSimulation() {
+void simulationManager::updateSimulation(int timestep) {
 
-    manageadding();
+    manageadding(timestep);
 
     ///@details From here the fighting logic starts
 /// @note totalNumOfUnits is passed by reference
@@ -112,50 +112,129 @@ void simulationManager::showStats(unit *AttackingUnit, unit *DamagedUnit) const 
                  << " " << DamagedUnit->getType() << endl;
 }
 
-void simulationManager::manageadding() {
-    if (RandomGenerator->creatunits()) {
-        for (int i{}; i < RandomGenerator->getnumofES(); i++) {
-            addNewUnit(RandomGenerator->generatUnit(EarthSoldier));
+void simulationManager::manageadding(int timestep) {
+    if (RandomGenerator->creatEunits()) {
+        for (int i = 0; i < RandomGenerator->getnumofunits(); i++)
+        {
+            addNewUnit(RandomGenerator->generatUnit(Earthunit , timestep));
         }
-        for (int i{}; i < RandomGenerator->getnumofET(); i++) {
-            addNewUnit(RandomGenerator->generatUnit(EarthTank));
-        }
-        for (int i{}; i < RandomGenerator->getnumofEG(); i++) {
-            addNewUnit(RandomGenerator->generatUnit(Gunnery));
-        }
-        for (int i{}; i < RandomGenerator->getnumofAS(); i++) {
-            addNewUnit(RandomGenerator->generatUnit(alienSoldier));
-        }
-        for (int i{}; i < RandomGenerator->getnumofAM(); i++) {
-            addNewUnit(RandomGenerator->generatUnit(MonsterType));
-        }
-        for (int i{}; i < RandomGenerator->getnumofAD(); i++) {
-            addNewUnit(RandomGenerator->generatUnit(DronePair));
+    }
+    if (RandomGenerator->creatAunits())
+    {
+        for (int i = 0; i < RandomGenerator->getnumofunits(); i++)
+        {
+            addNewUnit(RandomGenerator->generatUnit(Alienunit, timestep));
         }
     }
 }
 
-void simulationManager::phase12TestFunction(int x) {
-    if (x >= 0 & x <= 10) {
+
+void simulationManager::phase12TestFunction(int x) 
+{
+    if (x >= 0 & x <= 10)
+    {
         cout << "Picking an earth Soldier.\n";
         unit *Soldier = earthArmyPtr->getUnit(EarthSoldier);
-        if (Soldier) {
+        if (Soldier)
+        {
             Soldier->print();
             cout << "\nEarth Units Count after removing soldier is " << earthArmyPtr->getUnitCount();
             earthArmyPtr->addUnit(Soldier);
             cout << "And requeuing it. New count is:" << earthArmyPtr->getUnitCount();
-        } else cout << "No soldiers."
+        }
+        else cout << "No soldiers.";
     }
-    if (x > 10 & x <= 20)
+    else if (x > 10 & x <= 20)
+    {
 
-        if (x > 20 & x <= 30)
+        cout << "Picking an earth tank.\n";
+        unit* tank = earthArmyPtr->getUnit(EarthTank);
+        if (tank)
+        {
+            tank->print();
+            // move it to killed list
+        }
+        else cout << "No tanks.";
+    }
+    else if (x > 20 & x <= 30)
+    {
 
-            if (x > 30 & x <= 40)
+        cout << "Picking an earth gunnery.\n";
+        unit* gunnery = earthArmyPtr->getUnit(Gunnery);
+        if (gunnery)
+        {
+            gunnery->print();
+            gunnery->setHealth(gunnery->getHealth() - gunnery->getHealth() / 2);
+        }
+        else cout << "No gunnerys.";
+    }
+    else if (x > 30 & x <= 40)
+    {
 
-                if (x > 40 & x <= 50)
+        for (int i = 0; i < 5; i++)
+        {
+            cout << "Picking an alien soldier.\n";
+            unit* soldier = earthArmyPtr->getUnit(MonsterType);
+            if (soldier)
+            {
+                soldier->print();
+                cout << "\nAlien Units Count after removing soldier is " << alienArmyPtr->getUnitCount();
+                soldier->setHealth(soldier->getHealth() - soldier->getHealth() / 2);
+                //add it to temp list
+                cout << "And requeuing it. New count is:" << alienArmyPtr->getUnitCount();
+            }
+            else
+            {
+                cout << "No soldiers.";
+                break;
+            }
 
-                    if (x > 50 & x <= 60)
+        }
+    }
+    else if (x > 40 & x <= 50)
+    {
+        for (int i = 0 ; i < 5; i++)
+        {
+            cout << "Picking an alien monster.\n";
+            unit* monster = earthArmyPtr->getUnit(MonsterType);
+            if (monster)
+            {
+                monster->print();
+                cout << "\nAlien Units Count after removing monster is " << alienArmyPtr->getUnitCount();
+                earthArmyPtr->addUnit(monster);
+                cout << "And requeuing it. New count is:" << alienArmyPtr->getUnitCount();
+            }
+            else
+            {
+                cout << "No monsters.";
+                break;
+            }
+                
+        }
+    }
+    else if (x > 50 & x <= 60)
+    {
 
-                        return nullptr;
+        for (int i = 0; i < 6; i++)
+        {
+            cout << "Picking an alien Drone.\n";
+            unit* drone = earthArmyPtr->getUnit(DronePair);
+            if (drone)
+            {
+                drone->print();
+                cout << "\nAlien Units Count after removing drone is " << alienArmyPtr->getUnitCount();
+                // add to killed list
+                cout << "And requeuing it. New count is:" << alienArmyPtr->getUnitCount();
+            }
+            else
+            {
+                cout << "No drones.";
+                break;
+            }
+
+        }
+    }
+
+                        
 }
 

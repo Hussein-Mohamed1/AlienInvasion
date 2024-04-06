@@ -14,12 +14,11 @@
 #include "./units/Drone.h"
 
 using namespace std;
-namespace fs = std::filesystem;
+
 
 randGen::randGen() {
     string S, temps, unitrang[3];
-    fstream *infile = new fstream("C:\\Users\\youss\\CLionProjects\\AlienInvasion\\Alien Invasion\\src\\test.txt",
-                                  ios::in);
+    fstream *infile = new fstream("./src/test.txt",ios::in);
     if (infile->is_open()) {
         getline(*infile, S);
         unitscreated = stoi(S);
@@ -69,35 +68,6 @@ randGen::randGen() {
     } else throw runtime_error("Oops No file is found to read data from!");
 }
 
-double randGen::getnumofES() {
-    perES = handelPer(perES, unitscreated);
-    return perES;
-}
-
-double randGen::getnumofET() {
-    perET = handelPer(perET, unitscreated);
-    return perET;
-}
-
-double randGen::getnumofEG() {
-    perEG = handelPer(perEG, unitscreated);
-    return perEG;
-}
-
-double randGen::getnumofAS() {
-    perAS = handelPer(perAS, unitscreated);
-    return perAS;
-}
-
-double randGen::getnumofAM() {
-    perAM = handelPer(perAM, unitscreated);
-    return perAM;
-}
-
-double randGen::getnumofAD() {
-    perAD = handelPer(perAD, unitscreated);
-    return perAD;
-}
 
 double randGen::handelPer(double per, int num) {
 
@@ -109,9 +79,9 @@ double randGen::handelPer(double per, int num) {
     return per;
 }
 
-unit *randGen::generatUnit(Type unitType) {
+unit *randGen::generatUnit(armytypr unitType , int timestep) {
     double healthEunit, healthAunit, powerEunit, powerAunit;
-    int Eattackcap, Aattackcap;
+    int Eattackcap, Aattackcap, num;
 
     healthEunit = rand() % int(RangeEH2 - RangeEH1 + 1) + RangeEH1; //randome Health of earth unit
     powerEunit = rand() % int(RangeEP2 - RangeEP1 + 1) + RangeEP1; //randome power of earth unit
@@ -121,42 +91,50 @@ unit *randGen::generatUnit(Type unitType) {
     powerAunit = rand() % int(RangeAP2 - RangeAP1 + 1) + RangeAP1; //randome power of alien unit
     Aattackcap = rand() % (RangeAC2 - RangeAC1 + 1) + RangeAC1;    //randome attackcap of alien unit
     switch (unitType) {
-        case EarthSoldier:  //@todo
+        case Earthunit:  //@todo
         {
-            unit *soldier = new Esoldier(id++, 1, healthEunit, powerEunit, Eattackcap, nullptr);
-            return soldier;
+            num = rand() % 101;
+            if (num <= perES)
+            {
+                unit* soldier = new Esoldier(Eid++, 1, healthEunit, powerEunit, Eattackcap, nullptr);
+                return soldier;
+            }
+            else if (num <= (perES + perET))
+            {
+                unit* tank = new Tank(Eid++, 1, healthEunit, powerEunit, Eattackcap, nullptr);
+                return tank;
+            }
+            else
+            {
+                unit* gunnery = new Egunnery(Eid++, 1, healthEunit, powerEunit, Eattackcap, nullptr);
+                return gunnery;
+            }
         }
-        case EarthTank:                                //@todo
+        case Alienunit:                                
         {
-            unit *tank = new Tank(id++, 1, healthEunit, powerEunit, Eattackcap, nullptr);
-            return tank;
-        }
-        case Gunnery:                                //@todo
-        {
-            unit *gunnery = new Egunnery(id++, 1, healthEunit, powerEunit, Eattackcap, nullptr);
-            return gunnery;
-        }
-        case alienSoldier:                                //@todo
-        {
-            unit *Asoldier = new ASolider(id++, 1, healthAunit, powerAunit, Aattackcap, nullptr);
-            return Asoldier;
-        }
-        case MonsterType:                                //@todo
-        {
-            unit *monster = new Monster(id++, 1, healthAunit, powerAunit, Aattackcap, nullptr);
-            return monster;
-        }
-        case DronePair:                                //@todo
-        {
-            unit *drone = new Drone(id++, 1, healthAunit, powerAunit, Aattackcap, nullptr);
-            return drone;
+            num = rand() % 101;
+            if (num <= perAS)
+            {
+                unit* soldier = new ASolider(Aid++, 1, healthAunit, powerAunit, Aattackcap, nullptr);
+                return soldier;
+            }
+            else if (num <= (perAS + perAM))
+            {
+                unit* monster = new Monster(Aid++, 1, healthEunit, powerEunit, Eattackcap, nullptr);
+                return monster;
+            }
+            else
+            {
+                unit* drone = new Drone(Aid++, 1, healthEunit, powerEunit, Eattackcap, nullptr);
+                return drone;
+            }
         }
         default:
             break;
     }
 }
 
-bool randGen::creatunits() {
+bool randGen::creatEunits() {
     int num;
     num = rand() % 100;
     if (num <= prob) {
@@ -164,22 +142,18 @@ bool randGen::creatunits() {
     }
     return false;
 }
+bool randGen::creatAunits() {
+    int num;
+    num = rand() % 100;
+    if (num <= prob) {
+        return true;
+    }
+    return false;
+}
+int randGen::getnumofunits()
+{
+    return unitscreated;
+}
+int randGen::Eid = 1;
+int randGen::Aid = 2000;
 
-int randGen::id = 0;
-
-/*
-		double healthunit, powerunit;
-		int attackcap;
-		perES = handelPer(perES, unitscreated);// handel num of units created depening on persentage
-		generatUnits(perES, RangeEH1, RangeEH2, RangeEP1, RangeEP2, RangeEC1, RangeEC2, EarthSoldier); // add eartht soldier
-		perET = handelPer(perET, unitscreated);// handel num of units created depening on persentage
-		generatUnits(perET, REH1, REH2, REP1, REP2, REC1, REC2, EarthTank); // add eartht tank
-		perEG = handelPer(perEG, unitscreated);// handel num of units created depening on persentage
-		generatUnits(perEG, REH1, REH2, REP1, REP2, REC1, REC2, Gunnery); // add eartht gunnery
-		perAS = handelPer(perAS, unitscreated);// handel num of units created depening on persentage
-		generatUnits(perAS, RAH1, RAH2, RAP1, RAP2, RAC1, RAC2, alienSoldier); // add alien soldier
-		perAM = handelPer(perAM, unitscreated);// handel num of units created depening on persentage
-		generatUnits(perAM, RAH1, RAH2, RAP1, RAP2, RAC1, RAC2, Monster); // add alien monster
-		perAD = handelPer(perAD, unitscreated);// handel num of units created depening on persentage
-		generatUnits(perAD, RAH1, RAH2, RAP1, RAP2, RAC1, RAC2, Drone); // add alien Drone
-		*/

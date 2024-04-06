@@ -34,13 +34,13 @@ protected:
 public:
     simulationManager(operationMode); //initializes the simulation
 
-    void updateSimulation();
+    void updateSimulation(int);
 
     void addNewUnit(unit *);
 
     int getAlienUnitCount();
 
-    void manageadding();
+    void manageadding(int);
 
     int getEarthUnitCount();
 

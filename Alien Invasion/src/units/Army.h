@@ -22,6 +22,7 @@ public:
     virtual unit *Attack(unit *) = 0;
 
     virtual unit *getRandomUnit() = 0;
+    virtual unit* getUnit(Type type) = 0;
 };
 
 
