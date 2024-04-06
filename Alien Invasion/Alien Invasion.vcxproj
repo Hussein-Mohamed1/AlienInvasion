@@ -132,7 +132,6 @@
     <ClCompile Include="src\simulationManager.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\units\alienArmy.cpp" />
-    <ClCompile Include="src\units\AlienSolider.cpp" />
     <ClCompile Include="src\units\Army.cpp" />
     <ClCompile Include="src\units\ASolider.cpp" />
     <ClCompile Include="src\units\Drone.cpp" />
@@ -155,7 +154,6 @@
     <ClInclude Include="src\randGen.h" />
     <ClInclude Include="src\simulationManager.h" />
     <ClInclude Include="src\units\alienArmy.h" />
-    <ClInclude Include="src\units\AlienSolider.h" />
     <ClInclude Include="src\units\Army.h" />
     <ClInclude Include="src\units\ASolider.h" />
     <ClInclude Include="src\units\Drone.h" />

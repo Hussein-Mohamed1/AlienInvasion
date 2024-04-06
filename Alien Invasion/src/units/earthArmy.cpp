@@ -5,7 +5,7 @@
 #include "Egunnery.h"
 #include "alienArmy.h"
 
-unit *earthArmy::damageEnemy(unit *enemy) {
+unit *earthArmy::Attack(unit *enemy) {
 
     if (enemy->getType() == alienSoldier || enemy->getType() == MonsterType
                                             && unitCount <= 0.3 * alienArmyPtr->getUnitCount()) {

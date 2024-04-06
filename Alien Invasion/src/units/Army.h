@@ -19,7 +19,7 @@ public:
 
     void setUnitCount(int unitCount);
 
-    virtual unit *damageEnemy(unit *) = 0;
+    virtual unit *Attack(unit *) = 0;
 
     virtual unit *getRandomUnit() = 0;
 };

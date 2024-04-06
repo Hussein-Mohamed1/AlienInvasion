@@ -29,7 +29,7 @@ public:
 
     unit *getRandomUnit();
 
-    unit *damageEnemy(unit *enemy);
+    unit *Attack(unit *enemy);
 
     bool addUnit(unit *);
 
