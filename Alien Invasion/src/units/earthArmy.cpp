@@ -49,8 +49,12 @@ void earthArmy::removeUnit(unit *) {
 
 }
 
-void earthArmy::print() const {
-
+void earthArmy::print()  {
+    LinkedQueue<Esoldier*> TempESlist;
+    Esoldier* soldier;
+    cout << "======================== Eartht Army Alive units ==================================\n";
+    cout << "ES [ ";
+    
 }
 
 /// @details returns a randomUnit and removes it from its adt.

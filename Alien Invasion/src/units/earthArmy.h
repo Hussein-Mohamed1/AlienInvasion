@@ -35,7 +35,7 @@ public:
 
     void removeUnit(unit *);
 
-    void print() const;
+    void print() ;
 
     unit *getUnit(Type type);
 };

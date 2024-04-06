@@ -146,7 +146,6 @@ void simulationManager::phase12TestFunction(int x)
     }
     else if (x > 10 & x <= 20)
     {
-
         cout << "Picking an earth tank.\n";
         unit* tank = earthArmyPtr->getUnit(EarthTank);
         if (tank)
@@ -174,7 +173,7 @@ void simulationManager::phase12TestFunction(int x)
         for (int i = 0; i < 5; i++)
         {
             cout << "Picking an alien soldier.\n";
-            unit* soldier = earthArmyPtr->getUnit(MonsterType);
+            unit* soldier = earthArmyPtr->getUnit(alienSoldier);
             if (soldier)
             {
                 soldier->print();

@@ -96,17 +96,17 @@ unit *randGen::generatUnit(armytypr unitType , int timestep) {
             num = rand() % 101;
             if (num <= perES)
             {
-                unit* soldier = new Esoldier(Eid++, 1, healthEunit, powerEunit, Eattackcap, nullptr);
+                unit* soldier = new Esoldier(Eid++, timestep, healthEunit, powerEunit, Eattackcap, nullptr);
                 return soldier;
             }
             else if (num <= (perES + perET))
             {
-                unit* tank = new Tank(Eid++, 1, healthEunit, powerEunit, Eattackcap, nullptr);
+                unit* tank = new Tank(Eid++, timestep, healthEunit, powerEunit, Eattackcap, nullptr);
                 return tank;
             }
             else
             {
-                unit* gunnery = new Egunnery(Eid++, 1, healthEunit, powerEunit, Eattackcap, nullptr);
+                unit* gunnery = new Egunnery(Eid++, timestep, healthEunit, powerEunit, Eattackcap, nullptr);
                 return gunnery;
             }
         }
@@ -115,17 +115,17 @@ unit *randGen::generatUnit(armytypr unitType , int timestep) {
             num = rand() % 101;
             if (num <= perAS)
             {
-                unit* soldier = new ASolider(Aid++, 1, healthAunit, powerAunit, Aattackcap, nullptr);
+                unit* soldier = new ASolider(Aid++, timestep, healthAunit, powerAunit, Aattackcap, nullptr);
                 return soldier;
             }
             else if (num <= (perAS + perAM))
             {
-                unit* monster = new Monster(Aid++, 1, healthEunit, powerEunit, Eattackcap, nullptr);
+                unit* monster = new Monster(Aid++, timestep, healthEunit, powerEunit, Eattackcap, nullptr);
                 return monster;
             }
             else
             {
-                unit* drone = new Drone(Aid++, 1, healthEunit, powerEunit, Eattackcap, nullptr);
+                unit* drone = new Drone(Aid++, timestep , healthEunit, powerEunit, Eattackcap, nullptr);
                 return drone;
             }
         }
