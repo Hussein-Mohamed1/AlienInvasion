@@ -2,7 +2,10 @@
 // Created by youss on 3/30/2024.
 //
 #pragma once
+
+#include "../simulationManager.h"
 #include "unit.h"
+
 void unit::print() const {
     cout << "ID: " << ID << " type: " << type << " joinTime: " << joinTime << " health: "
          << health
@@ -69,3 +72,14 @@ unit::unit(int id, Type type, int joinTime, double health, double power, int att
         : ID(id), type(type), joinTime(joinTime), health(health), power(power), attackCapacity(attackCapacity),
           simPtr(simPtr) {}
 
+bool unit::damageEnemy(unit *Enemy) {
+    if (Enemy) {
+
+        double Damage = (getPower() * (getHealth() / 100)) / sqrt(Enemy->getHealth());
+        double NewHealth = Enemy->getHealth() - Damage;
+        Enemy->setHealth(NewHealth);
+
+        return true;
+    }
+    return false;
+}

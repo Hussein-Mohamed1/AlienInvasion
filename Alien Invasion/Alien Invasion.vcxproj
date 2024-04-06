@@ -130,13 +130,18 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\randGen.cpp" />
     <ClCompile Include="src\simulationManager.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\units\ASolider.cpp" />
+    <ClCompile Include="src\units\Dragon.cpp" />
     <ClCompile Include="src\units\earthArmy.cpp" />
     <ClCompile Include="src\units\Egunnery.cpp" />
     <ClCompile Include="src\units\Esoldier.cpp" />
+    <ClCompile Include="src\units\Monster.cpp" />
     <ClCompile Include="src\units\unit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ds\ArrayStack.h" />
+    <ClInclude Include="src\ds\DoublyLinkedQueue.h" />
     <ClInclude Include="src\ds\LinkedQueue.h" />
     <ClInclude Include="src\ds\Node.h" />
     <ClInclude Include="src\ds\priNode.h" />
@@ -145,9 +150,12 @@
     <ClInclude Include="src\ds\StackADT.h" />
     <ClInclude Include="src\randGen.h" />
     <ClInclude Include="src\simulationManager.h" />
+    <ClInclude Include="src\units\ASolider.h" />
+    <ClInclude Include="src\units\Dragon.h" />
     <ClInclude Include="src\units\earthArmy.h" />
     <ClInclude Include="src\units\Egunnery.h" />
     <ClInclude Include="src\units\Esoldier.h" />
+    <ClInclude Include="src\units\Monster.h" />
     <ClInclude Include="src\units\unit.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

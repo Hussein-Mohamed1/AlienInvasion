@@ -2,12 +2,13 @@
 // Created by youss on 3/30/2024.
 #pragma once
 
-#include "../simulationManager.h"
 #include <iostream>
+
+class simulationManager;
 
 using namespace std;
 enum Type {
-    Gunnery, EarthSoldier, EarthTank, alienSoldier, Drone, Monster
+    Gunnery, EarthSoldier, EarthTank, alienSoldier, DronePair, MonsterType
 };
 
 class unit {
@@ -22,7 +23,7 @@ protected:
 public:
     unit(int id, Type type, int joinTime, double health, double power, int attackCapacity, simulationManager *simPtr);
 
-    virtual bool attack(unit *) = 0;
+    virtual bool damageEnemy(unit *);
 
     virtual void print() const;
 

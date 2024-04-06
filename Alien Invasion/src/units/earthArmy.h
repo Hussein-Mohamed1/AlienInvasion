@@ -19,14 +19,17 @@ enum earthType {
 };
 
 class earthArmy : public Army {
-    int unitCount;
+
     LinkedQueue<Esoldier *> ESlist;
+
     priQueue<Egunnery *> EGlist;
-    ArrayStack<unit *> TankList;
+    ArrayStack<Tank *> TankList;
     alienArmy *alienArmyPtr;
 public:
 
-    unit * attack(unit *enemy);
+    unit *getRandomUnit();
+
+    unit *damageEnemy(unit *enemy);
 
     bool addUnit(unit *);
 
@@ -34,7 +37,6 @@ public:
 
     void print() const;
 
-    int getUnitCount() const;
 };
 
 
