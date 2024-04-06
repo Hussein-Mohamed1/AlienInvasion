@@ -4,9 +4,9 @@
 #pragma once
 
 #include "simulationManager.h"
-#include "alienArmy.h"
-#include "earthArmy.h"
-#include "unit.h"
+#include "./units/alienArmy.h"
+#include "./units/earthArmy.h"
+#include "./units/unit.h"
 
 
 simulationManager::simulationManager(operationMode operationModeVal) : operationModeVal(operationModeVal) {
@@ -114,34 +114,33 @@ void simulationManager::showStats(unit *AttackingUnit, unit *DamagedUnit) const 
             cout << AttackingUnit->getId() << " " << AttackingUnit->getType() << " has attacked" << DamagedUnit->getId()
                  << " " << DamagedUnit->getType() << endl;
 }
-void simulationManager::manageadding(fstream* infile)
+void simulationManager::manageadding()
 {
-	RandomGenerator = new randGen();
-	{
-		for (int i{}; i <RandomGenerator->getnumofES() ; i++)
-		{
-			// adding func of sim ( RandomeGenerator->generateunit(Es)
-		}
-		for (int i{}; i < RandomGenerator->getnumofET(); i++)
-		{
-			// adding func of sim ( RandomeGenerator->generateunit(ET)
-		}
-		for (int i{}; i < RandomGenerator->getnumofEG(); i++)
-		{
-			// adding func of sim ( RandomeGenerator->generateunit(EG)
-		}
-		for (int i{}; i < RandomGenerator->getnumofAS(); i++)
-		{
-			// adding func of sim ( RandomeGenerator->generateunit(AS)
-		}
-		for (int i{}; i < RandomGenerator->getnumofAM(); i++)
-		{
-			// adding func of sim ( RandomeGenerator->generateunit(AM)
-		}
-		for (int i{}; i < RandomGenerator->getnumofAD(); i++)
-		{
-			// adding func of sim ( RandomeGenerator->generateunit(AD)
-		}
-	}
-
+    if (RandomGenerator->creatunits())
+    {
+        for (int i{}; i < RandomGenerator->getnumofES(); i++)
+        {
+            addNewUnit(RandomGenerator->generatUnit(EarthSoldier));
+        }
+        for (int i{}; i < RandomGenerator->getnumofET(); i++)
+        {
+            addNewUnit(RandomGenerator->generatUnit(EarthTank));
+        }
+        for (int i{}; i < RandomGenerator->getnumofEG(); i++)
+        {
+            addNewUnit(RandomGenerator->generatUnit(Gunnery));
+        }
+        for (int i{}; i < RandomGenerator->getnumofAS(); i++)
+        {
+            addNewUnit(RandomGenerator->generatUnit(alienSoldier));
+        }
+        for (int i{}; i < RandomGenerator->getnumofAM(); i++)
+        {
+            addNewUnit(RandomGenerator->generatUnit(MonsterType));
+        }
+        for (int i{}; i < RandomGenerator->getnumofAD(); i++)
+        {
+            addNewUnit(RandomGenerator->generatUnit(DronePair));
+        }
+    }
 }

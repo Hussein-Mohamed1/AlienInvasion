@@ -5,6 +5,11 @@
 #include <sstream>
 #include <string>
 #include "./units/Esoldier.h"
+#include "./units/Egunnery.h"
+#include "./units/Tank.h"
+#include "./units/ASolider.h"
+#include "./units/Monster.h"
+#include "./units/Drone.h"
 randGen::randGen() {
 	string S, temps, unitrang[2];
 	fstream *infile = new fstream("test.txt", ios::in);
@@ -94,12 +99,8 @@ double randGen::handelPer(double per, int num)
 		per = floor(((per * num) / 100));
 	return per;
 }
-unit* randGen::generatUnits( Type unitType)
+unit* randGen::generatUnit( Type unitType)
 {
-	int num;
-	num = rand() % 100;
-	if (num <= prob)
-	{
 		double healthEunit, healthAunit, powerEunit, powerAunit;
 		int Eattackcap, Aattackcap;
 
@@ -112,13 +113,49 @@ unit* randGen::generatUnits( Type unitType)
 		Aattackcap = rand() % (RangeAC2 - RangeAC1 + 1) + RangeAC1;    //randome attackcap of alien unit
 		switch (unitType)
 		{
-		case EarthSoldier:                                //@todo
-			unit* soldier = new Esoldier(id++, EarthSoldier, 1, healthEunit, powerEunit, Eattackcap, nullptr);
+		case EarthSoldier:  //@todo
+		{
+			unit* soldier = new Esoldier(id++, 1, healthEunit, powerEunit, Eattackcap, nullptr);
+			return soldier;
+		}
+		case EarthTank:                                //@todo
+		{
+			unit* tank = new Tank(id++, 1, healthEunit, powerEunit, Eattackcap, nullptr);
+			return tank;
+		}
+		case Gunnery:                                //@todo
+		{
+			unit* gunnery = new Egunnery(id++, 1, healthEunit, powerEunit, Eattackcap, nullptr);
+			return gunnery;
+		}
+		case alienSoldier:                                //@todo
+		{
+			unit* Asoldier = new ASolider (id++, 1, healthAunit, powerAunit, Aattackcap, nullptr);
+			return Asoldier;
+		}
+		case MonsterType:                                //@todo
+		{
+			unit* monster = new Monster(id++, 1, healthAunit, powerAunit, Aattackcap, nullptr);
+			return monster;
+		}
+		case DronePair:                                //@todo
+		{
+			unit* drone = new Drone(id++, 1, healthAunit, powerAunit, Aattackcap, nullptr);
+			return drone;
+		}
 		default:
 			break;
 		}
+}
+bool randGen::creatunits()
+{
+	int num;
+	num = rand() % 100;
+	if (num <= prob)
+	{
+		return true;
 	}
-
+	return false;
 }
 int randGen::id = 0;
 

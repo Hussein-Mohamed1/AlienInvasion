@@ -1,5 +1,6 @@
 #pragma once
 #include "Egunnery.h"
+Egunnery::Egunnery(int id, int joinTime, double health, double power, int attackCapacity, simulationManager* simPtr) :unit(id, EarthSoldier, joinTime, health, power, attackCapacity, simPtr) {}
 //bool Egunnery::damageEnemy(unit* AD1 , unit* AD2)
 //{
 //	double damagedH1;

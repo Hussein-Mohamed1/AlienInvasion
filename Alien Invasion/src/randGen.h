@@ -10,7 +10,8 @@ class randGen
 public:
 	randGen();
 	double handelPer(double per, int num);
-	unit* generatUnits( Type unit);
+	unit* generatUnit( Type unit);
+	bool creatunits();
 	double getnumofES();
 	double getnumofET();
 	double getnumofEG();

@@ -7,15 +7,15 @@
 #include "ASolider.h"
 #include "Drone.h"
 
-unit *alienArmy::damageEnemy(unit *enemy) {
+unit* alienArmy::damageEnemy(unit* enemy) {
     return nullptr;
 }
 
-bool alienArmy::addUnit(unit *) {
+bool alienArmy::addUnit(unit*) {
     return false;
 }
 
-void alienArmy::removeUnit(unit *) {
+void alienArmy::removeUnit(unit*) {
 
 }
 
@@ -23,7 +23,7 @@ void alienArmy::print() const {
 
 }
 
-unit *alienArmy::getRandomUnit() {
+unit* alienArmy::getRandomUnit() {
     auto random_number = rand() % 3 + 3;
     /// @todo implement this after alienUnits Have been implemented
 

@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include "LinkedQueue.h"
+#include "./ds/LinkedQueue.h"
 #include "randGen.h"
 
 #include <fstream>
@@ -28,6 +28,7 @@ protected:
     earthArmy *earthArmyPtr;
     LinkedQueue<unit *> tempList;
     randGen randGenObj;
+    randGen* RandomGenerator;
 public:
     simulationManager(operationMode); //initializes the simulation
 
@@ -36,10 +37,7 @@ public:
     void addNewUnit(unit *);
 
     int getAlienUnitCount();
-	randGen *RandomGenerator;
-public:
-	void manageadding(fstream* infile);
-};
+	void manageadding();
 
     int getEarthUnitCount();
 

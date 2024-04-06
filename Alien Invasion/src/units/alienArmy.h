@@ -12,15 +12,15 @@ class alienArmy : public Army {
 public:
 
     ///@todo all member functions for alienUnits must be implemented
-    unit *damageEnemy(unit *enemy);
+    unit* damageEnemy(unit* enemy);
 
-    bool addUnit(unit *);
+    bool addUnit(unit*);
 
-    void removeUnit(unit *);
+    void removeUnit(unit*);
 
     void print() const;
 
-    unit *getRandomUnit();
+    unit* getRandomUnit();
 
 };
 

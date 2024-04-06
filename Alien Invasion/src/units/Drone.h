@@ -5,9 +5,14 @@
 #ifndef ALIENINVASION_DRONE_H
 #define ALIENINVASION_DRONE_H
 
+#include "unit.h"
+class Drone  : public unit
+{
+public:
 
-class Drone {
-
+    Drone(int id, int joinTime, double health, double power, int attackCapacity, simulationManager* simPtr = nullptr)
+        : unit(
+            id, DronePair, joinTime, health, power, attackCapacity, simPtr) {};
 };
 
 
