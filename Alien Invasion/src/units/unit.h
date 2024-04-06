@@ -55,5 +55,6 @@ public:
 
     void setSimPtr(simulationManager *simPtr);
 
+    virtual unit *getUnit(Type type) = 0;
 };
 

@@ -7,41 +7,42 @@
 #include "ASolider.h"
 #include "Drone.h"
 
-unit* alienArmy::Attack(unit* enemy) 
-{
-
+unit *alienArmy::Attack(unit *enemy) {
+    return nullptr;
 }
 
-bool alienArmy::addUnit(unit* AlienUnit) 
-{
-    Type UnitType = AlienUnit->getType();
-    switch (UnitType)
-    {
-    case alienSoldier : 
-        SoliderUnits.enqueue(dynamic_cast<ASolider*>(AlienUnit));
-        return true;
-    case DronePair:
-        DroneUnuits.enqueue(dynamic_cast<Drone*> (AlienUnit));
-        return true;
-    case MonsterType :
-        Monster* MonsterUnit = dynamic_cast<Monster*>(AlienUnit);    // 
-        MonsterUnits[Index] = MonsterUnit;
-        return true;
+bool alienArmy::addUnit(unit *AlienUnit) {
+
+    if (AlienUnit) {
+        Type UnitType = AlienUnit->getType();
+        switch (UnitType) {
+            case alienSoldier :
+                SoliderUnits.enqueue(dynamic_cast<ASolider *>(AlienUnit));
+                unitCount++;
+                return true;
+            case DronePair:
+                DroneUnits.enqueue(dynamic_cast<Drone *> (AlienUnit));
+                unitCount++;
+                return true;
+            case MonsterType :
+                Monster *MonsterUnit = dynamic_cast<Monster *>(AlienUnit);
+                unitCount++;
+                MonsterUnits[Index] = MonsterUnit;
+                return true;
+        }
+        return false;
     }
-    return false;
 }
 
-void alienArmy::removeUnit(unit*AlienUnit)
-{
-
-}
-
-void alienArmy::print() const
-{
+void alienArmy::removeUnit(unit *AlienUnit) {
 
 }
 
-unit* alienArmy::getRandomUnit() {
+void alienArmy::print() const {
+
+}
+
+unit *alienArmy::getRandomUnit() {
     auto random_number = rand() % 3 + 3;
     /// @todo implement this after alienUnits Have been implemented
 
@@ -66,4 +67,23 @@ unit* alienArmy::getRandomUnit() {
 //    }
     return nullptr;
 }
+
 int alienArmy::Index = 0;
+
+unit *alienArmy::getUnit(Type type) {
+    switch (type) {
+        case alienSoldier: {
+            ASolider *temp{nullptr};
+            SoliderUnits.dequeue(temp);
+            return temp;
+        }
+        case DronePair: {
+            Drone *temp{nullptr};
+            DroneUnits.dequeue(temp);
+            return temp;
+        }
+        case MonsterType: {
+            return MonsterUnits[Index--];
+        }
+    };
+}

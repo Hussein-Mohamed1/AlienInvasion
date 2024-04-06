@@ -37,6 +37,7 @@ public:
 
     void print() const;
 
+    unit *getUnit(Type type);
 };
 
 
