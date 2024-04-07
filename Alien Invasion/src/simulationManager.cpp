@@ -126,29 +126,32 @@ void simulationManager::manageadding(int timestep) {
 
 
 void simulationManager::phase12TestFunction(int x) {
+    earthArmyPtr->print();
+    alienArmyPtr->print();
+    cout << endl;
     if (x >= 0 & x <= 10) {
         cout << "🌍 Picking an 💂 Earth Soldier.\n";
         unit *soldier = earthArmyPtr->getUnit(EarthSoldier);
         if (soldier) {
             soldier->print();
-            cout << "\n🌍 Earth Units Count after removing soldier is " << earthArmyPtr->getUnitCount();
+            cout << "\n🌍 Earth Soldier Count after removing soldier is " << earthArmyPtr->getEarthSoldierCount();
             earthArmyPtr->addUnit(soldier);
-            cout << "\n➕ And requeuing it. New count is: " << earthArmyPtr->getUnitCount();
+            cout << "\n➕ And requeuing it. New count is: " << earthArmyPtr->getEarthSoldierCount();
         } else {
             cout << "⚠️ No soldiers.";
         }
     } else if (x > 10 & x <= 20) {
         cout << "🌍 Picking an 🚛 Earth Tank.\n";
         unit *tank = earthArmyPtr->getUnit(EarthTank);
-        cout << "🌍 Current Earth Army units is: " << earthArmyPtr->getUnitCount() << endl;
+        cout << "🌍 Current Earth Tank units is: " << earthArmyPtr->getEarthTankCount() << endl;
         if (tank) {
             tank->print();
             cout << "\n💉 Setting its health to 50%\n";
             tank->setHealth(0.5 * tank->getHealth());
             tank->print();
-            cout << "🌍 Current Earth Army units after re-inserting the tank is: " << earthArmyPtr->getUnitCount()
+            cout << "🌍 New count after re-inserting the tank is: " << earthArmyPtr->getEarthTankCount()
                  << endl;
-            // move it to killed list
+            ///@todo move it to the killed list
         } else {
             cout << "⚠️ No tanks.";
         }
@@ -167,10 +170,11 @@ void simulationManager::phase12TestFunction(int x) {
             unit *soldier = alienArmyPtr->getUnit(alienSoldier);
             if (soldier) {
                 soldier->print();
-                cout << "\n👽 Alien Units Count after removing soldier is " << alienArmyPtr->getUnitCount();
+                cout << "\n👽 Alien Soldiers Count after removing soldier is "
+                     << alienArmyPtr->getAleinSoldierCount() + i;
                 soldier->setHealth(soldier->getHealth() - soldier->getHealth() / 2);
-                //add it to temp list
-                cout << "\n➕ And requeuing it. New count is: " << alienArmyPtr->getUnitCount();
+                cout << "\n➕ And requeuing it. New count is: " << alienArmyPtr->getAleinSoldierCount() + i + 1;
+                ///@todo add it to temp list
             } else {
                 cout << "⚠️ No soldiers.";
                 break;
@@ -182,9 +186,9 @@ void simulationManager::phase12TestFunction(int x) {
             unit *monster = alienArmyPtr->getUnit(MonsterType);
             if (monster) {
                 monster->print();
-                cout << "\n👽 Alien Units Count after removing monster is " << alienArmyPtr->getUnitCount();
+                cout << "\n👽 Alien Monsters Count after removing monster is " << alienArmyPtr->getAlienMonsterCount();
                 earthArmyPtr->addUnit(monster);
-                cout << "\n➕ And requeuing it. New count is: " << alienArmyPtr->getUnitCount();
+                cout << "\n➕ And re-queuing it. New count is: " << alienArmyPtr->getAlienMonsterCount();
             } else {
                 cout << "⚠️ No monsters.";
                 break;
@@ -196,9 +200,9 @@ void simulationManager::phase12TestFunction(int x) {
             unit *drone = alienArmyPtr->getUnit(DronePair);
             if (drone) {
                 drone->print();
-                cout << "\n👽 Alien Units Count after removing drone is " << alienArmyPtr->getUnitCount();
-                // add to killed list
-                cout << "\n➕ And requeuing it. New count is: " << alienArmyPtr->getUnitCount();
+                cout << "\n👽 Alien Drones Count after removing drone is " << alienArmyPtr->getAlienDroneCount() + i;
+                ///@todo  add to killed list
+                cout << "\n➕ And requeuing it. New count is: " << alienArmyPtr->getAlienDroneCount() + i + 1;
             } else {
                 cout << "⚠️ No drones.";
                 break;
@@ -206,5 +210,4 @@ void simulationManager::phase12TestFunction(int x) {
         }
     }
 }
-
 
