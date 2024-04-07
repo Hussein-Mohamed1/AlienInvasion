@@ -63,22 +63,25 @@ unit *earthArmy::getRandomUnit() {
     switch (random_number) {
         case EarthTank: {
             Tank *removedTank;
-            if (TankList.pop(removedTank))
+            if (TankList.pop(removedTank)) {
+                unitCount--;
                 return removedTank;
-            else return nullptr;
+            } else return nullptr;
         }
         case EarthSoldier: {
             Esoldier *removedSoldier;
-            if (ESlist.dequeue(removedSoldier))
+            if (ESlist.dequeue(removedSoldier)) {
+                unitCount--;
                 return removedSoldier;
-            else return nullptr;
+            } else return nullptr;
         }
         case Gunnery: {
             Egunnery *removedGunnery;
             int priority{0};
-            if (EGlist.dequeue(removedGunnery, priority))
+            if (EGlist.dequeue(removedGunnery, priority)) {
+                unitCount--;
                 return removedGunnery;
-            else return nullptr;
+            } else return nullptr;
         }
     }
 }
@@ -87,19 +90,30 @@ unit *earthArmy::getUnit(Type type) {
     switch (type) {
         case EarthSoldier: {
             Esoldier *temp{nullptr};
-            ESlist.dequeue(temp);
-            return temp;
+            if (ESlist.dequeue(temp)) {
+                unitCount--;
+                return temp;
+            }
+            return nullptr;
         }
         case EarthTank: {
             Tank *temp{nullptr};
-            TankList.pop(temp);
-            return temp;
+            if (TankList.pop(temp)) {
+                unitCount--;
+                return temp;
+            }
+            return nullptr;
         }
         case Gunnery: {
             Egunnery *temp{nullptr};
             int garbage;
-            EGlist.dequeue(temp, garbage);
-            return temp;
+            if (EGlist.dequeue(temp, garbage)) {
+                unitCount--;
+                return temp;
+            }
+            return nullptr;
+
         }
     };
+    return nullptr;
 }

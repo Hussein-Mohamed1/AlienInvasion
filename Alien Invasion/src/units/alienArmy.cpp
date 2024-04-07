@@ -83,7 +83,9 @@ unit *alienArmy::getUnit(Type type) {
             return temp;
         }
         case MonsterType: {
-            return MonsterUnits[Index--];
+            if (MonsterUnits)
+                return MonsterUnits[Index--];
+            else return nullptr;
         }
     };
 }

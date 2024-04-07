@@ -13,7 +13,7 @@ simulationManager::simulationManager(operationMode operationModeVal) : operation
     alienArmyPtr = new alienArmy();
     earthArmyPtr = new earthArmy();
     srand(time(0));
-
+    RandomGenerator = new randGen;
 }
 
 void simulationManager::updateSimulation(int timestep) {
@@ -88,8 +88,7 @@ void simulationManager::addNewUnit(unit *newUnit) {
         }
 
         if (newUnit->getType() == DronePair) {
-            alienArmyPtr->
-                    addUnit(newUnit);
+            alienArmyPtr->addUnit(newUnit);
             return;
         }
     }
@@ -114,126 +113,98 @@ void simulationManager::showStats(unit *AttackingUnit, unit *DamagedUnit) const 
 
 void simulationManager::manageadding(int timestep) {
     if (RandomGenerator->creatEunits()) {
-        for (int i = 0; i < RandomGenerator->getnumofunits(); i++)
-        {
-            addNewUnit(RandomGenerator->generatUnit(Earthunit , timestep));
+        for (int i = 0; i < RandomGenerator->getnumofunits(); i++) {
+            addNewUnit(RandomGenerator->generatUnit(Earthunit, timestep));
         }
     }
-    if (RandomGenerator->creatAunits())
-    {
-        for (int i = 0; i < RandomGenerator->getnumofunits(); i++)
-        {
+    if (RandomGenerator->creatAunits()) {
+        for (int i = 0; i < RandomGenerator->getnumofunits(); i++) {
             addNewUnit(RandomGenerator->generatUnit(Alienunit, timestep));
         }
     }
 }
 
 
-void simulationManager::phase12TestFunction(int x) 
-{
-    if (x >= 0 & x <= 10)
-    {
-        cout << "Picking an earth Soldier.\n";
-        unit *Soldier = earthArmyPtr->getUnit(EarthSoldier);
-        if (Soldier)
-        {
-            Soldier->print();
-            cout << "\nEarth Units Count after removing soldier is " << earthArmyPtr->getUnitCount();
-            earthArmyPtr->addUnit(Soldier);
-            cout << "And requeuing it. New count is:" << earthArmyPtr->getUnitCount();
+void simulationManager::phase12TestFunction(int x) {
+    if (x >= 0 & x <= 10) {
+        cout << "🌍 Picking an 💂 Earth Soldier.\n";
+        unit *soldier = earthArmyPtr->getUnit(EarthSoldier);
+        if (soldier) {
+            soldier->print();
+            cout << "\n🌍 Earth Units Count after removing soldier is " << earthArmyPtr->getUnitCount();
+            earthArmyPtr->addUnit(soldier);
+            cout << "\n➕ And requeuing it. New count is: " << earthArmyPtr->getUnitCount();
+        } else {
+            cout << "⚠️ No soldiers.";
         }
-        else cout << "No soldiers.";
-    }
-    else if (x > 10 & x <= 20)
-    {
-        cout << "Picking an earth tank.\n";
-        unit* tank = earthArmyPtr->getUnit(EarthTank);
-        if (tank)
-        {
+    } else if (x > 10 & x <= 20) {
+        cout << "🌍 Picking an 🚛 Earth Tank.\n";
+        unit *tank = earthArmyPtr->getUnit(EarthTank);
+        cout << "🌍 Current Earth Army units is: " << earthArmyPtr->getUnitCount() << endl;
+        if (tank) {
             tank->print();
+            cout << "\n💉 Setting its health to 50%\n";
+            tank->setHealth(0.5 * tank->getHealth());
+            tank->print();
+            cout << "🌍 Current Earth Army units after re-inserting the tank is: " << earthArmyPtr->getUnitCount()
+                 << endl;
             // move it to killed list
+        } else {
+            cout << "⚠️ No tanks.";
         }
-        else cout << "No tanks.";
-    }
-    else if (x > 20 & x <= 30)
-    {
-
-        cout << "Picking an earth gunnery.\n";
-        unit* gunnery = earthArmyPtr->getUnit(Gunnery);
-        if (gunnery)
-        {
+    } else if (x > 20 & x <= 30) {
+        cout << "🌍 Picking an 💣 Earth Gunnery.\n";
+        unit *gunnery = earthArmyPtr->getUnit(Gunnery);
+        if (gunnery) {
             gunnery->print();
             gunnery->setHealth(gunnery->getHealth() - gunnery->getHealth() / 2);
+        } else {
+            cout << "⚠️ No gunnerys.";
         }
-        else cout << "No gunnerys.";
-    }
-    else if (x > 30 & x <= 40)
-    {
-
-        for (int i = 0; i < 5; i++)
-        {
-            cout << "Picking an alien soldier.\n";
-            unit* soldier = earthArmyPtr->getUnit(alienSoldier);
-            if (soldier)
-            {
+    } else if (x > 30 & x <= 40) {
+        for (int i = 0; i < 5; i++) {
+            cout << "👽 Picking an 👾 Alien Soldier.\n";
+            unit *soldier = alienArmyPtr->getUnit(alienSoldier);
+            if (soldier) {
                 soldier->print();
-                cout << "\nAlien Units Count after removing soldier is " << alienArmyPtr->getUnitCount();
+                cout << "\n👽 Alien Units Count after removing soldier is " << alienArmyPtr->getUnitCount();
                 soldier->setHealth(soldier->getHealth() - soldier->getHealth() / 2);
                 //add it to temp list
-                cout << "And requeuing it. New count is:" << alienArmyPtr->getUnitCount();
-            }
-            else
-            {
-                cout << "No soldiers.";
+                cout << "\n➕ And requeuing it. New count is: " << alienArmyPtr->getUnitCount();
+            } else {
+                cout << "⚠️ No soldiers.";
                 break;
             }
-
         }
-    }
-    else if (x > 40 & x <= 50)
-    {
-        for (int i = 0 ; i < 5; i++)
-        {
-            cout << "Picking an alien monster.\n";
-            unit* monster = earthArmyPtr->getUnit(MonsterType);
-            if (monster)
-            {
+    } else if (x > 40 & x <= 50) {
+        for (int i = 0; i < 5; i++) {
+            cout << "👽 Picking an 👹 Alien Monster.\n";
+            unit *monster = alienArmyPtr->getUnit(MonsterType);
+            if (monster) {
                 monster->print();
-                cout << "\nAlien Units Count after removing monster is " << alienArmyPtr->getUnitCount();
+                cout << "\n👽 Alien Units Count after removing monster is " << alienArmyPtr->getUnitCount();
                 earthArmyPtr->addUnit(monster);
-                cout << "And requeuing it. New count is:" << alienArmyPtr->getUnitCount();
-            }
-            else
-            {
-                cout << "No monsters.";
+                cout << "\n➕ And requeuing it. New count is: " << alienArmyPtr->getUnitCount();
+            } else {
+                cout << "⚠️ No monsters.";
                 break;
             }
-                
         }
-    }
-    else if (x > 50 & x <= 60)
-    {
-
-        for (int i = 0; i < 6; i++)
-        {
-            cout << "Picking an alien Drone.\n";
-            unit* drone = earthArmyPtr->getUnit(DronePair);
-            if (drone)
-            {
+    } else if (x > 50 & x <= 60) {
+        for (int i = 0; i < 6; i++) {
+            cout << "👽 Picking an 🛸 Alien Drone.\n";
+            unit *drone = alienArmyPtr->getUnit(DronePair);
+            if (drone) {
                 drone->print();
-                cout << "\nAlien Units Count after removing drone is " << alienArmyPtr->getUnitCount();
+                cout << "\n👽 Alien Units Count after removing drone is " << alienArmyPtr->getUnitCount();
                 // add to killed list
-                cout << "And requeuing it. New count is:" << alienArmyPtr->getUnitCount();
-            }
-            else
-            {
-                cout << "No drones.";
+                cout << "\n➕ And requeuing it. New count is: " << alienArmyPtr->getUnitCount();
+            } else {
+                cout << "⚠️ No drones.";
                 break;
             }
-
         }
     }
-
-                        
 }
+
 

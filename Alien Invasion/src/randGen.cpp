@@ -17,8 +17,9 @@ using namespace std;
 
 
 randGen::randGen() {
+    srand(time(nullptr));
     string S, temps, unitrang[3];
-    fstream *infile = new fstream("./src/test.txt",ios::in);
+    fstream *infile = new fstream("test.txt", ios::in);
     if (infile->is_open()) {
         getline(*infile, S);
         unitscreated = stoi(S);
@@ -79,7 +80,7 @@ double randGen::handelPer(double per, int num) {
     return per;
 }
 
-unit *randGen::generatUnit(armytypr unitType , int timestep) {
+unit *randGen::generatUnit(armytype unitType, int timestep) {
     double healthEunit, healthAunit, powerEunit, powerAunit;
     int Eattackcap, Aattackcap, num;
 
@@ -94,38 +95,27 @@ unit *randGen::generatUnit(armytypr unitType , int timestep) {
         case Earthunit:  //@todo
         {
             num = rand() % 101;
-            if (num <= perES)
-            {
-                unit* soldier = new Esoldier(Eid++, timestep, healthEunit, powerEunit, Eattackcap, nullptr);
+            if (num <= perES) {
+                unit *soldier = new Esoldier(Eid++, timestep, healthEunit, powerEunit, Eattackcap, nullptr);
                 return soldier;
-            }
-            else if (num <= (perES + perET))
-            {
-                unit* tank = new Tank(Eid++, timestep, healthEunit, powerEunit, Eattackcap, nullptr);
+            } else if (num <= (perES + perET)) {
+                unit *tank = new Tank(Eid++, timestep, healthEunit, powerEunit, Eattackcap, nullptr);
                 return tank;
-            }
-            else
-            {
-                unit* gunnery = new Egunnery(Eid++, timestep, healthEunit, powerEunit, Eattackcap, nullptr);
+            } else {
+                unit *gunnery = new Egunnery(Eid++, timestep, healthEunit, powerEunit, Eattackcap, nullptr);
                 return gunnery;
             }
         }
-        case Alienunit:                                
-        {
+        case Alienunit: {
             num = rand() % 101;
-            if (num <= perAS)
-            {
-                unit* soldier = new ASolider(Aid++, timestep, healthAunit, powerAunit, Aattackcap, nullptr);
+            if (num <= perAS) {
+                unit *soldier = new ASolider(Aid++, timestep, healthAunit, powerAunit, Aattackcap, nullptr);
                 return soldier;
-            }
-            else if (num <= (perAS + perAM))
-            {
-                unit* monster = new Monster(Aid++, timestep, healthEunit, powerEunit, Eattackcap, nullptr);
+            } else if (num <= (perAS + perAM)) {
+                unit *monster = new Monster(Aid++, timestep, healthEunit, powerEunit, Eattackcap, nullptr);
                 return monster;
-            }
-            else
-            {
-                unit* drone = new Drone(Aid++, timestep , healthEunit, powerEunit, Eattackcap, nullptr);
+            } else {
+                unit *drone = new Drone(Aid++, timestep, healthEunit, powerEunit, Eattackcap, nullptr);
                 return drone;
             }
         }
@@ -142,6 +132,7 @@ bool randGen::creatEunits() {
     }
     return false;
 }
+
 bool randGen::creatAunits() {
     int num;
     num = rand() % 100;
@@ -150,10 +141,11 @@ bool randGen::creatAunits() {
     }
     return false;
 }
-int randGen::getnumofunits()
-{
+
+int randGen::getnumofunits() {
     return unitscreated;
 }
+
 int randGen::Eid = 1;
 int randGen::Aid = 2000;
 
