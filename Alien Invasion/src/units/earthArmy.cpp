@@ -54,7 +54,16 @@ void earthArmy::print()  {
     Esoldier* soldier;
     cout << "======================== Eartht Army Alive units ==================================\n";
     cout << "ES [ ";
-    
+    while (ESlist.dequeue(soldier))
+    {
+        cout << soldier->getId() << ", ";
+        TempESlist.enqueue(soldier);
+    }
+    cout << "]";
+    while (TempESlist.dequeue(soldier))
+    {
+        ESlist.enqueue(soldier);
+    }
 }
 
 /// @details returns a randomUnit and removes it from its adt.
