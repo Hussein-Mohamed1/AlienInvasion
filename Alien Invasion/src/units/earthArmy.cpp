@@ -59,7 +59,7 @@ void earthArmy::print()  {
         cout << soldier->getId() << ", ";
         TempESlist.enqueue(soldier);
     }
-    cout << "]";
+    cout << "]" << endl;
     while (TempESlist.dequeue(soldier))
     {
         ESlist.enqueue(soldier);
