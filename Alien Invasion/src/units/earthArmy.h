@@ -26,17 +26,13 @@ class earthArmy : public Army {
     alienArmy *alienArmyPtr;
     int earthGunneryCount{0};
     int earthSoldierCount{0};
+    int earthTankCount{ 0 };
 public:
     int getEarthGunneryCount() const;
 
     int getEarthSoldierCount() const;
 
     int getEarthTankCount() const;
-
-private:
-    int earthTankCount{0};
-
-public:
 
     unit *getRandomUnit();
 

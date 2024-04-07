@@ -28,9 +28,6 @@ public:
 
     int getAlienDroneCount() const;
 
-
-public:
-
     ///@todo all member functions for alienUnits must be implemented
     unit *Attack(unit *enemy);
 
