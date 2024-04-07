@@ -18,7 +18,16 @@ class alienArmy : public Army {
     LinkedQueue<ASolider *> SoliderUnits;
     DoublyLinkedQueue<Drone *> DroneUnits;
     Monster **MonsterUnits;
-    static int Index;
+    static int alienMonsterCount;
+    int aleinSoldierCount{0};
+    int alienDroneCount{0};
+public:
+    int getAlienMonsterCount() const;
+
+    int getAleinSoldierCount() const;
+
+    int getAlienDroneCount() const;
+
 
 public:
 
@@ -29,7 +38,7 @@ public:
 
     void removeUnit(unit *);
 
-    void print() const;
+    void print();
 
     unit *getRandomUnit();
 
