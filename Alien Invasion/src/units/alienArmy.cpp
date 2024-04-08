@@ -14,11 +14,10 @@ unit *alienArmy::Attack(unit *enemy) {
 bool alienArmy::addUnit(unit *AlienUnit) {
 
     if (AlienUnit) {
-        Type UnitType = AlienUnit->getType();
-        switch (UnitType) {
+        switch (AlienUnit->getType()) {
             case alienSoldier :
                 SoliderUnits.enqueue(dynamic_cast<ASolider *>(AlienUnit));
-                aleinSoldierCount++;
+                alienSoldierCount++;
                 return true;
             case DronePair:
                 DroneUnits.enqueue(dynamic_cast<Drone *> (AlienUnit));
@@ -26,7 +25,7 @@ bool alienArmy::addUnit(unit *AlienUnit) {
                 return true;
             case MonsterType :
                 Monster *MonsterUnit = dynamic_cast<Monster *>(AlienUnit);
-                MonsterUnits[alienMonsterCount++] = MonsterUnit;
+                MonsterUnits[++alienMonsterCount] = MonsterUnit;
                 return true;
         }
         return false;
@@ -41,7 +40,7 @@ void alienArmy::print() {
     LinkedQueue<ASolider *> TempASlist;
     ASolider *soldier;
     cout << "======================== Alien Army Alive units ==================================\n";
-    cout << "👽 Alien Soldier Count is: " << getAleinSoldierCount() << endl;
+    cout << "👽 Alien Soldier Count is: " << getAlienSoldierCount() << endl;
     cout << "AS [ ";
     while (SoliderUnits.dequeue(soldier)) {
         cout << soldier->getId() << ", ";
@@ -64,9 +63,9 @@ void alienArmy::print() {
     while (tempDroneQueue.dequeue(tempDrone))
         DroneUnits.enqueue(tempDrone);
 
-    cout << "👽 Alien Monster Count is: " << getAlienMonsterCount() << endl;
+    cout << "👽 Alien Monster Count is: " << getAlienMonsterCount() + 1 << endl;
     cout << "AM [ ";
-    for (int i = 0; i < alienMonsterCount; ++i) {
+    for (int i = 0; i <= alienMonsterCount; ++i) {
         cout << MonsterUnits[alienMonsterCount]->getId() << ", ";
     }
     cout << "]\n";
@@ -101,14 +100,13 @@ unit *alienArmy::getRandomUnit() {
     return nullptr;
 }
 
-int alienArmy::alienMonsterCount = 0;
 
 unit *alienArmy::getUnit(Type type) {
     switch (type) {
         case alienSoldier: {
             ASolider *temp{nullptr};
             if (SoliderUnits.dequeue(temp))
-                aleinSoldierCount--;
+                alienSoldierCount--;
             return temp;
         }
         case DronePair: {
@@ -118,9 +116,8 @@ unit *alienArmy::getUnit(Type type) {
             return temp;
         }
         case MonsterType: {
-            if (MonsterUnits) {
+            if (alienMonsterCount != -1)
                 return MonsterUnits[alienMonsterCount--];
-            } else return nullptr;
         }
     };
 }
@@ -129,8 +126,8 @@ int alienArmy::getAlienMonsterCount() const {
     return alienMonsterCount;
 }
 
-int alienArmy::getAleinSoldierCount() const {
-    return aleinSoldierCount;
+int alienArmy::getAlienSoldierCount() const {
+    return alienSoldierCount;
 }
 
 int alienArmy::getAlienDroneCount() const {

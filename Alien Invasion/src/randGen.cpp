@@ -19,7 +19,7 @@ using namespace std;
 randGen::randGen() {
     srand(time(nullptr));
     string S, temps, unitrang[3];
-    fstream *infile = new fstream("./src/test.txt", ios::in);
+    fstream *infile = new fstream("test.txt", ios::in);
     if (infile->is_open()) {
         getline(*infile, S);
         unitscreated = stoi(S);

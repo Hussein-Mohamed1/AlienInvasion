@@ -93,7 +93,7 @@ void simulationManager::addNewUnit(unit *newUnit) {
         }
     }
 }
-    
+
 int simulationManager::getAlienUnitCount() {
     return alienArmyPtr->getUnitCount();
 }
@@ -126,7 +126,7 @@ void simulationManager::manageadding(int timestep) {
 
 
 void simulationManager::phase12TestFunction(int x) {
-    LinkedQueue<unit*> KilledList;
+    LinkedQueue<unit *> KilledList;
     int numofkilledunit = 0;
     earthArmyPtr->print();
     alienArmyPtr->print();
@@ -136,9 +136,10 @@ void simulationManager::phase12TestFunction(int x) {
         unit *soldier = earthArmyPtr->getUnit(EarthSoldier);
         if (soldier) {
             soldier->print();
-            cout << "\n🌍 Earth Soldier Count after removing soldier is " << earthArmyPtr->getEarthSoldierCount()<<endl;
+            cout << "\n🌍 Earth Soldier Count after removing soldier is " << earthArmyPtr->getEarthSoldierCount()
+                 << endl;
             earthArmyPtr->addUnit(soldier);
-            cout << "\n➕ And requeuing it. New count is: " << earthArmyPtr->getEarthSoldierCount()<<endl;
+            cout << "\n➕ And requeuing it. New count is: " << earthArmyPtr->getEarthSoldierCount() << endl;
         } else {
             cout << "⚠️ No soldiers.\n";
         }
@@ -172,9 +173,9 @@ void simulationManager::phase12TestFunction(int x) {
             if (soldier) {
                 soldier->print();
                 cout << "\n👽 Alien Soldiers Count after removing soldier is "
-                     << alienArmyPtr->getAleinSoldierCount() + i<<endl;
+                        << alienArmyPtr->getAlienSoldierCount() + i << endl;
                 soldier->setHealth(soldier->getHealth() - soldier->getHealth() / 2);
-                cout << "\n➕ And requeuing it. New count is: " << alienArmyPtr->getAleinSoldierCount() + i + 1<<endl;
+                cout << "\n➕ And requeuing it. New count is: " << alienArmyPtr->getAlienSoldierCount() + i + 1 << endl;
                 ///@todo add it to temp list
             } else {
                 cout << "⚠️ No soldiers.\n";
@@ -187,16 +188,17 @@ void simulationManager::phase12TestFunction(int x) {
             unit *monster = alienArmyPtr->getUnit(MonsterType);
             if (monster) {
                 monster->print();
-                cout << "\n👽 Alien Monsters Count after removing monster is " << alienArmyPtr->getAlienMonsterCount()<<endl;
-                earthArmyPtr->addUnit(monster);
-                cout << "\n➕ And re-queuing it. New count is: " << alienArmyPtr->getAlienMonsterCount()<<endl;
+                cout << "\n👽 Alien Monsters Count after removing monster is " << alienArmyPtr->getAlienMonsterCount()
+                     << endl;
+                alienArmyPtr->addUnit(monster);
+                cout << "\n➕ And re-queuing it. New count is: " << alienArmyPtr->getAlienMonsterCount() << endl;
             } else {
                 cout << "⚠️ No monsters.\n";
                 break;
             }
         }
     } else if (x > 50 & x <= 60) {
-        unit* drone=nullptr;
+        unit *drone = nullptr;
         for (int i = 0; i < 6; i++) {
             cout << "👽 Picking an 🛸 Alien Drone.\n";
             drone = alienArmyPtr->getUnit(DronePair);
@@ -205,22 +207,21 @@ void simulationManager::phase12TestFunction(int x) {
                 drone->print();
                 KilledList.enqueue(drone);
                 numofkilledunit++;
-                cout << "\n👽 Alien Drones Count after removing drone is " << alienArmyPtr->getAlienDroneCount() + i<<endl;
+                cout << "\n👽 Alien Drones Count after removing drone is " << alienArmyPtr->getAlienDroneCount() + i
+                     << endl;
             } else {
                 cout << "⚠️ No drones.\n";
                 break;
             }
         }
     }
-    unit* Killedunit = nullptr;
+    unit *Killedunit = nullptr;
     cout << "================ Killed Units ====================\n";
-    cout <<"💀 " << numofkilledunit << " Units killed [ ";
-    while (!KilledList.isEmpty())
-    {
+    cout << "💀 " << numofkilledunit << " Units killed [ ";
+    while (!KilledList.isEmpty()) {
         KilledList.dequeue(Killedunit);
-        if (Killedunit)
-        {
-            cout<<Killedunit->getId() << " , ";
+        if (Killedunit) {
+            cout << Killedunit->getId() << " , ";
         }
     }
     cout << " ]\n";
