@@ -12,13 +12,13 @@
 simulationManager::simulationManager(operationMode operationModeVal) : operationModeVal(operationModeVal) {
     alienArmyPtr = new alienArmy();
     earthArmyPtr = new earthArmy();
-    srand(time(0));
+    srand(time(nullptr));
     RandomGenerator = new randGen;
 }
 
 void simulationManager::updateSimulation(int timestep) {
 
-    manageadding(timestep);
+    manageAdding(timestep);
 
     ///@details From here the fighting logic starts
 /// @note totalNumOfUnits is passed by reference
@@ -93,14 +93,7 @@ void simulationManager::addNewUnit(unit *newUnit) {
         }
     }
 }
-    
-int simulationManager::getAlienUnitCount() {
-    return alienArmyPtr->getUnitCount();
-}
 
-int simulationManager::getEarthUnitCount() {
-    return earthArmyPtr->getUnitCount();
-}
 
 ///@param AttackingUnit: The unit attacking.
 ///@param DamagedUnit: The unit being attacked.
@@ -111,22 +104,22 @@ void simulationManager::showStats(unit *AttackingUnit, unit *DamagedUnit) const 
                  << " " << DamagedUnit->getType() << endl;
 }
 
-void simulationManager::manageadding(int timestep) {
-    if (RandomGenerator->creatEunits()) {
+void simulationManager::manageAdding(int timestep) {
+    if (RandomGenerator->creatEarthUnits()) {
         for (int i = 0; i < RandomGenerator->getnumofunits(); i++) {
-            addNewUnit(RandomGenerator->generatUnit(Earthunit, timestep));
+            addNewUnit(RandomGenerator->generatUnit(earthUnit, timestep));
         }
     }
-    if (RandomGenerator->creatAunits()) {
+    if (RandomGenerator->creatAlienUnits()) {
         for (int i = 0; i < RandomGenerator->getnumofunits(); i++) {
-            addNewUnit(RandomGenerator->generatUnit(Alienunit, timestep));
+            addNewUnit(RandomGenerator->generatUnit(alienUnit, timestep));
         }
     }
 }
 
 
 void simulationManager::phase12TestFunction(int x) {
-    LinkedQueue<unit*> KilledList;
+    LinkedQueue<unit *> KilledList;
     int numofkilledunit = 0;
     earthArmyPtr->print();
     alienArmyPtr->print();
@@ -136,9 +129,9 @@ void simulationManager::phase12TestFunction(int x) {
         unit *soldier = earthArmyPtr->getUnit(EarthSoldier);
         if (soldier) {
             soldier->print();
-            cout << "\n🌍 Earth Soldier Count after removing soldier is " << earthArmyPtr->getEarthSoldierCount()<<endl;
+            cout << "\n🌍 Earth Soldier Count after removing soldier is " << earthArmyPtr->getEarthSoldierCount();
             earthArmyPtr->addUnit(soldier);
-            cout << "\n➕ And requeuing it. New count is: " << earthArmyPtr->getEarthSoldierCount()<<endl;
+            cout << "\n➕ And re-queuing it. New count is: " << earthArmyPtr->getEarthSoldierCount() << endl;
         } else {
             cout << "⚠️ No soldiers.\n";
         }
@@ -172,9 +165,9 @@ void simulationManager::phase12TestFunction(int x) {
             if (soldier) {
                 soldier->print();
                 cout << "\n👽 Alien Soldiers Count after removing soldier is "
-                     << alienArmyPtr->getAleinSoldierCount() + i<<endl;
+                        << alienArmyPtr->getAlienSoldierCount() + i;
                 soldier->setHealth(soldier->getHealth() - soldier->getHealth() / 2);
-                cout << "\n➕ And requeuing it. New count is: " << alienArmyPtr->getAleinSoldierCount() + i + 1<<endl;
+                cout << "\n➕ And re-queuing it. New count is: " << alienArmyPtr->getAlienSoldierCount() + i + 1 << endl;
                 ///@todo add it to temp list
             } else {
                 cout << "⚠️ No soldiers.\n";
@@ -187,16 +180,17 @@ void simulationManager::phase12TestFunction(int x) {
             unit *monster = alienArmyPtr->getUnit(MonsterType);
             if (monster) {
                 monster->print();
-                cout << "\n👽 Alien Monsters Count after removing monster is " << alienArmyPtr->getAlienMonsterCount()<<endl;
-                earthArmyPtr->addUnit(monster);
-                cout << "\n➕ And re-queuing it. New count is: " << alienArmyPtr->getAlienMonsterCount()<<endl;
+                cout << "\n👽 Alien Monsters Count after removing monster is "
+                     << alienArmyPtr->getCurrentMonstersIndex() + 1;
+                alienArmyPtr->addUnit(monster);
+                cout << "\n➕ And re-queuing it. New count is: " << alienArmyPtr->getCurrentMonstersIndex() + 1 << endl;
             } else {
                 cout << "⚠️ No monsters.\n";
                 break;
             }
         }
     } else if (x > 50 & x <= 60) {
-        unit* drone=nullptr;
+        unit *drone = nullptr;
         for (int i = 0; i < 6; i++) {
             cout << "👽 Picking an 🛸 Alien Drone.\n";
             drone = alienArmyPtr->getUnit(DronePair);
@@ -205,24 +199,33 @@ void simulationManager::phase12TestFunction(int x) {
                 drone->print();
                 KilledList.enqueue(drone);
                 numofkilledunit++;
-                cout << "\n👽 Alien Drones Count after removing drone is " << alienArmyPtr->getAlienDroneCount() + i<<endl;
+                cout << "\n👽 Alien Drones Count after removing drone is " << alienArmyPtr->getAlienDroneCount() + i
+                     << endl;
             } else {
                 cout << "⚠️ No drones.\n";
                 break;
             }
         }
     }
-    unit* Killedunit = nullptr;
+    unit *killedUnit = nullptr;
     cout << "================ Killed Units ====================\n";
-    cout <<"💀 " << numofkilledunit << " Units killed [ ";
-    while (!KilledList.isEmpty())
-    {
-        KilledList.dequeue(Killedunit);
-        if (Killedunit)
-        {
-            cout<<Killedunit->getId() << " , ";
+    cout << "💀 " << numofkilledunit << " Units killed [ ";
+    while (!KilledList.isEmpty()) {
+        KilledList.dequeue(killedUnit);
+        if (killedUnit) {
+            cout << killedUnit->getId() << " , ";
         }
     }
     cout << " ]\n";
+}
+
+int simulationManager::getAlienArmyUnitsCount() const {
+    return alienArmyPtr->getAlienSoldierCount() + alienArmyPtr->getAlienDroneCount() +
+           alienArmyPtr->getCurrentMonstersIndex() + 1;
+}
+
+int simulationManager::getEarthArmyUnitsCount() const {
+    return earthArmyPtr->getEarthGunneryCount() + earthArmyPtr->getEarthSoldierCount() +
+           earthArmyPtr->getEarthTankCount();
 }
 

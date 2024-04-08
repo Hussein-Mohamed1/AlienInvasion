@@ -8,7 +8,10 @@
 unit *earthArmy::Attack(unit *enemy) {
 
     if (enemy->getType() == alienSoldier || enemy->getType() == MonsterType
-                                            && unitCount <= 0.3 * alienArmyPtr->getUnitCount()) {
+                                            && earthSoldierCount + earthGunneryCount + earthTankCount <=
+                                               0.3 * (alienArmyPtr->getAlienDroneCount() +
+                                                      alienArmyPtr->getAlienSoldierCount() +
+                                                      alienArmyPtr->getCurrentMonstersIndex() + 1)) {
         Tank *ETank;
         TankList.pop(ETank);
         return ETank;
@@ -44,19 +47,15 @@ bool earthArmy::addUnit(unit *earthUnit) {
 
 }
 
-// used to remove
-void earthArmy::removeUnit(unit *) {
-
-}
 
 void earthArmy::print() {
     LinkedQueue<Esoldier *> TempESlist;
-    Esoldier *soldier;
+    Esoldier *soldier{nullptr};
     cout << "======================== Eartht Army Alive units ==================================\n";
     cout << "🌍 Earth Soldiers Count is: " << getEarthSoldierCount() << endl;
     cout << "ES [ ";
     while (ESlist.dequeue(soldier)) {
-        if (soldier) {
+        {
             cout << soldier->getId() << ", ";
             TempESlist.enqueue(soldier);
         }
@@ -73,7 +72,7 @@ void earthArmy::print() {
     int garbage;
     priQueue<Egunnery *> tempEgunnery;
     while (EGlist.dequeue(tempGunnery, garbage)) {
-        if (tempGunnery) { ///@todo fix these
+        { ///@todo fix these
             cout << tempGunnery->getId() << ", ";
             tempEgunnery.enqueue(tempGunnery, garbage);
         }
@@ -81,14 +80,14 @@ void earthArmy::print() {
     cout << "]\n";
     while (tempEgunnery.dequeue(tempGunnery, garbage))
         if (tempGunnery)
-            ESlist.enqueue(soldier);
+            EGlist.enqueue(tempGunnery, tempGunnery->getHealth() + tempGunnery->getPower());
 
     cout << "🌍 Earth Tanks Count is: " << getEarthTankCount() << endl;
     cout << "ET [ ";
     ArrayStack<Tank *> tempTankList;
     Tank *tempTank{nullptr};
     while (TankList.pop(tempTank)) {
-        if (tempTank) {
+        {
             cout << tempTank->getId() << ", ";
             tempTankList.push(tempTank);
         }

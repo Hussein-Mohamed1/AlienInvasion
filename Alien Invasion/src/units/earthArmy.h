@@ -40,7 +40,6 @@ public:
 
     bool addUnit(unit *);
 
-    void removeUnit(unit *);
 
     void print();
 

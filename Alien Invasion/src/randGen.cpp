@@ -1,7 +1,6 @@
 #pragma once
 
 #include "iostream"
-#include <filesystem>
 #include <fstream>
 #include "randGen.h"
 #include <sstream>
@@ -19,7 +18,7 @@ using namespace std;
 randGen::randGen() {
     srand(time(nullptr));
     string S, temps, unitrang[3];
-    fstream *infile = new fstream("./src/test.txt", ios::in);
+    fstream *infile = new fstream("test.txt", ios::in);
     if (infile->is_open()) {
         getline(*infile, S);
         unitscreated = stoi(S);
@@ -80,7 +79,7 @@ double randGen::handelPer(double per, int num) {
     return per;
 }
 
-unit *randGen::generatUnit(armytype unitType, int timestep) {
+unit *randGen::generatUnit(armyType unitType, int timestep) {
     double healthEunit, healthAunit, powerEunit, powerAunit;
     int Eattackcap, Aattackcap, num;
 
@@ -92,21 +91,21 @@ unit *randGen::generatUnit(armytype unitType, int timestep) {
     powerAunit = rand() % int(RangeAP2 - RangeAP1 + 1) + RangeAP1; //randome power of alien unit
     Aattackcap = rand() % (RangeAC2 - RangeAC1 + 1) + RangeAC1;    //randome attackcap of alien unit
     switch (unitType) {
-        case Earthunit:  //@todo
+        case earthUnit:
         {
             num = rand() % 101;
             if (num <= perES) {
                 unit *soldier = new Esoldier(Eid++, timestep, healthEunit, powerEunit, Eattackcap, nullptr);
                 return soldier;
             } else if (num <= (perES + perET)) {
-                unit *tank = new Tank(Eid++, timestep, healthEunit, powerEunit, Eattackcap, nullptr);
+                Tank *tank = new Tank(Eid++, timestep, healthEunit, powerEunit, Eattackcap, nullptr);
                 return tank;
             } else {
                 unit *gunnery = new Egunnery(Eid++, timestep, healthEunit, powerEunit, Eattackcap, nullptr);
                 return gunnery;
             }
         }
-        case Alienunit: {
+        case alienUnit: {
             num = rand() % 101;
             if (num <= perAS) {
                 unit *soldier = new ASolider(Aid++, timestep, healthAunit, powerAunit, Aattackcap, nullptr);
@@ -122,9 +121,10 @@ unit *randGen::generatUnit(armytype unitType, int timestep) {
         default:
             break;
     }
+    return nullptr;
 }
 
-bool randGen::creatEunits() {
+bool randGen::creatEarthUnits() const {
     int num;
     num = rand() % 100;
     if (num <= prob) {
@@ -133,7 +133,7 @@ bool randGen::creatEunits() {
     return false;
 }
 
-bool randGen::creatAunits() {
+bool randGen::creatAlienUnits() const {
     int num;
     num = rand() % 100;
     if (num <= prob) {
