@@ -188,7 +188,7 @@ void simulationManager::phase12TestFunction(int x) {
             if (monster) {
                 monster->print();
                 cout << "\n👽 Alien Monsters Count after removing monster is " << alienArmyPtr->getAlienMonsterCount()<<endl;
-                earthArmyPtr->addUnit(monster);
+                alienArmyPtr->addUnit(monster);
                 cout << "\n➕ And re-queuing it. New count is: " << alienArmyPtr->getAlienMonsterCount()<<endl;
             } else {
                 cout << "⚠️ No monsters.\n";

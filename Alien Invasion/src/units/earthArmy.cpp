@@ -92,6 +92,7 @@ void earthArmy::print() {
             cout << tempTank->getId() << ", ";
             tempTankList.push(tempTank);
         }
+        
     }
     cout << "]\n";
     while (tempTankList.pop(tempTank))

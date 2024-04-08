@@ -119,7 +119,8 @@ unit *alienArmy::getUnit(Type type) {
         }
         case MonsterType: {
             if (MonsterUnits) {
-                return MonsterUnits[alienMonsterCount--];
+                if (alienMonsterCount != -1)
+                    return MonsterUnits[alienMonsterCount--];
             } else return nullptr;
         }
     };
