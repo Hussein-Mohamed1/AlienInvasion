@@ -8,7 +8,9 @@
 
 #include <fstream>
 #include "randGen.h"
+
 class randGen;
+
 enum operationMode {
     Silent, Interactive
 };
@@ -27,19 +29,22 @@ protected:
     alienArmy *alienArmyPtr;
     earthArmy *earthArmyPtr;
     LinkedQueue<unit *> tempList;
-    randGen randGenObj;
-    randGen* RandomGenerator;
+    randGen *RandomGenerator;
 public:
     simulationManager(operationMode); //initializes the simulation
 
-    void updateSimulation();
+    void updateSimulation(int);
 
     void addNewUnit(unit *);
 
-    int getAlienUnitCount();
-	void manageadding();
+    void manageAdding(int);
 
-    int getEarthUnitCount();
 
     void showStats(unit *, unit *) const;
+
+    void phase12TestFunction(int x);
+
+    int getAlienArmyUnitsCount() const;
+
+    int getEarthArmyUnitsCount() const;
 };

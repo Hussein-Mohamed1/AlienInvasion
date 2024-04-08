@@ -15,24 +15,29 @@
 
 class alienArmy : public Army {
 
-    LinkedQueue<ASolider* > SoliderUnits;
-    DoublyLinkedQueue < Drone* > DroneUnuits;
-    Monster ** MonsterUnits;
-    static int Index;
-
+    LinkedQueue<ASolider *> SoliderUnits;
+    DoublyLinkedQueue<Drone *> DroneUnits;
+    Monster *MonsterUnits[1000]{nullptr};
+    int currentMonstersIndex{-1};
+    int alienSoldierCount{0};
+    int alienDroneCount{0};
 public:
+    int getCurrentMonstersIndex() const;
+
+    int getAlienSoldierCount() const;
+
+    int getAlienDroneCount() const;
 
     ///@todo all member functions for alienUnits must be implemented
-    unit* Attack(unit* enemy);
+    unit *Attack(unit *enemy);
 
-    bool addUnit(unit*);
+    bool addUnit(unit *);
 
-    void removeUnit(unit*);
+    void print();
 
-    void print() const;
+    unit *getRandomUnit();
 
-    unit* getRandomUnit();
-
+    unit *getUnit(Type type);
 };
 
 

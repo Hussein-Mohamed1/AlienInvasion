@@ -11,6 +11,10 @@ enum Type {
     Gunnery, EarthSoldier, EarthTank, alienSoldier, DronePair, MonsterType
 };
 
+enum armyType {
+    earthUnit, alienUnit
+};
+
 class unit {
 protected:
     int ID;
@@ -54,6 +58,7 @@ public:
     simulationManager *getSimPtr() const;
 
     void setSimPtr(simulationManager *simPtr);
+
 
 };
 
