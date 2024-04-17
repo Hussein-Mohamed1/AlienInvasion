@@ -6,7 +6,7 @@ class ASolider : public unit
 public:
 	ASolider(int id, int joinTime, double health, double power, int attackCapacity, simulationManager* simPtr = nullptr)
 		: unit(
-			id, alienSoldier, joinTime, health, power, attackCapacity, simPtr) {};
+            id, alienSoldier, joinTime, health, power, attackCapacity, simPtr) {};
 	void print() const;
 
 };

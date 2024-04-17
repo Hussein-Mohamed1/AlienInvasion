@@ -18,6 +18,7 @@ int main() {
         }
     } catch (const runtime_error &e) {
         cout << "⚠️ " << e.what() << endl;
+        cin.get();
         exit(0);
     }
 }

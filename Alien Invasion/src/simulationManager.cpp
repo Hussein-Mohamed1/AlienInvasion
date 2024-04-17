@@ -25,7 +25,7 @@ simulationManager::simulationManager(operationMode operationModeVal) : operation
     }
 
     // Write data to the file in the constructor
-    OutputFile << "Td     ID      Tj      Df      Dd      Db" << endl;
+    OutputFile << "TimeDeath     ID      Tj      Df      Dd      Db" << endl;
 }
 
 
@@ -258,130 +258,32 @@ void simulationManager::printTempList() {
     }
 }
 
-void simulationManager::loadtoOutputFile(LinkedQueue<unit> killedList) {
-    OutputFile << "Td" << "     " << "ID" << "     " << "Tj" << "     " << "Df" << "     " << "Dd" << "     "
+void simulationManager::loadtoOutputFile(LinkedQueue<unit *> killedList) {
+    OutputFile << "TimeDeath" << "     " << "ID" << "     " << "Tj" << "     " << "Df" << "     " << "Dd" << "     "
                << "Db" << endl;
-    unit killedU;
+    unit *killedU;
     while (killedList.dequeue(killedU)) {
-        if (killedU.getType() == EarthSoldier || killedU.getType() == Gunnery || killedU.getType() == EarthTank) {
-            void
-            simulationManager::ManageHealing()    /// !!!!!!!!!! When Insert in PriQueue observe that the decleartion was changed for UML
-            {
-
-                HealUnit *Healer;
-                if (!HealList.pop(Healer))
-                    return;
-                int Cap = Healer->getAttackCapacity();
-
-
-                LinkedQueue<unit *> T;
-                LinkedQueue<unit *> tank;
-
-                priQueue<unit *> Soldiers;
-
-                while (!UnitMaintenceList.isEmpty()) {
-                    unit *Inj;
-                    UnitMaintenceList.dequeue(Inj);
-                    if (Inj->getType() == EarthSoldier) {
-                        Soldiers.enqueue(Inj, Inj->getHealth(), 1);
-                    } else if (Inj->getType() == EarthTank) {
-                        tank.enqueue(Inj);
-                    } else
-                        T.enqueue(Inj);
-
-                }
-
-                while (0 < Cap && !Soldiers.isEmpty()) {
-                    unit *InjSol;
-                    int p;
-                    Soldiers.dequeue(InjSol, p);
-
-                    if (InjSol->GetStillHealing() == 10)
-                        KilledList.enqueue(InjSol);
-
-                    else {
-                        Healer->Heal(InjSol);
-
-                        if (InjSol->getHealth() > (0.2 * InjSol->GetOriginalHealth())) {
-                            addNewUnit(InjSol);
-                        } else {
-                            tempList.enqueue(InjSol);
-                        }
-                        InjSol->UpdateStillHealing();
-                        Cap--;
-                    }
-                }
-
-
-                while (0 < Cap && !tank.isEmpty()) {
-                    unit *InjTank;
-                    tank.dequeue(InjTank);
-
-
-                    if (InjTank->GetStillHealing() == 10)
-                        KilledList.enqueue(InjTank);
-
-                    else {
-                        Healer->Heal(InjTank);
-
-                        if (InjTank->getHealth() > (0.2 * InjTank->GetOriginalHealth())) {
-                            addNewUnit(InjTank);
-                        } else {
-                            tempList.enqueue(InjTank);
-                        }
-                        InjTank->UpdateStillHealing();
-                        Cap--;
-                    }
-                }
-
-
-                while (!Soldiers.isEmpty()) {
-                    unit *S;
-                    int p;
-                    Soldiers.dequeue(S, p);
-                    UnitMaintenceList.enqueue(S);
-                }
-                while (!tank.isEmpty()) {
-                    unit *t;
-                    tank.dequeue(t);
-                    UnitMaintenceList.enqueue(t);
-                }
-                while (!T.isEmpty()) {
-                    unit *t;
-                    T.dequeue(t);
-                    UnitMaintenceList.enqueue(t);
-                }
-
-
-                while (!tempList.isEmpty()) {
-                    unit *T;
-                    tempList.dequeue(T);
-                    UnitMaintenceList.enqueue(T);
-                }
-
-                delete Healer;
-            }
-
-            OutputFile << killedU.getDestructionTime() << "     " << killedU.getId() << "     "
-                       << killedU.getJoinTime() << "     " << killedU.getDf() << "     " << killedU.getDd()
-                       << "     " << killedU.getDb() << endl;
+        if (killedU->getType() == EarthSoldier || killedU->getType() == Gunnery || killedU->getType() == EarthTank) {
+            OutputFile << killedU->getDestructionTime() << "     " << killedU->getId() << "     "
+                       << killedU->getJoinTime() << "     " << killedU->getDf() << "     " << killedU->getDd()
+                       << "     " << killedU->getDb() << endl;
             EDfcount++;
             EDdcount++;
             EDbcount++;
-            sumOfEDf += killedU.getDf();
-            sumOfEDd += killedU.getDd();
-            sumOfEDb += killedU.getDb();
+            sumOfEDf += killedU->getDf();
+            sumOfEDd += killedU->getDd();
+            sumOfEDb += killedU->getDb();
         } else {
 
-            OutputFile << killedU.getDestructionTime() << "     " << killedU.getId() << "     "
-                       << killedU.getJoinTime() << "     " << killedU.getDf() << "     " << killedU.getDd()
-                       << "     " << killedU.getDb() << endl;
+            OutputFile << killedU->getDestructionTime() << "     " << killedU->getId() << "     "
+                       << killedU->getJoinTime() << "     " << killedU->getDf() << "     " << killedU->getDd()
+                       << "     " << killedU->getDb() << endl;
             ADfcount++;
             ADdcount++;
             ADbcount++;
-            sumOfADf += killedU.getDf();
-            sumOfADd += killedU.getDd();
-            sumOfADb += killedU.getDb();
+            sumOfADf += killedU->getDf();
+            sumOfADd += killedU->getDd();
+            sumOfADb += killedU->getDb();
         }
     }
 
@@ -446,8 +348,122 @@ void simulationManager::loadtoOutputFile(LinkedQueue<unit> killedList) {
 
 }
 
+/// ! When Insert in PriQueue observe that the decleartion was changed for UML
+void simulationManager::ManageHealing() {
+
+    HealUnit *Healer;
+    if (!HealList.pop(Healer))
+        return;
+    int Cap = Healer->getAttackCapacity();
+
+
+    LinkedQueue<unit *> T;
+    LinkedQueue<unit *> tank;
+
+    priQueue<unit *> Soldiers;
+
+    while (!UnitMaintenceList.isEmpty()) {
+        unit *Inj;
+        UnitMaintenceList.dequeue(Inj);
+        if (Inj->getType() == EarthSoldier) {
+            Soldiers.enqueue(Inj, Inj->getHealth(), 1);
+        } else if (Inj->getType() == EarthTank) {
+            tank.enqueue(Inj);
+        } else
+            T.enqueue(Inj);
+
+    }
+
+    while (0 < Cap && !Soldiers.isEmpty()) {
+        unit *InjSol;
+        int p;
+        Soldiers.dequeue(InjSol, p);
+
+        if (InjSol->GetStillHealing() == 10)
+            KilledList.enqueue(InjSol);
+
+        else {
+            Healer->Heal(InjSol);
+
+            if (InjSol->getHealth() > (0.2 * InjSol->GetOriginalHealth())) {
+                addNewUnit(InjSol);
+            } else {
+                tempList.enqueue(InjSol);
+            }
+            InjSol->UpdateStillHealing();
+            Cap--;
+        }
+    }
+
+
+    while (0 < Cap && !tank.isEmpty()) {
+        unit *InjTank;
+        tank.dequeue(InjTank);
+
+
+        if (InjTank->GetStillHealing() == 10)
+            KilledList.enqueue(InjTank);
+
+        else {
+            Healer->Heal(InjTank);
+
+            if (InjTank->getHealth() > (0.2 * InjTank->GetOriginalHealth())) {
+                addNewUnit(InjTank);
+            } else {
+                tempList.enqueue(InjTank);
+            }
+            InjTank->UpdateStillHealing();
+            Cap--;
+        }
+    }
+
+
+    while (!Soldiers.isEmpty()) {
+        unit *S;
+        int p;
+        Soldiers.dequeue(S, p);
+        UnitMaintenceList.enqueue(S);
+    }
+    while (!tank.isEmpty()) {
+        unit *t;
+        tank.dequeue(t);
+        UnitMaintenceList.enqueue(t);
+    }
+    while (!T.isEmpty()) {
+        unit *t;
+        T.dequeue(t);
+        UnitMaintenceList.enqueue(t);
+    }
+
+
+    while (!tempList.isEmpty()) {
+        unit *T;
+        tempList.dequeue(T);
+        UnitMaintenceList.enqueue(T);
+    }
+
+    delete Healer;
+}
+
 simulationManager::~simulationManager() {
     if (OutputFile.is_open()) {
         OutputFile.close();
+    }
+}
+
+void simulationManager::handleUnit(unit *attackingUnit, unit *&defendingUnit, Army *defendingArmy) {
+    bool enqueuedOnce = false;
+    if (attackingUnit) {
+        for (int i = 0; i < attackingUnit->getAttackCapacity(); ++i) {
+            defendingUnit = defendingArmy->getRandomUnit();
+            if (attackingUnit->damageEnemy(defendingUnit)) {
+                showStats(attackingUnit, defendingUnit);
+                if (!enqueuedOnce) {
+                    enqueuedOnce = true;
+                    tempList.enqueue(attackingUnit);
+                }
+                tempList.enqueue(defendingUnit);
+            }
+        }
     }
 }

@@ -32,6 +32,7 @@ protected:
     LinkedQueue<unit *> KilledList;
     randGen *RandomGenerator;
     fstream OutputFile;
+    ///@note deleted these
     int sumOfEDf{0};
     int EDfcount{0};
     int sumOfEDd{0};
@@ -45,12 +46,14 @@ protected:
     int sumOfADb{0};
     int ADbcount{0};
     int numofHealedunits{0};
+
     ArrayStack<HealUnit *> HealList;
     LinkedQueue<unit *> UnitMaintenceList;
 public:
     static void intro();
 
     simulationManager(operationMode); //initializes the simulation
+    ~simulationManager();
 
     void updateSimulation(int);
 
@@ -60,7 +63,7 @@ public:
 
     void ManageHealing();
 
-    void loadtoOutputFile(LinkedQueue<unit> KilledList);
+    void loadtoOutputFile(LinkedQueue<unit *> KilledList);
 
     void showStats(unit *, unit *) const;
 
