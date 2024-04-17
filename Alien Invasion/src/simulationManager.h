@@ -31,6 +31,8 @@ protected:
     LinkedQueue<unit *> tempList;
     randGen *RandomGenerator;
 public:
+    static void intro();
+
     simulationManager(operationMode); //initializes the simulation
 
     void updateSimulation(int);
