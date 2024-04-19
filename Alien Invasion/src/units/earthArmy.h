@@ -26,12 +26,9 @@ class earthArmy : public Army {
     alienArmy *alienArmyPtr;
 public:
 
-    unit *getRandomUnit();
-
     unit *Attack(unit *enemy);
 
     bool addUnit(unit *);
-
 
     void print();
 

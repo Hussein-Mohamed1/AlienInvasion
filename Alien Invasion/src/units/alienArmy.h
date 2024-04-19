@@ -27,8 +27,6 @@ public:
 
     void print();
 
-    unit *getRandomUnit();
-
     unit *getUnit(Type type);
 
     int getAlienDroneCount();

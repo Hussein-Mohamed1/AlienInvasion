@@ -4,9 +4,6 @@
 #pragma once
 
 #include "simulationManager.h"
-#include "./units/alienArmy.h"
-#include "./units/earthArmy.h"
-#include "./units/unit.h"
 #include "windows.h"
 #include "iostream"
 
@@ -16,32 +13,9 @@ simulationManager::simulationManager(operationMode operationModeVal) : operation
     srand(time(nullptr));
     RandomGenerator = new randGen;
 }
-//
-//void simulationManager::handleUnit(unit *attackingUnit, unit *&defendingUnit, Army *defendingArmy) {
-//    bool enqueuedOnce = false;
-//    if (attackingUnit) {
-//        for (int i = 0; i < attackingUnit->getAttackCapacity(); ++i) {
-//            defendingUnit = defendingArmy->getRandomUnit();
-//            if (attackingUnit->damageEnemy(defendingUnit)) {
-//                showStats(attackingUnit, defendingUnit);
-//                if (!enqueuedOnce) {
-//                    enqueuedOnce = true;
-//                    tempList.enqueue(attackingUnit);
-//                }
-//                tempList.enqueue(defendingUnit);
-//            }
-//        }
-//    }
-//}
 
 void simulationManager::updateSimulation(int timestep) {
     manageAdding(timestep);
-
-//    unit *earthUnit = earthArmyPtr->getRandomUnit();
-//    unit *alienUnit = alienArmyPtr->getRandomUnit();
-//
-//    handleUnit(earthUnit, alienUnit, alienArmyPtr);
-//    handleUnit(alienUnit, earthUnit, earthArmyPtr);
 }
 
 ///@details adds the unit to the earth army
@@ -78,15 +52,6 @@ void simulationManager::addNewUnit(unit *newUnit) {
     }
 }
 
-
-///@param AttackingUnit: The unit attacking.
-///@param DamagedUnit: The unit being attacked.
-void simulationManager::showStats(unit *AttackingUnit, unit *DamagedUnit) const {
-    if (operationModeVal == Interactive)
-        if (AttackingUnit && DamagedUnit)
-            cout << AttackingUnit->getId() << " " << AttackingUnit->getType() << " has attacked" << DamagedUnit->getId()
-                 << " " << DamagedUnit->getType() << endl;
-}
 
 void simulationManager::manageAdding(int timestep) {
     if (RandomGenerator->creatEarthUnits()) {

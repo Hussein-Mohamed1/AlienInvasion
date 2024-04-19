@@ -6,16 +6,6 @@
 #include "alienArmy.h"
 
 unit *earthArmy::Attack(unit *enemy) {
-
-    if (enemy->getType() == alienSoldier || enemy->getType() == MonsterType
-                                            && EGlist.getCount() + ESlist.getCount() + TankList.getCount() <=
-                                               0.3 * (alienArmyPtr->getAlienDroneCount() +
-                                                      alienArmyPtr->getAlienSoldierCount() +
-                                                      alienArmyPtr->getCurrentMonstersIndex() + 1)) {
-        Tank *ETank;
-        TankList.pop(ETank);
-        return ETank;
-    }
     return nullptr;
     /// @todo add the reset of unit
 }
@@ -94,32 +84,6 @@ void earthArmy::print() {
         if (tempTank)
             TankList.push(tempTank);
 
-}
-
-/// @details returns a randomUnit and removes it from its adt.
-unit *earthArmy::getRandomUnit() {
-    auto random_number = rand() % 3;
-    switch (random_number) {
-        case EarthTank: {
-            Tank *removedTank;
-            if (TankList.pop(removedTank)) {
-                return removedTank;
-            } else return nullptr;
-        }
-        case EarthSoldier: {
-            Esoldier *removedSoldier;
-            if (ESlist.dequeue(removedSoldier)) {
-                return removedSoldier;
-            } else return nullptr;
-        }
-        case Gunnery: {
-            Egunnery *removedGunnery;
-            int priority{0};
-            if (EGlist.dequeue(removedGunnery, priority)) {
-                return removedGunnery;
-            } else return nullptr;
-        }
-    }
 }
 
 unit *earthArmy::getUnit(Type type) {
