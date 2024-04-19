@@ -16,32 +16,32 @@ simulationManager::simulationManager(operationMode operationModeVal) : operation
     srand(time(nullptr));
     RandomGenerator = new randGen;
 }
-//
-//void simulationManager::handleUnit(unit *attackingUnit, unit *&defendingUnit, Army *defendingArmy) {
-//    bool enqueuedOnce = false;
-//    if (attackingUnit) {
-//        for (int i = 0; i < attackingUnit->getAttackCapacity(); ++i) {
-//            defendingUnit = defendingArmy->getRandomUnit();
-//            if (attackingUnit->damageEnemy(defendingUnit)) {
-//                showStats(attackingUnit, defendingUnit);
-//                if (!enqueuedOnce) {
-//                    enqueuedOnce = true;
-//                    tempList.enqueue(attackingUnit);
-//                }
-//                tempList.enqueue(defendingUnit);
-//            }
-//        }
-//    }
-//}
+
+void simulationManager::handleUnit(unit *attackingUnit, unit *&defendingUnit, Army *defendingArmy) {
+    bool enqueuedOnce = false;
+    if (attackingUnit) {
+        for (int i = 0; i < attackingUnit->getAttackCapacity(); ++i) {
+            defendingUnit = defendingArmy->getRandomUnit();
+            if (attackingUnit->damageEnemy(defendingUnit)) {
+                showStats(attackingUnit, defendingUnit);
+                if (!enqueuedOnce) {
+                    enqueuedOnce = true;
+                    tempList.enqueue(attackingUnit);
+                }
+                tempList.enqueue(defendingUnit);
+            }
+        }
+    }
+}
 
 void simulationManager::updateSimulation(int timestep) {
     manageAdding(timestep);
 
-//    unit *earthUnit = earthArmyPtr->getRandomUnit();
-//    unit *alienUnit = alienArmyPtr->getRandomUnit();
-//
-//    handleUnit(earthUnit, alienUnit, alienArmyPtr);
-//    handleUnit(alienUnit, earthUnit, earthArmyPtr);
+    unit *earthUnit = earthArmyPtr->getRandomUnit();
+    unit *alienUnit = alienArmyPtr->getRandomUnit();
+
+    handleUnit(earthUnit, alienUnit, alienArmyPtr);
+    handleUnit(alienUnit, earthUnit, earthArmyPtr);
 }
 
 ///@details adds the unit to the earth army
@@ -101,107 +101,6 @@ void simulationManager::manageAdding(int timestep) {
     }
 }
 
-
-void simulationManager::phase12TestFunction(int x) {
-    earthArmyPtr->print();
-    alienArmyPtr->print();
-    cout << endl;
-    if (x >= 0 & x <= 10) {
-        cout << "🌍 Picking an 💂 Earth Soldier.\n";
-        unit *soldier = earthArmyPtr->getUnit(EarthSoldier);
-        if (soldier) {
-            soldier->print();
-            cout << "\n🌍 Earth Soldier Count after removing soldier is " << earthArmyPtr->getEarthSoldierCount();
-            earthArmyPtr->addUnit(soldier);
-            cout << "\n➕ And re-queuing it. New count is: " << earthArmyPtr->getEarthSoldierCount() << endl;
-        } else {
-            cout << "⚠️ No soldiers.\n";
-        }
-    } else if (x > 10 & x <= 20) {
-        cout << "🌍 Picking an 🚛 Earth Tank.\n";
-        unit *tank = earthArmyPtr->getUnit(EarthTank);
-        cout << "🌍 Current Earth Tank units is: " << earthArmyPtr->getEarthTankCount() << endl;
-        if (tank) {
-            cout << "Killed Tank is ---> ";
-            tank->print();
-            KilledList.enqueue(tank);
-            cout << "🌍 New count after Killed the tank is: " << earthArmyPtr->getEarthTankCount()
-                 << endl;
-        } else {
-            cout << "⚠️ No tanks.\n";
-        }
-    } else if (x > 20 & x <= 30) {
-        cout << "🌍 Picking an 💣 Earth Gunnery.\n";
-        unit *gunnery = earthArmyPtr->getUnit(Gunnery);
-        if (gunnery) {
-            gunnery->print();
-            gunnery->setHealth(gunnery->getHealth() - gunnery->getHealth() / 2);
-        } else {
-            cout << "⚠️ No gunnerys.\n";
-        }
-    } else if (x > 30 & x <= 40) {
-        for (int i = 0; i < 5; i++) {
-            cout << "👽 Picking an 👾 Alien Soldier.\n";
-            unit *soldier = alienArmyPtr->getUnit(alienSoldier);
-            if (soldier) {
-                tempList.enqueue(soldier);
-                soldier->print();
-                cout << "\n👽 Alien Soldiers Count after removing soldier is "
-                        << alienArmyPtr->getAlienSoldierCount();
-                soldier->setHealth(soldier->getHealth() - soldier->getHealth() / 2);
-
-                printTempList();
-                tempList.dequeue(soldier);
-
-                alienArmyPtr->addUnit(soldier);
-                cout << "\n➕ And re-queuing it. New count is: " << alienArmyPtr->getAlienSoldierCount() << endl << endl;
-            } else {
-                cout << "⚠️ No soldiers.\n";
-                break;
-            }
-        }
-    } else if (x > 40 & x <= 50) {
-        unit *temp[5]{nullptr};
-        for (int i = 0; i < 5; i++) {
-            cout << "\n👽 Picking an 👹 Alien Monster.\n";
-            unit *monster = alienArmyPtr->getUnit(MonsterType);
-            if (monster) {
-                monster->print();
-                cout << "\n👹 Alien Monsters Count after removing monster is "
-                     << alienArmyPtr->getCurrentMonstersIndex() + 1 << endl;
-                temp[i] = monster;
-            } else {
-                cout << "⚠️ No monsters.\n";
-                break;
-            }
-        }
-        for (int i = 0; i < 5; ++i) {
-            if (temp[i] == nullptr)
-                break;
-            alienArmyPtr->addUnit(temp[i]);
-            cout << "➕ Now re-queuing the monster chosen no. " << i + 1 << "\n👹 No. Monsters is: "
-                 << alienArmyPtr->getCurrentMonstersIndex() + 1 << endl;
-        }
-
-    } else if (x > 50 & x <= 60) {
-        unit *drone = nullptr;
-        for (int i = 0; i < 6; i++) {
-            cout << "👽 Picking an 🛸 Alien Drone.\n";
-            drone = alienArmyPtr->getUnit(DronePair);
-            if (drone) {
-                cout << "killed Drone is ---> ";
-                drone->print();
-                KilledList.enqueue(drone);
-                cout << "\n👽 Alien Drones Count after removing drone is " << alienArmyPtr->getAlienDroneCount()
-                     << endl;
-            } else {
-                cout << "⚠️ No drones.\n";
-                break;
-            }
-        }
-    }
-    printKilledList();
-}
 
 int simulationManager::getAlienArmyUnitsCount() const {
     return alienArmyPtr->getAlienSoldierCount() + alienArmyPtr->getAlienDroneCount() +

@@ -44,8 +44,6 @@ public:
 
     void showStats(unit *, unit *) const;
 
-    void phase12TestFunction(int x);
-
     int getAlienArmyUnitsCount() const;
 
     int getEarthArmyUnitsCount() const;
