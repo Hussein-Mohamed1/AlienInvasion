@@ -1,13 +1,19 @@
 #pragma once
+
 #include "priNode.h"
 
 
 //This class implements the priority queue as a sorted list (Linked List)
 //The item with the highest priority is at the front of the queue
-template <typename T>
-class priQueue
-{
-    priNode<T>* head;
+template<typename T>
+class priQueue {
+    priNode<T> *head;
+    int itemCount{0};
+public:
+    int getCount() const {
+        return itemCount;
+    }
+
 public:
     priQueue() : head(nullptr) {}
 
@@ -18,8 +24,8 @@ public:
     }
 
     //insert the new node in its correct position according to its priority
-    void enqueue(const T& data, int priority) {
-        priNode<T>* newNode = new priNode<T>(data, priority);
+    void enqueue(const T &data, int priority) {
+        priNode<T> *newNode = new priNode<T>(data, priority);
 
         if (head == nullptr || priority > head->getPri()) {
 
@@ -28,26 +34,28 @@ public:
             return;
         }
 
-        priNode<T>* current = head;
+        priNode<T> *current = head;
         while (current->getNext() && priority <= current->getNext()->getPri()) {
             current = current->getNext();
         }
         newNode->setNext(current->getNext());
         current->setNext(newNode);
+        itemCount++;
     }
 
-    bool dequeue(T& topEntry, int& pri) {
+    bool dequeue(T &topEntry, int &pri) {
         if (isEmpty())
             return false;
 
         topEntry = head->getItem(pri);
-        priNode<T>* temp = head;
+        priNode<T> *temp = head;
         head = head->getNext();
         delete temp;
+        itemCount--;
         return true;
     }
 
-    bool peek(T& topEntry, int& pri) {
+    bool peek(T &topEntry, int &pri) {
         if (isEmpty())
             return false;
 

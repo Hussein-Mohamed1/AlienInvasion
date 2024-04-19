@@ -7,9 +7,25 @@
 #include "unit.h"
 
 void unit::print() const {
-    cout << "ID: " << ID << " type: " << type << " joinTime: " << joinTime << " health: "
+    cout << "ID: " << ID << " type: " << [this]() -> string {
+        switch (type) {
+            case Gunnery:
+                return "Gunnery";
+            case EarthSoldier:
+                return "Earth Soldier";
+            case EarthTank:
+                return "Earth Tank";
+            case alienSoldier:
+                return "alien Soldier";
+            case DronePair:
+                return "Drone";
+            case MonsterType:
+                return "Monster";
+        }
+    }();
+    cout << " join Time: " << joinTime << " health: "
          << health
-            << " power: " << power << " attackCapacity: " << attackCapacity;
+         << " power: " << power << " attack Capacity: " << attackCapacity;
 }
 
 int unit::getId() const {
