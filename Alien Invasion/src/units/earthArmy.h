@@ -24,15 +24,7 @@ class earthArmy : public Army {
     priQueue<Egunnery *> EGlist;
     ArrayStack<Tank *> TankList;
     alienArmy *alienArmyPtr;
-    int earthGunneryCount{0};
-    int earthSoldierCount{0};
-    int earthTankCount{ 0 };
 public:
-    int getEarthGunneryCount() const;
-
-    int getEarthSoldierCount() const;
-
-    int getEarthTankCount() const;
 
     unit *getRandomUnit();
 
@@ -44,6 +36,12 @@ public:
     void print();
 
     unit *getUnit(Type type);
+
+    int getEarthSoldierCount();
+
+    int getEarthTankCount();
+
+    int getEarthGunneryCount();
 };
 
 

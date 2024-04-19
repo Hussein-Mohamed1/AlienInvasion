@@ -16,49 +16,32 @@ simulationManager::simulationManager(operationMode operationModeVal) : operation
     srand(time(nullptr));
     RandomGenerator = new randGen;
 }
+//
+//void simulationManager::handleUnit(unit *attackingUnit, unit *&defendingUnit, Army *defendingArmy) {
+//    bool enqueuedOnce = false;
+//    if (attackingUnit) {
+//        for (int i = 0; i < attackingUnit->getAttackCapacity(); ++i) {
+//            defendingUnit = defendingArmy->getRandomUnit();
+//            if (attackingUnit->damageEnemy(defendingUnit)) {
+//                showStats(attackingUnit, defendingUnit);
+//                if (!enqueuedOnce) {
+//                    enqueuedOnce = true;
+//                    tempList.enqueue(attackingUnit);
+//                }
+//                tempList.enqueue(defendingUnit);
+//            }
+//        }
+//    }
+//}
 
 void simulationManager::updateSimulation(int timestep) {
-
     manageAdding(timestep);
 
-    ///@details From here the fighting logic starts
-/// @note totalNumOfUnits is passed by reference
-    unit *earthUnit = earthArmyPtr->getRandomUnit();
-    unit *alienUnit{nullptr};
-    bool enqueuedOnce = false;
-    if (earthUnit)
-        /// @notice If there getRandomUnit returns a nullptr then no fighting occurs
-        for (int i = 0; i < earthUnit->getAttackCapacity(); ++i) {
-            alienUnit = alienArmyPtr->getRandomUnit();
-            if (earthUnit->damageEnemy(alienUnit)) {
-                showStats(earthUnit, alienUnit); // note this executes only in interactive mode
-                /// @note this order should be maintained as the earthUnit must added to the queue first
-                if (!enqueuedOnce) {
-                    enqueuedOnce = true;
-                    tempList.enqueue(earthUnit);
-                }
-                tempList.enqueue(alienUnit);
-            }
-        }
-    earthUnit = nullptr;
-    alienUnit = alienArmyPtr->getRandomUnit();
-    enqueuedOnce = false;
-
-    if (alienUnit)
-        /// @notice If there getRandomUnit returns a nullptr then no fighting occurs
-        for (int i = 0; i < alienUnit->getAttackCapacity(); ++i) {
-            earthUnit = earthArmyPtr->getRandomUnit();
-            if (alienUnit->damageEnemy(earthUnit)) {
-                showStats(alienUnit, earthUnit); // note this executes only in interactive mode
-                /// @note this order should be maintained as the earthUnit must added to the queue first
-                if (!enqueuedOnce) {
-                    enqueuedOnce = true;
-                    tempList.enqueue(alienUnit);
-                }
-                tempList.enqueue(earthUnit);
-            }
-        }
-
+//    unit *earthUnit = earthArmyPtr->getRandomUnit();
+//    unit *alienUnit = alienArmyPtr->getRandomUnit();
+//
+//    handleUnit(earthUnit, alienUnit, alienArmyPtr);
+//    handleUnit(alienUnit, earthUnit, earthArmyPtr);
 }
 
 ///@details adds the unit to the earth army
@@ -120,8 +103,6 @@ void simulationManager::manageAdding(int timestep) {
 
 
 void simulationManager::phase12TestFunction(int x) {
-    LinkedQueue<unit *> KilledList;
-    int numofkilledunit = 0;
     earthArmyPtr->print();
     alienArmyPtr->print();
     cout << endl;
@@ -144,7 +125,6 @@ void simulationManager::phase12TestFunction(int x) {
             cout << "Killed Tank is ---> ";
             tank->print();
             KilledList.enqueue(tank);
-            numofkilledunit++;
             cout << "🌍 New count after Killed the tank is: " << earthArmyPtr->getEarthTankCount()
                  << endl;
         } else {
@@ -164,32 +144,45 @@ void simulationManager::phase12TestFunction(int x) {
             cout << "👽 Picking an 👾 Alien Soldier.\n";
             unit *soldier = alienArmyPtr->getUnit(alienSoldier);
             if (soldier) {
+                tempList.enqueue(soldier);
                 soldier->print();
                 cout << "\n👽 Alien Soldiers Count after removing soldier is "
-                        << alienArmyPtr->getAlienSoldierCount() + i;
+                        << alienArmyPtr->getAlienSoldierCount();
                 soldier->setHealth(soldier->getHealth() - soldier->getHealth() / 2);
-                cout << "\n➕ And re-queuing it. New count is: " << alienArmyPtr->getAlienSoldierCount() + i + 1 << endl;
-                ///@todo add it to temp list
+
+                printTempList();
+                tempList.dequeue(soldier);
+
+                alienArmyPtr->addUnit(soldier);
+                cout << "\n➕ And re-queuing it. New count is: " << alienArmyPtr->getAlienSoldierCount() << endl << endl;
             } else {
                 cout << "⚠️ No soldiers.\n";
                 break;
             }
         }
     } else if (x > 40 & x <= 50) {
+        unit *temp[5]{nullptr};
         for (int i = 0; i < 5; i++) {
-            cout << "👽 Picking an 👹 Alien Monster.\n";
+            cout << "\n👽 Picking an 👹 Alien Monster.\n";
             unit *monster = alienArmyPtr->getUnit(MonsterType);
             if (monster) {
                 monster->print();
-                cout << "\n👽 Alien Monsters Count after removing monster is "
-                     << alienArmyPtr->getCurrentMonstersIndex() + 1;
-                alienArmyPtr->addUnit(monster);
-                cout << "\n➕ And re-queuing it. New count is: " << alienArmyPtr->getCurrentMonstersIndex() + 1 << endl;
+                cout << "\n👹 Alien Monsters Count after removing monster is "
+                     << alienArmyPtr->getCurrentMonstersIndex() + 1 << endl;
+                temp[i] = monster;
             } else {
                 cout << "⚠️ No monsters.\n";
                 break;
             }
         }
+        for (int i = 0; i < 5; ++i) {
+            if (temp[i] == nullptr)
+                break;
+            alienArmyPtr->addUnit(temp[i]);
+            cout << "➕ Now re-queuing the monster chosen no. " << i + 1 << "\n👹 No. Monsters is: "
+                 << alienArmyPtr->getCurrentMonstersIndex() + 1 << endl;
+        }
+
     } else if (x > 50 & x <= 60) {
         unit *drone = nullptr;
         for (int i = 0; i < 6; i++) {
@@ -199,8 +192,7 @@ void simulationManager::phase12TestFunction(int x) {
                 cout << "killed Drone is ---> ";
                 drone->print();
                 KilledList.enqueue(drone);
-                numofkilledunit++;
-                cout << "\n👽 Alien Drones Count after removing drone is " << alienArmyPtr->getAlienDroneCount() + i
+                cout << "\n👽 Alien Drones Count after removing drone is " << alienArmyPtr->getAlienDroneCount()
                      << endl;
             } else {
                 cout << "⚠️ No drones.\n";
@@ -208,16 +200,7 @@ void simulationManager::phase12TestFunction(int x) {
             }
         }
     }
-    unit *killedUnit = nullptr;
-    cout << "================ Killed Units ====================\n";
-    cout << "💀 " << numofkilledunit << " Units killed [ ";
-    while (!KilledList.isEmpty()) {
-        KilledList.dequeue(killedUnit);
-        if (killedUnit) {
-            cout << killedUnit->getId() << " , ";
-        }
-    }
-    cout << " ]\n";
+    printKilledList();
 }
 
 int simulationManager::getAlienArmyUnitsCount() const {
@@ -338,6 +321,45 @@ void simulationManager::intro() {
         cout << "\x1b[1F"; // Move to the beginning of the previous line
         cout << "\x1b[2K"; // Clear the entire line
         Sleep(50);
+    }
+}
+
+void simulationManager::printKilledList() {
+    unit *killedUnit = nullptr;
+    LinkedQueue<unit *> temp;
+    cout << "================ Killed Units ====================\n";
+    cout << "💀 " << KilledList.getCount() << " Units killed [ ";
+    while (!KilledList.isEmpty()) {
+        KilledList.dequeue(killedUnit);
+        temp.enqueue(killedUnit);
+        if (killedUnit) {
+            cout << killedUnit->getId() << " , ";
+        }
+    }
+    cout << " ]\n";
+    while (!temp.isEmpty()) {
+        temp.dequeue(killedUnit);
+        KilledList.enqueue(killedUnit);
+    }
+
+}
+
+void simulationManager::printTempList() {
+    unit *tempUnit = nullptr;
+    LinkedQueue<unit *> temp;
+    cout << "================ Temp Units ====================\n";
+    cout << "🕒 " << tempList.getCount() << " Units in Temp [ ";
+    while (!tempList.isEmpty()) {
+        tempList.dequeue(tempUnit);
+        temp.enqueue(tempUnit);
+        if (tempUnit) {
+            cout << tempUnit->getId() << " , ";
+        }
+    }
+    cout << " ]\n";
+    while (!temp.isEmpty()) {
+        temp.dequeue(tempUnit);
+        tempList.enqueue(tempUnit);
     }
 }
 
