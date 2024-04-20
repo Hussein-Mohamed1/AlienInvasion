@@ -152,7 +152,6 @@
     <ClInclude Include="src\ds\StackADT.h" />
     <ClInclude Include="src\randGen.h" />
     <ClInclude Include="src\simulationManager.h" />
-    <ClInclude Include="src\units\alienArmy.h" />
     <ClInclude Include="src\units\Army.h" />
     <ClInclude Include="src\units\ASolider.h" />
     <ClInclude Include="src\units\Drone.h" />

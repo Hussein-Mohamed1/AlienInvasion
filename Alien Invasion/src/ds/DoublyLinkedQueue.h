@@ -11,7 +11,7 @@ public:
             return false;
 
         if (this->backPtr->getItem()->getId() == this->frontPtr->getItem()->getId()) {
-            return dequeue(Back);
+            return  LinkedQueue<T>::dequeue(Back);
         } else {
             Back = this->backPtr->getItem();
             this->backPtr = this->backPtr->getPrev();
@@ -25,7 +25,7 @@ public:
     bool DoublyDequeue(T &Item) {
         if (!backOrFront) {
             backOrFront = 1;
-            return dequeue(Item);
+            return LinkedQueue<T>::dequeue(Item);
         } else {
             backOrFront = 0;
             return DequeueFromBack(Item);

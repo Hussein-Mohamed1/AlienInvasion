@@ -5,8 +5,8 @@
 
 #include "./ds/LinkedQueue.h"
 #include "randGen.h"
-#include "alienArmy.h"
-#include "earthArmy.h"
+#include "./units/alienArmy.h"
+#include "./units/earthArmy.h"
 #include <fstream>
 #include "randGen.h"
 
