@@ -4,23 +4,28 @@ template<class T>
 class DoublyLinkedQueue :public LinkedQueue<T>
 {
 public:
-	bool DequeueFromFront(Node<T>* Ptr, T Data)
+	bool DequeueFromBack(Node<T>* Back)
 	{
-		if (!frontPtr)
-			retutn false;
+		if (!backPtr)
+			return false;
 
-		Ptr = frontPtr;
-
-		if (frontPtr == backPtr)
-		{
-			dequeue(Ptr, Data);
+		if (backPtr == frontPtr){
+			T Data = 0;
+			dequeue(Back, Data);
 		}
 
 		else {
-			frontPtr = frontPtr->getNext();
-			frontPtr->setPrev(nullptr);
+			Back = backPtr;
+			backPtr = backPtr->getPrev();
+			backPtr->setNext(nullptr);
 		}
 		return true;
+	}
+	bool DoublyDequeue(Node<T>* Front, Node<T>* Back)
+	{
+		if (dequeue(Front) && DequeueFromBack(Back))
+			return true;
+		return false;
 	}
 };
 
