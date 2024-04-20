@@ -6,13 +6,13 @@ int main() {
     SetConsoleOutputCP(CP_UTF8);
     try {
         simulationManager simManager(Silent);
+        simulationManager::intro();
         for (int i = 0; i < 50; ++i) {
             int randNum = rand() % 100;
             system("cls");
             simManager.updateSimulation(i);
             cout << "Current TimeStep is:" << i;
             cout << "\n🔢 Current Random num is " << randNum << "\n";
-            simManager.phase12TestFunction(randNum);
             cout << "⏩ Press Enter to proceed to the next time step..." << endl;
             cin.get();
         }

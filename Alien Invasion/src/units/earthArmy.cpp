@@ -8,7 +8,7 @@
 unit *earthArmy::Attack(unit *enemy) {
 
     if (enemy->getType() == alienSoldier || enemy->getType() == MonsterType
-                                            && earthSoldierCount + earthGunneryCount + earthTankCount <=
+                                            && EGlist.getCount() + ESlist.getCount() + TankList.getCount() <=
                                                0.3 * (alienArmyPtr->getAlienDroneCount() +
                                                       alienArmyPtr->getAlienSoldierCount() +
                                                       alienArmyPtr->getCurrentMonstersIndex() + 1)) {
@@ -26,17 +26,14 @@ bool earthArmy::addUnit(unit *earthUnit) {
         switch (earthUnit->getType()) {
             case EarthSoldier:
                 ESlist.enqueue(dynamic_cast<Esoldier *>(earthUnit));
-                earthSoldierCount++;
                 return true;
             case Gunnery: {
                 Egunnery *Egunn = dynamic_cast<Egunnery *>(earthUnit);
                 EGlist.enqueue(Egunn, Egunn->getPower() + Egunn->getHealth());
-                earthGunneryCount++;
                 return true;
             }
             case EarthTank: {
                 Tank *newTank = dynamic_cast<Tank *>(earthUnit);
-                earthTankCount++;
                 if (!TankList.push(newTank))
                     return false;
             }
@@ -52,7 +49,7 @@ void earthArmy::print() {
     LinkedQueue<Esoldier *> TempESlist;
     Esoldier *soldier{nullptr};
     cout << "======================== Eartht Army Alive units ==================================\n";
-    cout << "🌍 Earth Soldiers Count is: " << getEarthSoldierCount() << endl;
+    cout << "🌍 Earth Soldiers Count is: " << ESlist.getCount() << endl;
     cout << "ES [ ";
     while (ESlist.dequeue(soldier)) {
         {
@@ -66,7 +63,7 @@ void earthArmy::print() {
             ESlist.enqueue(soldier);
 
 
-    cout << "🌍 Earth Gunnery Count is: " << getEarthGunneryCount() << endl;
+    cout << "🌍 Earth Gunnery Count is: " << EGlist.getCount() << endl;
     cout << "EG [ ";
     Egunnery *tempGunnery{nullptr};
     int garbage;
@@ -82,7 +79,7 @@ void earthArmy::print() {
         if (tempGunnery)
             EGlist.enqueue(tempGunnery, tempGunnery->getHealth() + tempGunnery->getPower());
 
-    cout << "🌍 Earth Tanks Count is: " << getEarthTankCount() << endl;
+    cout << "🌍 Earth Tanks Count is: " << TankList.getCount() << endl;
     cout << "ET [ ";
     ArrayStack<Tank *> tempTankList;
     Tank *tempTank{nullptr};
@@ -106,14 +103,12 @@ unit *earthArmy::getRandomUnit() {
         case EarthTank: {
             Tank *removedTank;
             if (TankList.pop(removedTank)) {
-                earthTankCount--;
                 return removedTank;
             } else return nullptr;
         }
         case EarthSoldier: {
             Esoldier *removedSoldier;
             if (ESlist.dequeue(removedSoldier)) {
-                earthSoldierCount--;
                 return removedSoldier;
             } else return nullptr;
         }
@@ -121,7 +116,6 @@ unit *earthArmy::getRandomUnit() {
             Egunnery *removedGunnery;
             int priority{0};
             if (EGlist.dequeue(removedGunnery, priority)) {
-                earthGunneryCount--;
                 return removedGunnery;
             } else return nullptr;
         }
@@ -133,7 +127,6 @@ unit *earthArmy::getUnit(Type type) {
         case EarthSoldier: {
             Esoldier *temp{nullptr};
             if (ESlist.dequeue(temp)) {
-                earthSoldierCount--;
                 return temp;
             }
             return nullptr;
@@ -141,7 +134,6 @@ unit *earthArmy::getUnit(Type type) {
         case EarthTank: {
             Tank *temp{nullptr};
             if (TankList.pop(temp)) {
-                earthTankCount--;
                 return temp;
             }
             return nullptr;
@@ -150,7 +142,6 @@ unit *earthArmy::getUnit(Type type) {
             Egunnery *temp{nullptr};
             int garbage;
             if (EGlist.dequeue(temp, garbage)) {
-                earthGunneryCount--;
                 return temp;
             }
             return nullptr;
@@ -160,14 +151,14 @@ unit *earthArmy::getUnit(Type type) {
     return nullptr;
 }
 
-int earthArmy::getEarthGunneryCount() const {
-    return earthGunneryCount;
+int earthArmy::getEarthSoldierCount() {
+    return ESlist.getCount();
 }
 
-int earthArmy::getEarthSoldierCount() const {
-    return earthSoldierCount;
+int earthArmy::getEarthTankCount() {
+    return TankList.getCount();
 }
 
-int earthArmy::getEarthTankCount() const {
-    return earthTankCount;
+int earthArmy::getEarthGunneryCount() {
+    return EGlist.getCount();
 }
