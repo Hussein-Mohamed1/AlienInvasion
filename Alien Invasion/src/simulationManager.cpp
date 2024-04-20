@@ -112,7 +112,7 @@ void simulationManager::phase12TestFunction(int x) {
                 tempList.enqueue(soldier);
                 soldier->print();
                 cout << "\n👽 Alien Soldiers Count after removing soldier is "
-                        << alienArmyPtr->getAlienSoldierCount();
+                     << alienArmyPtr->getAlienSoldierCount();
                 soldier->setHealth(soldier->getHealth() - soldier->getHealth() / 2);
 
                 printTempList();
@@ -150,19 +150,30 @@ void simulationManager::phase12TestFunction(int x) {
 
     } else if (x > 50 & x <= 60) {
         unit *drone = nullptr;
-        for (int i = 0; i < 6; i++) {
-            cout << "👽 Picking an 🛸 Alien Drone.\n";
-            drone = alienArmyPtr->getUnit(DronePair);
-            if (drone) {
-                cout << "killed Drone is ---> ";
-                drone->print();
-                KilledList.enqueue(drone);
-                cout << "\n👽 Alien Drones Count after removing drone is " << alienArmyPtr->getAlienDroneCount()
-                     << endl;
-            } else {
-                cout << "⚠️ No drones.\n";
-                break;
+        if (alienArmyPtr->getAlienDroneCount() < 2)
+            cout << "⚠️ No Enough drones.\n";
+        else {
+            for (int i = 0; i < 6; i++) {
+                cout << "👽 Picking an 🛸 Alien Drone.\n";
+                drone = alienArmyPtr->getUnit(DronePair);
+                if (drone) {
+                    cout << "killed Drone is ---> ";
+                    drone->print();
+                    KilledList.enqueue(drone);
+                    cout << "\n👽 Alien Drones Count after removing drone is " << alienArmyPtr->getAlienDroneCount()
+                         << endl;
+                    drone = alienArmyPtr->getUnit(DronePair);
+                    cout << "killed Drone is ---> ";
+                    drone->print();
+                    KilledList.enqueue(drone);
+                    cout << "\n👽 Alien Drones Count after removing drone is " << alienArmyPtr->getAlienDroneCount()
+                         << endl;
+                } else {
+                    cout << "⚠️ No drones.\n";
+                    break;
+                }
             }
+
         }
     }
     printKilledList();
