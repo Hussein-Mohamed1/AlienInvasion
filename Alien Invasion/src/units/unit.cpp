@@ -84,9 +84,9 @@ void unit::setSimPtr(simulationManager *nSimPtr) {
     unit::simPtr = nSimPtr;
 }
 
-unit::unit(int id, Type type, int joinTime, double health, double power, int attackCapacity, simulationManager *simPtr)
-        : ID(id), type(type), joinTime(joinTime), health(health), power(power), attackCapacity(attackCapacity),
-          simPtr(simPtr) {}
+unit::unit(int id, Type type, int joinTime, double health, double power, int attackCapacity, simulationManager* simPtr)
+    : ID(id), type(type), joinTime(joinTime), health(health), power(power), attackCapacity(attackCapacity),
+    simPtr(simPtr), StillInHealingList(0){}
 
 bool unit::damageEnemy(unit *Enemy) {
     if (Enemy) {
@@ -98,4 +98,12 @@ bool unit::damageEnemy(unit *Enemy) {
         return true;
     }
     return false;
+}
+void  unit::UpdateStillHealing()
+{
+    StillInHealingList++;
+}
+int unit::GetStillHealing()  const
+{
+    return StillInHealingList;
 }

@@ -5,9 +5,14 @@
 
 //This class implements the priority queue as a sorted list (Linked List)
 //The item with the highest priority is at the front of the queue
+
+enum { HighestPri = 1, LoWestPri = 0 };
 template<typename T>
-class priQueue {
+class priQueue 
+{
     priNode<T> *head;
+    
+
     int itemCount{0};
 public:
     int getCount() const {
@@ -24,8 +29,9 @@ public:
     }
 
     //insert the new node in its correct position according to its priority
-    void enqueue(const T &data, int priority) {
-        priNode<T> *newNode = new priNode<T>(data, priority);
+    void enqueue(const T &data, int priority ) 
+    {
+            priNode<T>* newNode = new priNode<T>(data, priority);
 
         if (head == nullptr || priority > head->getPri()) {
 
@@ -43,7 +49,8 @@ public:
         itemCount++;
     }
 
-    bool dequeue(T &topEntry, int &pri) {
+    bool dequeue(T &topEntry, int &pri)
+    {
         if (isEmpty())
             return false;
 

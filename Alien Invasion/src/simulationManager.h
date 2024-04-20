@@ -5,10 +5,11 @@
 
 #include "./ds/LinkedQueue.h"
 #include "randGen.h"
-#include "alienArmy.h"
-#include "earthArmy.h"
+#include "units/alienArmy.h"
+#include "units/earthArmy.h"
 #include <fstream>
 #include "randGen.h"
+#include"units/HealUnit.h"
 
 class randGen;
 
@@ -30,6 +31,9 @@ protected:
     LinkedQueue<unit *> tempList;
     LinkedQueue<unit *> KilledList;
     randGen *RandomGenerator;
+    ArrayStack < HealUnit*> HealList;
+    LinkedQueue<unit*> UnitMaintenceList;
+    int SoldierCounter;
 public:
     static void intro();
 
@@ -41,6 +45,7 @@ public:
 
     void manageAdding(int);
 
+    void ManageHealing();
 
     void showStats(unit *, unit *) const;
 

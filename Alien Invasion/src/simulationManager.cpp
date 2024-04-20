@@ -15,6 +15,7 @@ simulationManager::simulationManager(operationMode operationModeVal) : operation
     earthArmyPtr = new earthArmy();
     srand(time(nullptr));
     RandomGenerator = new randGen;
+    SoldierCounter= 0;
 }
 
 void simulationManager::handleUnit(unit *attackingUnit, unit *&defendingUnit, Army *defendingArmy) {
@@ -260,5 +261,30 @@ void simulationManager::printTempList() {
         temp.dequeue(tempUnit);
         tempList.enqueue(tempUnit);
     }
+}
+void simulationManager::ManageHealing()
+{
+
+    if (!SoldierCounter)
+        return;
+    HealUnit* Healer;
+    HealList.pop(Healer);
+
+    int WantedTanks = 0;
+    
+    WantedTanks = Healer->getAttackCapacity() - SoldierCounter;
+
+    if (WantedTanks < 0)
+          WantedTanks = 0;
+    
+      
+    for (int i = 0; i < WantedTanks; i++)
+    {
+        unit* InjTank;
+        UnitMaintenceList.dequeue(InjTank);
+        Healer->Heal(InjTank);
+        InjTank->UpdateStillHealing();
+    }
+       
 }
 

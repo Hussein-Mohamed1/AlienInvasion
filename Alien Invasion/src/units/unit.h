@@ -24,6 +24,7 @@ protected:
     double power;
     int attackCapacity;
     simulationManager *simPtr;
+    int StillInHealingList;
 public:
     unit(int id, Type type, int joinTime, double health, double power, int attackCapacity, simulationManager *simPtr);
 
@@ -32,6 +33,10 @@ public:
     virtual void print() const;
 
     int getId() const;
+
+    int GetStillHealing () const;
+
+    void UpdateStillHealing();
 
     void setId(int id);
 
