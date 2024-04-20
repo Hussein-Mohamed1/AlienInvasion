@@ -59,7 +59,7 @@ void earthArmy::print() {
     int garbage;
     priQueue<Egunnery *> tempEgunnery;
     while (EGlist.dequeue(tempGunnery, garbage)) {
-        { ///@todo fix these
+        {
             cout << tempGunnery->getId() << ", ";
             tempEgunnery.enqueue(tempGunnery, garbage);
         }

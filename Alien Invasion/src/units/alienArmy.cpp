@@ -61,7 +61,7 @@ void alienArmy::print() {
     cout << "👽 Alien Monster Count is: " << currentMonstersIndex + 1 << endl;
     cout << "AM [ ";
     for (int i = 0; i <= currentMonstersIndex; ++i) {
-        cout << MonsterUnits[currentMonstersIndex]->getId() << ", ";
+        cout << MonsterUnits[i]->getId() << ", ";
     }
     cout << "]\n";
 
@@ -77,10 +77,10 @@ unit *alienArmy::getUnit(Type type) {
             else return nullptr;
         }
         case DronePair: {
-            Drone *temp{nullptr};
-            if (DroneUnits.dequeue(temp))
-                return temp;
-            else return nullptr;
+            Drone *temp1{nullptr};
+            if (DroneUnits.DoublyDequeue(temp1)) {
+                return temp1;
+            } else return nullptr;
         }
         case MonsterType: {
             if (currentMonstersIndex != -1)

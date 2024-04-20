@@ -31,6 +31,7 @@ public:
 
             newNode->setNext(head);
             head = newNode;
+            itemCount++;
             return;
         }
 

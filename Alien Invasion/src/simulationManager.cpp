@@ -101,6 +101,8 @@ void simulationManager::phase12TestFunction(int x) {
         if (gunnery) {
             gunnery->print();
             gunnery->setHealth(gunnery->getHealth() - gunnery->getHealth() / 2);
+            cout << "New Health is " << gunnery->getHealth() << " and reinserting it.\n";
+            earthArmyPtr->addUnit(gunnery);
         } else {
             cout << "⚠️ No gunnerys.\n";
         }
@@ -112,9 +114,9 @@ void simulationManager::phase12TestFunction(int x) {
                 tempList.enqueue(soldier);
                 soldier->print();
                 cout << "\n👽 Alien Soldiers Count after removing soldier is "
-                        << alienArmyPtr->getAlienSoldierCount();
+                     << alienArmyPtr->getAlienSoldierCount();
                 soldier->setHealth(soldier->getHealth() - soldier->getHealth() / 2);
-
+                cout << endl << "New Health is: " << soldier->getHealth() << endl;
                 printTempList();
                 tempList.dequeue(soldier);
 
@@ -152,8 +154,18 @@ void simulationManager::phase12TestFunction(int x) {
         unit *drone = nullptr;
         for (int i = 0; i < 6; i++) {
             cout << "👽 Picking an 🛸 Alien Drone.\n";
+            if (alienArmyPtr->getAlienDroneCount() < 2) {
+                cout << "⚠️ No Enough drones.\n";
+                break;
+            }
             drone = alienArmyPtr->getUnit(DronePair);
             if (drone) {
+                cout << "killed Drone is ---> ";
+                drone->print();
+                KilledList.enqueue(drone);
+                cout << "\n👽 Alien Drones Count after removing drone is " << alienArmyPtr->getAlienDroneCount()
+                     << endl;
+                drone = alienArmyPtr->getUnit(DronePair);
                 cout << "killed Drone is ---> ";
                 drone->print();
                 KilledList.enqueue(drone);

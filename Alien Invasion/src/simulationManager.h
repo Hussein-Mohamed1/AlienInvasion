@@ -41,16 +41,12 @@ public:
 
     void manageAdding(int);
 
-
-    void showStats(unit *, unit *) const;
-
     void phase12TestFunction(int x);
 
     int getAlienArmyUnitsCount() const;
 
     int getEarthArmyUnitsCount() const;
 
-    void handleUnit(unit *attackingUnit, unit *&defendingUnit, Army *defendingArmy);
 
     void printKilledList();
 
