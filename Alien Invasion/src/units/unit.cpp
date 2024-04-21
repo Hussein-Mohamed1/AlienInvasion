@@ -5,9 +5,37 @@
 
 #include "../simulationManager.h"
 #include "unit.h"
-
+unit::unit() {}
+void unit::setDestructionTime(int t)
+{
+    Td = t;
+}
+int unit::getDestructionTime() const
+{
+    return Td;
+}
+void unit::setfirstAttackedTime(int t)
+{
+    Ta = t;
+}
+int unit::getfirstAttackedTime() const
+{
+    return Ta;
+}
+int unit::getDf() const
+{
+    return Ta - Tj;
+}
+int unit::getDd() const
+{
+    return Td - Ta;
+}
+int unit::getDb() const
+{
+    return Td - Tj;
+}
 void unit::print() const {
-    cout << "ID: " << ID << " type: " << type << " joinTime: " << joinTime << " health: "
+    cout << "ID: " << ID << " type: " << type << " joinTime: " << Tj << " health: "
          << health
             << " power: " << power << " attackCapacity: " << attackCapacity;
 }
@@ -29,11 +57,11 @@ void unit::setType(Type nType) {
 }
 
 int unit::getJoinTime() const {
-    return joinTime;
+    return Tj;
 }
 
 void unit::setJoinTime(int nJoinTime) {
-    unit::joinTime = nJoinTime;
+    unit::Tj = nJoinTime;
 }
 
 double unit::getHealth() const {
@@ -69,7 +97,7 @@ void unit::setSimPtr(simulationManager *nSimPtr) {
 }
 
 unit::unit(int id, Type type, int joinTime, double health, double power, int attackCapacity, simulationManager *simPtr)
-        : ID(id), type(type), joinTime(joinTime), health(health), power(power), attackCapacity(attackCapacity),
+        : ID(id), type(type), Tj(joinTime), health(health), power(power), attackCapacity(attackCapacity),
           simPtr(simPtr) {}
 
 bool unit::damageEnemy(unit *Enemy) {

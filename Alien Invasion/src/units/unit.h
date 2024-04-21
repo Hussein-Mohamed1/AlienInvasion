@@ -19,12 +19,15 @@ class unit {
 protected:
     int ID;
     Type type;
-    int joinTime;
+    int Tj;
     double health;
     double power;
     int attackCapacity;
     simulationManager *simPtr;
+    int Ta;
+    int Td;
 public:
+    unit();
     unit(int id, Type type, int joinTime, double health, double power, int attackCapacity, simulationManager *simPtr);
 
     virtual bool damageEnemy(unit *);
@@ -58,7 +61,14 @@ public:
     simulationManager *getSimPtr() const;
 
     void setSimPtr(simulationManager *simPtr);
+    int getDestructionTime() const;
 
+    void setDestructionTime(int t);
+    int getfirstAttackedTime() const;
 
+    void setfirstAttackedTime(int t);
+    int getDf() const;
+    int getDd() const;
+    int getDb() const;
 };
 

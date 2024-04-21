@@ -17,19 +17,20 @@ using namespace std;
 
 randGen::randGen() {
     srand(time(nullptr));
-    string S, temps, unitrang[3];
-    fstream *infile = new fstream("test.txt", ios::in);
+    string S, temps, unitrang[4];
+    fstream *infile = new fstream("./src/test.txt", ios::in);
     if (infile->is_open()) {
         getline(*infile, S);
         unitscreated = stoi(S);
-        //get ranges of ES / ET / EG
+        //get ranges of ES / ET / EG /HU
         getline(*infile, S);
         stringstream sE(S);
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 4; i++)
             sE >> unitrang[i];
         perES = stod(unitrang[0]);
         perET = stod(unitrang[1]);
         perEG = stod(unitrang[2]);
+        perHU = stod(unitrang[3]);
         //get ranges of AS / AT / AG
         getline(*infile, S);
         stringstream sA(S);
@@ -100,9 +101,14 @@ unit *randGen::generatUnit(armyType unitType, int timestep) {
             } else if (num <= (perES + perET)) {
                 Tank *tank = new Tank(Eid++, timestep, healthEunit, powerEunit, Eattackcap, nullptr);
                 return tank;
-            } else {
+            } else if(num <= (perES + perET+perEG))
+            {
                 unit *gunnery = new Egunnery(Eid++, timestep, healthEunit, powerEunit, Eattackcap, nullptr);
                 return gunnery;
+            }
+            else
+            {
+                //todo generate Health Unit
             }
         }
         case alienUnit: {

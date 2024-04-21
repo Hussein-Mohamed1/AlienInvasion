@@ -14,12 +14,23 @@ simulationManager::simulationManager(operationMode operationModeVal) : operation
     earthArmyPtr = new earthArmy();
     srand(time(nullptr));
     RandomGenerator = new randGen;
+    OutputFile.open("output.txt", std::ios::app | std::ios::out);
+
+    // Check if the file was opened successfully
+    if (!OutputFile) {
+        cout << "Unable to open file for writing." << endl;
+        // Handle the error appropriately, e.g., by throwing an exception
+        throw std::runtime_error("Failed to open output file.");
+    }
+
+    // Write data to the file in the constructor
+    OutputFile << "Td     ID      Tj      Df      Dd      Db" << endl;
 }
 
 void simulationManager::updateSimulation(int timestep) {
 
     manageAdding(timestep);
-
+ 
     ///@details From here the fighting logic starts
 /// @note totalNumOfUnits is passed by reference
 //    unit *earthUnit = earthArmyPtr->getRandomUnit();
@@ -140,7 +151,7 @@ void simulationManager::phase12TestFunction(int x) {
         unit *tank = earthArmyPtr->getUnit(EarthTank);
         cout << "🌍 Current Earth Tank units is: " << earthArmyPtr->getEarthTankCount() << endl;
         if (tank) {
-            cout << "Killed Tank is ---> ";
+            cout << "☠️ Killed Tank is ---> ";
             tank->print();
             KilledList.enqueue(tank);
             numofkilledunit++;
@@ -195,7 +206,7 @@ void simulationManager::phase12TestFunction(int x) {
             cout << "👽 Picking an 🛸 Alien Drone.\n";
             drone = alienArmyPtr->getUnit(DronePair);
             if (drone) {
-                cout << "killed Drone is ---> ";
+                cout << "☠️ killed Drone is ---> ";
                 drone->print();
                 KilledList.enqueue(drone);
                 numofkilledunit++;
@@ -228,4 +239,79 @@ int simulationManager::getEarthArmyUnitsCount() const {
     return earthArmyPtr->getEarthGunneryCount() + earthArmyPtr->getEarthSoldierCount() +
            earthArmyPtr->getEarthTankCount();
 }
+void simulationManager::loadtoOutputFile(LinkedQueue<unit> killedList)
+{
+    OutputFile << "Td" << "     " << "ID" << "     " << "Tj" << "     " << "Df" << "     " << "Dd" << "     " << "Db" << endl;
+    unit killedU;
+    while (killedList.dequeue(killedU))
+    {
+        if (killedU.getType() == EarthSoldier || killedU.getType() == Gunnery || killedU.getType() == EarthTank)
+        {
 
+            OutputFile << killedU.getDestructionTime() << "     " << killedU.getId() << "     " << killedU.getJoinTime() << "     " << killedU.getDf() << "     " << killedU.getDd() << "     " << killedU.getDb() << endl;
+            EDfcount++;
+            EDdcount++;
+            EDbcount++;
+            sumOfEDf += killedU.getDf();
+            sumOfEDd += killedU.getDd();
+            sumOfEDb += killedU.getDb();
+        }
+        else
+        {
+
+            OutputFile << killedU.getDestructionTime() << "     " << killedU.getId() << "     " << killedU.getJoinTime() << "     " << killedU.getDf() << "     " << killedU.getDd() << "     " << killedU.getDb() << endl;
+            ADfcount++;
+            ADdcount++;
+            ADbcount++;
+            sumOfADf += killedU.getDf();
+            sumOfADd += killedU.getDd();
+            sumOfADb += killedU.getDb();
+        }
+    }
+
+    // todo knowing result of fight
+    // cout<<"win" or cout<<"drawn" or cout<<"loss"
+    OutputFile << "========================= Battle result =========================";
+    OutputFile << "======================================== For Earth Army ===========================" << endl;
+    OutputFile << "total number of ES---> " << earthArmyPtr->getEarthSoldierCount() << endl;
+    OutputFile << "total number of ET---> " << earthArmyPtr->getEarthTankCount() << endl;
+    OutputFile << "total number of EG---> " << earthArmyPtr->getEarthGunneryCount() << endl;
+    OutputFile << "percentage of destructed ES----> " << (double(earthArmyPtr->getEarthdestructedSoldierCount()) / earthArmyPtr->getEarthSoldierCount()) * 100 << endl;
+    OutputFile << "percentage of destructed ET----> " << (double(earthArmyPtr->getEarthdestructedTankCount()) / earthArmyPtr->getEarthTankCount()) * 100 << endl;
+    OutputFile << "percentage of destructed EG----> " << (double(earthArmyPtr->getEarthdestructedGunneryCount()) / earthArmyPtr->getEarthGunneryCount()) * 100 << endl;
+    int totaldestructedEarthArmy = earthArmyPtr->getEarthdestructedSoldierCount() + earthArmyPtr->getEarthdestructedTankCount() + earthArmyPtr->getEarthdestructedGunneryCount();
+    int totalEarthArmy = earthArmyPtr->getEarthSoldierCount() + earthArmyPtr->getEarthTankCount() + earthArmyPtr->getEarthGunneryCount();
+    OutputFile << "percentage of total destructed Earth units----> " << (double(totaldestructedEarthArmy) / totalEarthArmy) * 100 << endl;
+    OutputFile << "percentage of total Healed units----> " << (double(numofHealedunits) / totalEarthArmy) * 100 << endl;
+    OutputFile << "Average of Df---> " << sumOfEDf / EDfcount << endl;
+    OutputFile << "Average of Dd---> " << sumOfEDd / EDdcount << endl;
+    OutputFile << "Average of Db---> " << sumOfEDb / EDbcount << endl;
+    OutputFile << "Df/Db % ----> " << (double(sumOfEDf) / sumOfEDb) * 100 << endl;
+    OutputFile << "Dd/Db % ----> " << (double(sumOfEDd) / sumOfEDb) * 100 << endl;
+    
+
+    OutputFile << "======================================== For Alien Army ===========================" << endl;
+    OutputFile << "total number of AS---> " << alienArmyPtr->getAlienSoldierCount() << endl;
+    OutputFile << "total number of AD---> " << alienArmyPtr->getAlienDroneCount() << endl;
+    OutputFile << "total number of AM---> " << alienArmyPtr->getCurrentMonstersIndex() << endl;
+    OutputFile << "percentage of destructed AS----> " << (double(alienArmyPtr->getAliendestructedSoldierCount()) / alienArmyPtr->getAlienSoldierCount()) * 100 << endl;
+    OutputFile << "percentage of destructed AD----> " << (double(alienArmyPtr->getAliendestructedDroneCount()) / alienArmyPtr->getAlienDroneCount()) * 100 << endl;
+    OutputFile << "percentage of destructed AM----> " << (double(alienArmyPtr->getAliendestructedMonsterCount()) / alienArmyPtr->getCurrentMonstersIndex()) * 100 << endl;
+    int totaldestructedAlienArmy = alienArmyPtr->getAliendestructedSoldierCount() + alienArmyPtr->getAliendestructedDroneCount() + alienArmyPtr->getAliendestructedMonsterCount();
+    int totalAlienArmy = alienArmyPtr->getAlienSoldierCount() + alienArmyPtr->getAlienDroneCount() + alienArmyPtr->getCurrentMonstersIndex();
+    OutputFile << "percentage of total destructed Alien units----> " << (double(totaldestructedAlienArmy) / totalAlienArmy) * 100 << endl;
+    OutputFile << "Average of Df---> " << sumOfADf / ADfcount << endl;
+    OutputFile << "Average of Dd---> " << sumOfADd / ADdcount << endl;
+    OutputFile << "Average of Db---> " << sumOfADb / ADbcount << endl;
+    OutputFile << "Df/Db % ----> " << (double(sumOfADf) / sumOfADb) * 100 << endl;
+    OutputFile << "Dd/Db % ----> " << (double(sumOfADd) / sumOfADb) * 100 << endl;
+
+
+}
+
+simulationManager::~simulationManager()
+{
+    if (OutputFile.is_open()) {
+        OutputFile.close();
+    }
+}

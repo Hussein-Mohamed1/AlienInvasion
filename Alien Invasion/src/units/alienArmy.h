@@ -21,12 +21,21 @@ class alienArmy : public Army {
     int currentMonstersIndex{-1};
     int alienSoldierCount{0};
     int alienDroneCount{0};
+    int aliendestructedSoldierCount{ 0 };
+    int aliendestructedMonsterCount{ 0 };
+    int aliendestructedDroneCount{ 0 };
 public:
     int getCurrentMonstersIndex() const;
 
     int getAlienSoldierCount() const;
 
     int getAlienDroneCount() const;
+
+    int getAliendestructedMonsterCount() const;
+
+    int getAliendestructedSoldierCount() const;
+
+    int getAliendestructedDroneCount() const;
 
     ///@todo all member functions for alienUnits must be implemented
     unit *Attack(unit *enemy);

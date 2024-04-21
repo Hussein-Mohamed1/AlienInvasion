@@ -172,3 +172,14 @@ int earthArmy::getEarthSoldierCount() const {
 int earthArmy::getEarthTankCount() const {
     return earthTankCount;
 }
+int earthArmy::getEarthdestructedGunneryCount() const {
+    return earthdestructedGunneryCount;
+}
+
+int earthArmy::getEarthdestructedSoldierCount() const {
+    return earthdestructedSoldierCount;
+}
+
+int earthArmy::getEarthdestructedTankCount() const {
+    return earthdestructedTankCount;
+}

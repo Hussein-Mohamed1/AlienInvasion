@@ -5,7 +5,7 @@
 
 #include "./ds/LinkedQueue.h"
 #include "randGen.h"
-
+#include <iostream>
 #include <fstream>
 #include "randGen.h"
 
@@ -30,6 +30,20 @@ protected:
     earthArmy *earthArmyPtr;
     LinkedQueue<unit *> tempList;
     randGen *RandomGenerator;
+    fstream OutputFile;
+    int sumOfEDf{ 0 };
+    int EDfcount{ 0 };
+    int sumOfEDd{ 0 };
+    int EDdcount{ 0 };
+    int sumOfEDb{ 0 };
+    int EDbcount{ 0 };
+    int sumOfADf{ 0 };
+    int ADfcount{ 0 };
+    int sumOfADd{ 0 };
+    int ADdcount{ 0 };
+    int sumOfADb{ 0 };
+    int ADbcount{ 0 };
+    int numofHealedunits{ 0 };
 public:
     simulationManager(operationMode); //initializes the simulation
 
@@ -38,8 +52,7 @@ public:
     void addNewUnit(unit *);
 
     void manageAdding(int);
-
-
+    void loadtoOutputFile(LinkedQueue< unit > KilledList);
     void showStats(unit *, unit *) const;
 
     void phase12TestFunction(int x);
@@ -47,4 +60,5 @@ public:
     int getAlienArmyUnitsCount() const;
 
     int getEarthArmyUnitsCount() const;
+    ~simulationManager();
 };
