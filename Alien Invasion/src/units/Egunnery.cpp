@@ -1,6 +1,10 @@
 #pragma once
+
 #include "Egunnery.h"
-Egunnery::Egunnery(int id, int joinTime, double health, double power, int attackCapacity, simulationManager* simPtr) :unit(id, Gunnery, joinTime, health, power, attackCapacity, simPtr) {}
+
+Egunnery::Egunnery(int id, int joinTime, double health, double power, int attackCapacity, simulationManager *simPtr)
+        : unit(id, Gunnery, joinTime, health, power, attackCapacity, simPtr) {}
+
 //bool Egunnery::damageEnemy(unit* AD1 , unit* AD2)
 //{
 //	double damagedH1;
@@ -26,8 +30,7 @@ Egunnery::Egunnery(int id, int joinTime, double health, double power, int attack
 //	}
 //	return true;
 //}
-void Egunnery::print() const
-{
-	cout << "Earth Gunnery----> ";
-	unit::print();
+void Egunnery::print() const {
+    cout << "Earth Gunnery----> ";
+    unit::print();
 }

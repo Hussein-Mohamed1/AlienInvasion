@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/cmake-build-debug/
+/.idea
+./Alien Invasion.sln
+.gitignore
+.gitattributes
+/.vs

@@ -8,7 +8,8 @@
 bool Tank::damageEnemy(unit *enemy) {
     if (enemy)
         if (enemy->getType() == alienSoldier || enemy->getType() == MonsterType
-                                                && simPtr->getEarthUnitCount() <= 0.3 * simPtr->getAlienUnitCount()) {
+                                                && simPtr->getEarthArmyUnitsCount() <=
+                                                   0.3 * simPtr->getAlienArmyUnitsCount()) {
             unit::damageEnemy(enemy);
             return true;
         }

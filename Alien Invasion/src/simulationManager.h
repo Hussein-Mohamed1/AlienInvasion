@@ -37,14 +37,14 @@ public:
 
     void addNewUnit(unit *);
 
-    int getAlienUnitCount();
+    void manageAdding(int);
 
-    void manageadding(int);
-
-    int getEarthUnitCount();
 
     void showStats(unit *, unit *) const;
 
     void phase12TestFunction(int x);
 
+    int getAlienArmyUnitsCount() const;
+
+    int getEarthArmyUnitsCount() const;
 };

@@ -51,8 +51,8 @@ using namespace std;
 template<typename T>
 class LinkedQueue : public QueueADT<T> {
 private:
-    Node<T> *backPtr;
-    Node<T> *frontPtr;
+    Node<T> *backPtr{nullptr};
+    Node<T> *frontPtr{nullptr};
 public:
     LinkedQueue();
 
@@ -141,9 +141,8 @@ bool LinkedQueue<T>::dequeue(T &frntEntry) {
     if (frontPtr)
         frontPtr->setPrev(nullptr);
 
-    // Queue is not empty; remove front
-    if (nodeToDeletePtr == backPtr)     // Special case: last node in the queue
-        backPtr = nullptr;
+    if (nodeToDeletePtr == backPtr)
+        frontPtr = backPtr = nullptr;
 
 
     // Free memory reserved for the dequeued node

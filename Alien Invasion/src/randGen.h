@@ -11,9 +11,11 @@ public:
 	randGen();
 	double handelPer(double per, int num);
 
-    unit *generatUnit(armytype, int);
-	bool creatEunits();
-	bool creatAunits();
+	unit *generatUnit(armyType, int);
+
+	bool creatEarthUnits() const;
+
+	bool creatAlienUnits() const;
 	int getnumofunits();
 };
 

@@ -10,10 +10,11 @@ using namespace std;
 enum Type {
     Gunnery, EarthSoldier, EarthTank, alienSoldier, DronePair, MonsterType
 };
-enum armytype
-{
-    Earthunit , Alienunit
+
+enum armyType {
+    earthUnit, alienUnit
 };
+
 class unit {
 protected:
     int ID;
@@ -58,6 +59,6 @@ public:
 
     void setSimPtr(simulationManager *simPtr);
 
-    
+
 };
 
