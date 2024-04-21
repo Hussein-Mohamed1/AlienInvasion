@@ -47,6 +47,12 @@ public:
     unit *getRandomUnit();
 
     unit *getUnit(Type type);
+
+    int getAlienDroneCount();
+
+    int getAlienSoldierCount();
+
+    int getCurrentMonstersIndex();
 };
 
 

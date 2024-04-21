@@ -6,6 +6,7 @@ int main() {
     SetConsoleOutputCP(CP_UTF8);
     try {
         simulationManager simManager(Silent);
+        simulationManager::intro();
         for (int i = 0; i < 50; ++i) {
             int randNum = rand() % 100;
             system("cls");

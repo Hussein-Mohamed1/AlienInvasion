@@ -5,7 +5,8 @@
 
 #include "./ds/LinkedQueue.h"
 #include "randGen.h"
-#include <iostream>
+#include "alienArmy.h"
+#include "earthArmy.h"
 #include <fstream>
 #include "randGen.h"
 
@@ -17,11 +18,9 @@ enum operationMode {
 
 class randGen;
 
-class earthArmy;
-
-class alienArmy;
 
 class unit;
+
 
 class simulationManager {
 protected:
@@ -29,6 +28,7 @@ protected:
     alienArmy *alienArmyPtr;
     earthArmy *earthArmyPtr;
     LinkedQueue<unit *> tempList;
+    LinkedQueue<unit *> KilledList;
     randGen *RandomGenerator;
     fstream OutputFile;
     int sumOfEDf{ 0 };
@@ -45,6 +45,8 @@ protected:
     int ADbcount{ 0 };
     int numofHealedunits{ 0 };
 public:
+    static void intro();
+
     simulationManager(operationMode); //initializes the simulation
 
     void updateSimulation(int);
@@ -55,10 +57,13 @@ public:
     void loadtoOutputFile(LinkedQueue< unit > KilledList);
     void showStats(unit *, unit *) const;
 
-    void phase12TestFunction(int x);
-
     int getAlienArmyUnitsCount() const;
 
     int getEarthArmyUnitsCount() const;
-    ~simulationManager();
+
+    void handleUnit(unit *attackingUnit, unit *&defendingUnit, Army *defendingArmy);
+
+    void printKilledList();
+
+    void printTempList();
 };

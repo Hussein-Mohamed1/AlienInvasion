@@ -31,11 +31,6 @@ class earthArmy : public Army {
     int earthdestructedSoldierCount{ 0 };
     int earthdestructedTankCount{ 0 };
 public:
-    int getEarthGunneryCount() const;
-
-    int getEarthSoldierCount() const;
-
-    int getEarthTankCount() const;
 
     int getEarthdestructedGunneryCount() const;
 
@@ -52,6 +47,12 @@ public:
     void print();
 
     unit *getUnit(Type type);
+
+    int getEarthSoldierCount();
+
+    int getEarthTankCount();
+
+    int getEarthGunneryCount();
 };
 
 

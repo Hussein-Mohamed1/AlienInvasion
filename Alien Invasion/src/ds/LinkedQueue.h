@@ -53,6 +53,7 @@ class LinkedQueue : public QueueADT<T> {
 private:
     Node<T> *backPtr{nullptr};
     Node<T> *frontPtr{nullptr};
+    int itemCount{0};
 public:
     LinkedQueue();
 
@@ -63,6 +64,10 @@ public:
     bool dequeue(T &frntEntry);
 
     bool peek(T &frntEntry) const;
+
+    int getCount() const {
+        return itemCount;
+    }
 
     ~LinkedQueue();
 };
@@ -105,6 +110,9 @@ Output: True if the operation is successful; otherwise false.
 
 template<typename T>
 bool LinkedQueue<T>::enqueue(const T &newEntry) {
+
+    itemCount++;
+
     Node<T> *newNodePtr = new Node<T>(newEntry);
     // Insert the new node
     if (isEmpty())    //special case if this is the first node to insert
@@ -133,7 +141,6 @@ template<typename T>
 bool LinkedQueue<T>::dequeue(T &frntEntry) {
     if (isEmpty())
         return false;
-
     Node<T> *nodeToDeletePtr = frontPtr;
     frntEntry = frontPtr->getItem();
     frontPtr = frontPtr->getNext();
@@ -147,6 +154,8 @@ bool LinkedQueue<T>::dequeue(T &frntEntry) {
 
     // Free memory reserved for the dequeued node
     delete nodeToDeletePtr;
+
+    itemCount--;
 
     return true;
 }

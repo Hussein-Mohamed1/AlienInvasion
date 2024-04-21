@@ -17,11 +17,9 @@ bool alienArmy::addUnit(unit *AlienUnit) {
         switch (AlienUnit->getType()) {
             case alienSoldier :
                 SoliderUnits.enqueue(dynamic_cast<ASolider *>(AlienUnit));
-                alienSoldierCount++;
                 return true;
             case DronePair:
                 DroneUnits.enqueue(dynamic_cast<Drone *> (AlienUnit));
-                alienDroneCount++;
                 return true;
             case MonsterType :
                 Monster *MonsterUnit = dynamic_cast<Monster *>(AlienUnit);
@@ -33,12 +31,11 @@ bool alienArmy::addUnit(unit *AlienUnit) {
 }
 
 
-
 void alienArmy::print() {
     LinkedQueue<ASolider *> TempASlist;
     ASolider *soldier;
     cout << "======================== Alien Army Alive units ==================================\n";
-    cout << "👽 Alien Soldier Count is: " << getAlienSoldierCount() << endl;
+    cout << "👽 Alien Soldier Count is: " << SoliderUnits.getCount() << endl;
     cout << "AS [ ";
     while (SoliderUnits.dequeue(soldier)) {
         cout << soldier->getId() << ", ";
@@ -49,7 +46,7 @@ void alienArmy::print() {
         SoliderUnits.enqueue(soldier);
 
 
-    cout << "👽 Alien Drone Count is: " << getAlienDroneCount() << endl;
+    cout << "👽 Alien Drone Count is: " << DroneUnits.getCount() << endl;
     cout << "AD [ ";
     Drone *tempDrone{nullptr};
     DoublyLinkedQueue<Drone *> tempDroneQueue;
@@ -61,7 +58,7 @@ void alienArmy::print() {
     while (tempDroneQueue.dequeue(tempDrone))
         DroneUnits.enqueue(tempDrone);
 
-    cout << "👽 Alien Monster Count is: " << getCurrentMonstersIndex() + 1 << endl;
+    cout << "👽 Alien Monster Count is: " << currentMonstersIndex + 1 << endl;
     cout << "AM [ ";
     for (int i = 0; i <= currentMonstersIndex; ++i) {
         cout << MonsterUnits[currentMonstersIndex]->getId() << ", ";
@@ -104,32 +101,34 @@ unit *alienArmy::getUnit(Type type) {
         case alienSoldier: {
             ASolider *temp{nullptr};
             if (SoliderUnits.dequeue(temp))
-                alienSoldierCount--;
-            return temp;
+                return temp;
+            else return nullptr;
         }
         case DronePair: {
             Drone *temp{nullptr};
             if (DroneUnits.dequeue(temp))
-                alienDroneCount--;
-            return temp;
+                return temp;
+            else return nullptr;
         }
         case MonsterType: {
             if (currentMonstersIndex != -1)
                 return MonsterUnits[currentMonstersIndex--];
+            else return nullptr;
         }
     };
+    return nullptr;
 }
 
-int alienArmy::getCurrentMonstersIndex() const {
+int alienArmy::getAlienDroneCount() {
+    return DroneUnits.getCount();
+}
+
+int alienArmy::getAlienSoldierCount() {
+    return SoliderUnits.getCount();
+}
+
+int alienArmy::getCurrentMonstersIndex() {
     return currentMonstersIndex;
-}
-
-int alienArmy::getAlienSoldierCount() const {
-    return alienSoldierCount;
-}
-
-int alienArmy::getAlienDroneCount() const {
-    return alienDroneCount;
 }
 
 
