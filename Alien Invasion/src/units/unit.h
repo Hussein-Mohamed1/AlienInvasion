@@ -25,12 +25,15 @@ protected:
     int attackCapacity;
     simulationManager *simPtr;
     int StillInHealingList;
+    const int OriginalHealth;
 public:
     unit(int id, Type type, int joinTime, double health, double power, int attackCapacity, simulationManager *simPtr);
 
     virtual bool damageEnemy(unit *);
 
     virtual void print() const;
+
+    int GetOriginalHealth() const;
 
     int getId() const;
 

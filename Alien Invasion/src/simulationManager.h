@@ -32,8 +32,7 @@ protected:
     LinkedQueue<unit *> KilledList;
     randGen *RandomGenerator;
     ArrayStack < HealUnit*> HealList;
-    LinkedQueue<unit*> UnitMaintenceList;
-    int SoldierCounter;
+    LinkedQueue<unit*> UnitMaintenceList;  
 public:
     static void intro();
 
