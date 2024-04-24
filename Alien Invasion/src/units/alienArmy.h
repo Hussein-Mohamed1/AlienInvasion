@@ -21,15 +21,10 @@ class alienArmy : public Army {
     int currentMonstersIndex{-1};
     int alienSoldierCount{0};
     int alienDroneCount{0};
-    int aliendestructedSoldierCount{ 0 };
-    int aliendestructedMonsterCount{ 0 };
-    int aliendestructedDroneCount{ 0 };
+    int alienDestructedSoldierCount{0};
+    int alienDestructedMonsterCount{0};
+    int alienDestructedDroneCount{0};
 public:
-    int getCurrentMonstersIndex() const;
-
-    int getAlienSoldierCount() const;
-
-    int getAlienDroneCount() const;
 
     int getAliendestructedMonsterCount() const;
 
@@ -50,7 +45,7 @@ public:
 
     int getAlienSoldierCount();
 
-    int getCurrentMonstersIndex();
+    int getCurrentMonstersIndex() const;
 
     unit *getRandomUnit();
 };

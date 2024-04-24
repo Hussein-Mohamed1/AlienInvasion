@@ -99,21 +99,27 @@ int alienArmy::getAlienSoldierCount() {
     return SoliderUnits.getCount();
 }
 
-int alienArmy::getCurrentMonstersIndex() {
+int alienArmy::getCurrentMonstersIndex() const {
     return currentMonstersIndex;
 }
 
 
 int alienArmy::getAliendestructedMonsterCount() const {
-    return aliendestructedMonsterCount;
+    return alienDestructedMonsterCount;
 }
 
 int alienArmy::getAliendestructedSoldierCount() const {
-    return aliendestructedSoldierCount;
+    return alienDestructedSoldierCount;
 }
 
 int alienArmy::getAliendestructedDroneCount() const {
-    return aliendestructedDroneCount;
+    return alienDestructedDroneCount;
+}
+
+/// @details returns a randomUnit and removes it from its adt.
+unit *alienArmy::getRandomUnit() {
+    auto random_number = rand() % 3;
+    return getUnit(static_cast<Type>(random_number));
 }
 
 unit *alienArmy::getRandomUnit() {

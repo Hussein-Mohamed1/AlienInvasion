@@ -78,7 +78,7 @@ void earthArmy::print() {
             cout << tempTank->getId() << ", ";
             tempTankList.push(tempTank);
         }
-        
+
     }
     cout << "]\n";
     while (tempTankList.pop(tempTank))
@@ -127,6 +127,7 @@ int earthArmy::getEarthTankCount() {
 int earthArmy::getEarthGunneryCount() {
     return EGlist.getCount();
 }
+
 int earthArmy::getEarthdestructedGunneryCount() const {
     return earthdestructedGunneryCount;
 }
@@ -137,4 +138,10 @@ int earthArmy::getEarthdestructedSoldierCount() const {
 
 int earthArmy::getEarthdestructedTankCount() const {
     return earthdestructedTankCount;
+}
+
+/// @details returns a randomUnit and removes it from its adt.
+unit *earthArmy::getRandomUnit() {
+    auto random_number = rand() % 3;
+    return getUnit(static_cast<Type>(random_number));
 }
