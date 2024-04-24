@@ -7,7 +7,6 @@
 #include "./units/alienArmy.h"
 #include "./units/earthArmy.h"
 #include "./units/unit.h"
-#include "windows.h"
 #include "iostream"
 
 simulationManager::simulationManager(operationMode operationModeVal) : operationModeVal(operationModeVal) {
@@ -28,23 +27,6 @@ simulationManager::simulationManager(operationMode operationModeVal) : operation
     OutputFile << "Td     ID      Tj      Df      Dd      Db" << endl;
 }
 
-void simulationManager::updateSimulation(int timestep) {
-void simulationManager::handleUnit(unit *attackingUnit, unit *&defendingUnit, Army *defendingArmy) {
-    bool enqueuedOnce = false;
-    if (attackingUnit) {
-        for (int i = 0; i < attackingUnit->getAttackCapacity(); ++i) {
-            defendingUnit = defendingArmy->getRandomUnit();
-            if (attackingUnit->damageEnemy(defendingUnit)) {
-                showStats(attackingUnit, defendingUnit);
-                if (!enqueuedOnce) {
-                    enqueuedOnce = true;
-                    tempList.enqueue(attackingUnit);
-                }
-                tempList.enqueue(defendingUnit);
-            }
-        }
-    }
-}
 
 void simulationManager::updateSimulation(int timestep) {
     manageAdding(timestep);
@@ -96,7 +78,8 @@ void simulationManager::addNewUnit(unit *newUnit) {
 void simulationManager::showStats(unit *AttackingUnit, unit *DamagedUnit) const {
     if (operationModeVal == Interactive)
         if (AttackingUnit && DamagedUnit)
-            cout << AttackingUnit->getId() << " " << AttackingUnit->getType() << " has attacked" << DamagedUnit->getId()
+            cout << AttackingUnit->getId() << " " << AttackingUnit->getType() << " has attacked"
+                 << DamagedUnit->getId()
                  << " " << DamagedUnit->getType() << endl;
 }
 
@@ -273,144 +256,125 @@ void simulationManager::printTempList() {
         tempList.enqueue(tempUnit);
     }
 }
-void simulationManager::loadtoOutputFile(LinkedQueue<unit> killedList)
-{
-    OutputFile << "Td" << "     " << "ID" << "     " << "Tj" << "     " << "Df" << "     " << "Dd" << "     " << "Db" << endl;
+
+void simulationManager::loadtoOutputFile(LinkedQueue<unit> killedList) {
+    OutputFile << "Td" << "     " << "ID" << "     " << "Tj" << "     " << "Df" << "     " << "Dd" << "     "
+               << "Db" << endl;
     unit killedU;
-    while (killedList.dequeue(killedU))
-    {
-        if (killedU.getType() == EarthSoldier || killedU.getType() == Gunnery || killedU.getType() == EarthTank)
-        {
-void simulationManager::ManageHealing()    /// !!!!!!!!!! When Insert in PriQueue observe that the decleartion was changed for UML
-{
+    while (killedList.dequeue(killedU)) {
+        if (killedU.getType() == EarthSoldier || killedU.getType() == Gunnery || killedU.getType() == EarthTank) {
+            void
+            simulationManager::ManageHealing()    /// !!!!!!!!!! When Insert in PriQueue observe that the decleartion was changed for UML
+            {
 
-    HealUnit* Healer;
-    if (!HealList.pop(Healer))
-        return;
-    int Cap = Healer->getAttackCapacity();
+                HealUnit *Healer;
+                if (!HealList.pop(Healer))
+                    return;
+                int Cap = Healer->getAttackCapacity();
 
 
-    LinkedQueue<unit* > T;
-    LinkedQueue<unit* > tank;
+                LinkedQueue<unit *> T;
+                LinkedQueue<unit *> tank;
 
-    priQueue<unit*>Soldiers;
+                priQueue<unit *> Soldiers;
 
-    while (!UnitMaintenceList.isEmpty())
-    {
-        unit* Inj;
-        UnitMaintenceList.dequeue(Inj);
-        if (Inj->getType() == EarthSoldier)
-        {
-            Soldiers.enqueue(Inj, Inj->getHealth(), 1);
-        }
-        else if (Inj->getType() == EarthTank)
-        {
-            tank.enqueue(Inj);
-        }
-        else
-            T.enqueue(Inj);
+                while (!UnitMaintenceList.isEmpty()) {
+                    unit *Inj;
+                    UnitMaintenceList.dequeue(Inj);
+                    if (Inj->getType() == EarthSoldier) {
+                        Soldiers.enqueue(Inj, Inj->getHealth(), 1);
+                    } else if (Inj->getType() == EarthTank) {
+                        tank.enqueue(Inj);
+                    } else
+                        T.enqueue(Inj);
 
-    }
-
-    while (0<Cap && !Soldiers.isEmpty())
-    {
-        unit* InjSol;
-        int p;
-      Soldiers.dequeue(InjSol , p);
-
-            if (InjSol->GetStillHealing() == 10)
-                KilledList.enqueue(InjSol);
-
-            else {
-                Healer->Heal(InjSol);
-
-                if (InjSol->getHealth() > (0.2 * InjSol->GetOriginalHealth()))
-                {
-                    addNewUnit(InjSol);
                 }
 
-                else {
-                    tempList.enqueue(InjSol);
+                while (0 < Cap && !Soldiers.isEmpty()) {
+                    unit *InjSol;
+                    int p;
+                    Soldiers.dequeue(InjSol, p);
+
+                    if (InjSol->GetStillHealing() == 10)
+                        KilledList.enqueue(InjSol);
+
+                    else {
+                        Healer->Heal(InjSol);
+
+                        if (InjSol->getHealth() > (0.2 * InjSol->GetOriginalHealth())) {
+                            addNewUnit(InjSol);
+                        } else {
+                            tempList.enqueue(InjSol);
+                        }
+                        InjSol->UpdateStillHealing();
+                        Cap--;
+                    }
                 }
-                InjSol->UpdateStillHealing();
-                Cap--;
+
+
+                while (0 < Cap && !tank.isEmpty()) {
+                    unit *InjTank;
+                    tank.dequeue(InjTank);
+
+
+                    if (InjTank->GetStillHealing() == 10)
+                        KilledList.enqueue(InjTank);
+
+                    else {
+                        Healer->Heal(InjTank);
+
+                        if (InjTank->getHealth() > (0.2 * InjTank->GetOriginalHealth())) {
+                            addNewUnit(InjTank);
+                        } else {
+                            tempList.enqueue(InjTank);
+                        }
+                        InjTank->UpdateStillHealing();
+                        Cap--;
+                    }
+                }
+
+
+                while (!Soldiers.isEmpty()) {
+                    unit *S;
+                    int p;
+                    Soldiers.dequeue(S, p);
+                    UnitMaintenceList.enqueue(S);
+                }
+                while (!tank.isEmpty()) {
+                    unit *t;
+                    tank.dequeue(t);
+                    UnitMaintenceList.enqueue(t);
+                }
+                while (!T.isEmpty()) {
+                    unit *t;
+                    T.dequeue(t);
+                    UnitMaintenceList.enqueue(t);
+                }
+
+
+                while (!tempList.isEmpty()) {
+                    unit *T;
+                    tempList.dequeue(T);
+                    UnitMaintenceList.enqueue(T);
+                }
+
+                delete Healer;
             }
-    }
 
-
-
-
-   while (0 < Cap && !tank.isEmpty())
-   {
-       unit* InjTank;
-       tank.dequeue(InjTank);
-
-
-           if (InjTank->GetStillHealing() == 10)
-               KilledList.enqueue(InjTank);
-
-           else {
-               Healer->Heal(InjTank);
-
-               if (InjTank->getHealth() > (0.2 * InjTank->GetOriginalHealth()))
-               {
-                   addNewUnit(InjTank);
-               }
-
-               else
-               {
-                   tempList.enqueue(InjTank);
-               }
-               InjTank->UpdateStillHealing();
-               Cap--;
-           }
-   }
-
-
-   while (!Soldiers.isEmpty())
-   {
-       unit* S;
-       int p;
-       Soldiers.dequeue(S,p);
-       UnitMaintenceList.enqueue(S);
-   }
-   while (!tank.isEmpty())
-   {
-       unit* t;
-       tank.dequeue(t);
-       UnitMaintenceList.enqueue(t);
-   }
-   while (!T.isEmpty())
-   {
-       unit* t;
-       T.dequeue(t);
-       UnitMaintenceList.enqueue(t);
-   }
-
-
-
-    while (!tempList.isEmpty())
-    {
-        unit* T;
-        tempList.dequeue(T);
-        UnitMaintenceList.enqueue(T);
-    }
-
-    delete Healer;
-}
-
-            OutputFile << killedU.getDestructionTime() << "     " << killedU.getId() << "     " << killedU.getJoinTime() << "     " << killedU.getDf() << "     " << killedU.getDd() << "     " << killedU.getDb() << endl;
+            OutputFile << killedU.getDestructionTime() << "     " << killedU.getId() << "     "
+                       << killedU.getJoinTime() << "     " << killedU.getDf() << "     " << killedU.getDd()
+                       << "     " << killedU.getDb() << endl;
             EDfcount++;
             EDdcount++;
             EDbcount++;
             sumOfEDf += killedU.getDf();
             sumOfEDd += killedU.getDd();
             sumOfEDb += killedU.getDb();
-        }
-        else
-        {
+        } else {
 
-            OutputFile << killedU.getDestructionTime() << "     " << killedU.getId() << "     " << killedU.getJoinTime() << "     " << killedU.getDf() << "     " << killedU.getDd() << "     " << killedU.getDb() << endl;
+            OutputFile << killedU.getDestructionTime() << "     " << killedU.getId() << "     "
+                       << killedU.getJoinTime() << "     " << killedU.getDf() << "     " << killedU.getDd()
+                       << "     " << killedU.getDb() << endl;
             ADfcount++;
             ADdcount++;
             ADbcount++;
@@ -427,13 +391,24 @@ void simulationManager::ManageHealing()    /// !!!!!!!!!! When Insert in PriQueu
     OutputFile << "total number of ES---> " << earthArmyPtr->getEarthSoldierCount() << endl;
     OutputFile << "total number of ET---> " << earthArmyPtr->getEarthTankCount() << endl;
     OutputFile << "total number of EG---> " << earthArmyPtr->getEarthGunneryCount() << endl;
-    OutputFile << "percentage of destructed ES----> " << (double(earthArmyPtr->getEarthdestructedSoldierCount()) / earthArmyPtr->getEarthSoldierCount()) * 100 << endl;
-    OutputFile << "percentage of destructed ET----> " << (double(earthArmyPtr->getEarthdestructedTankCount()) / earthArmyPtr->getEarthTankCount()) * 100 << endl;
-    OutputFile << "percentage of destructed EG----> " << (double(earthArmyPtr->getEarthdestructedGunneryCount()) / earthArmyPtr->getEarthGunneryCount()) * 100 << endl;
-    int totaldestructedEarthArmy = earthArmyPtr->getEarthdestructedSoldierCount() + earthArmyPtr->getEarthdestructedTankCount() + earthArmyPtr->getEarthdestructedGunneryCount();
-    int totalEarthArmy = earthArmyPtr->getEarthSoldierCount() + earthArmyPtr->getEarthTankCount() + earthArmyPtr->getEarthGunneryCount();
-    OutputFile << "percentage of total destructed Earth units----> " << (double(totaldestructedEarthArmy) / totalEarthArmy) * 100 << endl;
-    OutputFile << "percentage of total Healed units----> " << (double(numofHealedunits) / totalEarthArmy) * 100 << endl;
+    OutputFile << "percentage of destructed ES----> "
+               << (double(earthArmyPtr->getEarthdestructedSoldierCount()) / earthArmyPtr->getEarthSoldierCount()) *
+                  100 << endl;
+    OutputFile << "percentage of destructed ET----> "
+               << (double(earthArmyPtr->getEarthdestructedTankCount()) / earthArmyPtr->getEarthTankCount()) * 100
+               << endl;
+    OutputFile << "percentage of destructed EG----> "
+               << (double(earthArmyPtr->getEarthdestructedGunneryCount()) / earthArmyPtr->getEarthGunneryCount()) *
+                  100 << endl;
+    int totaldestructedEarthArmy =
+            earthArmyPtr->getEarthdestructedSoldierCount() + earthArmyPtr->getEarthdestructedTankCount() +
+            earthArmyPtr->getEarthdestructedGunneryCount();
+    int totalEarthArmy = earthArmyPtr->getEarthSoldierCount() + earthArmyPtr->getEarthTankCount() +
+                         earthArmyPtr->getEarthGunneryCount();
+    OutputFile << "percentage of total destructed Earth units----> "
+               << (double(totaldestructedEarthArmy) / totalEarthArmy) * 100 << endl;
+    OutputFile << "percentage of total Healed units----> " << (double(numofHealedunits) / totalEarthArmy) * 100
+               << endl;
     OutputFile << "Average of Df---> " << sumOfEDf / EDfcount << endl;
     OutputFile << "Average of Dd---> " << sumOfEDd / EDdcount << endl;
     OutputFile << "Average of Db---> " << sumOfEDb / EDbcount << endl;
@@ -445,12 +420,22 @@ void simulationManager::ManageHealing()    /// !!!!!!!!!! When Insert in PriQueu
     OutputFile << "total number of AS---> " << alienArmyPtr->getAlienSoldierCount() << endl;
     OutputFile << "total number of AD---> " << alienArmyPtr->getAlienDroneCount() << endl;
     OutputFile << "total number of AM---> " << alienArmyPtr->getCurrentMonstersIndex() << endl;
-    OutputFile << "percentage of destructed AS----> " << (double(alienArmyPtr->getAliendestructedSoldierCount()) / alienArmyPtr->getAlienSoldierCount()) * 100 << endl;
-    OutputFile << "percentage of destructed AD----> " << (double(alienArmyPtr->getAliendestructedDroneCount()) / alienArmyPtr->getAlienDroneCount()) * 100 << endl;
-    OutputFile << "percentage of destructed AM----> " << (double(alienArmyPtr->getAliendestructedMonsterCount()) / alienArmyPtr->getCurrentMonstersIndex()) * 100 << endl;
-    int totaldestructedAlienArmy = alienArmyPtr->getAliendestructedSoldierCount() + alienArmyPtr->getAliendestructedDroneCount() + alienArmyPtr->getAliendestructedMonsterCount();
-    int totalAlienArmy = alienArmyPtr->getAlienSoldierCount() + alienArmyPtr->getAlienDroneCount() + alienArmyPtr->getCurrentMonstersIndex();
-    OutputFile << "percentage of total destructed Alien units----> " << (double(totaldestructedAlienArmy) / totalAlienArmy) * 100 << endl;
+    OutputFile << "percentage of destructed AS----> "
+               << (double(alienArmyPtr->getAliendestructedSoldierCount()) / alienArmyPtr->getAlienSoldierCount()) *
+                  100 << endl;
+    OutputFile << "percentage of destructed AD----> "
+               << (double(alienArmyPtr->getAliendestructedDroneCount()) / alienArmyPtr->getAlienDroneCount()) * 100
+               << endl;
+    OutputFile << "percentage of destructed AM----> " <<
+               (double(alienArmyPtr->getAliendestructedMonsterCount()) / alienArmyPtr->getCurrentMonstersIndex()) *
+               100 << endl;
+    int totaldestructedAlienArmy =
+            alienArmyPtr->getAliendestructedSoldierCount() + alienArmyPtr->getAliendestructedDroneCount() +
+            alienArmyPtr->getAliendestructedMonsterCount();
+    int totalAlienArmy = alienArmyPtr->getAlienSoldierCount() + alienArmyPtr->getAlienDroneCount() +
+                         alienArmyPtr->getCurrentMonstersIndex();
+    OutputFile << "percentage of total destructed Alien units----> "
+               << (double(totaldestructedAlienArmy) / totalAlienArmy) * 100 << endl;
     OutputFile << "Average of Df---> " << sumOfADf / ADfcount << endl;
     OutputFile << "Average of Dd---> " << sumOfADd / ADdcount << endl;
     OutputFile << "Average of Db---> " << sumOfADb / ADbcount << endl;
@@ -460,8 +445,7 @@ void simulationManager::ManageHealing()    /// !!!!!!!!!! When Insert in PriQueu
 
 }
 
-simulationManager::~simulationManager()
-{
+simulationManager::~simulationManager() {
     if (OutputFile.is_open()) {
         OutputFile.close();
     }
