@@ -121,3 +121,7 @@ unit *alienArmy::getRandomUnit() {
     auto random_number = rand() % 3;
     return getUnit(static_cast<Type>(random_number));
 }
+
+unit *alienArmy::getRandomUnit() {
+    return nullptr;
+}
