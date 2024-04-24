@@ -13,8 +13,7 @@
 //Unless spesificed by the stack user, the default size is 100
 template<typename T>
 class ArrayStack : public StackADT<T> {
-    enum {
-        MAX_SIZE = 1000
+    enum {        MAX_SIZE = 1000
     };
 private:
     T items[MAX_SIZE];        // Array of stack items

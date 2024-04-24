@@ -102,3 +102,16 @@ int alienArmy::getAlienSoldierCount() {
 int alienArmy::getCurrentMonstersIndex() {
     return currentMonstersIndex;
 }
+
+
+int alienArmy::getAliendestructedMonsterCount() const {
+    return aliendestructedMonsterCount;
+}
+
+int alienArmy::getAliendestructedSoldierCount() const {
+    return aliendestructedSoldierCount;
+}
+
+int alienArmy::getAliendestructedDroneCount() const {
+    return aliendestructedDroneCount;
+}

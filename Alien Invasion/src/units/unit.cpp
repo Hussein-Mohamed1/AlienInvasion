@@ -5,7 +5,35 @@
 
 #include "../simulationManager.h"
 #include "unit.h"
-
+unit::unit() {}
+void unit::setDestructionTime(int t)
+{
+    Td = t;
+}
+int unit::getDestructionTime() const
+{
+    return Td;
+}
+void unit::setfirstAttackedTime(int t)
+{
+    Ta = t;
+}
+int unit::getfirstAttackedTime() const
+{
+    return Ta;
+}
+int unit::getDf() const
+{
+    return Ta - Tj;
+}
+int unit::getDd() const
+{
+    return Td - Ta;
+}
+int unit::getDb() const
+{
+    return Td - Tj;
+}
 void unit::print() const {
     cout << "ID: " << ID << " type: " << [this]() -> string {
         switch (type) {
@@ -84,9 +112,9 @@ void unit::setSimPtr(simulationManager *nSimPtr) {
     unit::simPtr = nSimPtr;
 }
 
-unit::unit(int id, Type type, int joinTime, double health, double power, int attackCapacity, simulationManager *simPtr)
-        : ID(id), type(type), joinTime(joinTime), health(health), power(power), attackCapacity(attackCapacity),
-          simPtr(simPtr) {}
+unit::unit(int id, Type type, int joinTime, double health, double power, int attackCapacity, simulationManager* simPtr)
+    : ID(id), type(type), joinTime(joinTime), health(health), power(power), attackCapacity(attackCapacity),
+    simPtr(simPtr), StillInHealingList(0) , OriginalHealth(health){}
 
 bool unit::damageEnemy(unit *Enemy) {
     if (Enemy) {
@@ -98,4 +126,16 @@ bool unit::damageEnemy(unit *Enemy) {
         return true;
     }
     return false;
+}
+void  unit::UpdateStillHealing()
+{
+    StillInHealingList++;
+}
+int unit::GetStillHealing()  const
+{
+    return StillInHealingList;
+}
+int unit::GetOriginalHealth() const
+{
+    return OriginalHealth;
 }

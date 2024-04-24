@@ -60,9 +60,6 @@
     <ClInclude Include="src\units\Monster.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ds\DoublyLinkedQueue.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\units\alienArmy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -73,6 +70,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\units\Tank.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\units\HealUnit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ds\DoublyLinkedQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -101,9 +104,6 @@
     <ClCompile Include="src\units\Monster.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -118,6 +118,12 @@
     </ClCompile>
     <ClCompile Include="src\units\Tank.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\units\HealUnit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\units\earthArmy.cpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

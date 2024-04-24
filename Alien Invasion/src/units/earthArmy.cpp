@@ -78,6 +78,7 @@ void earthArmy::print() {
             cout << tempTank->getId() << ", ";
             tempTankList.push(tempTank);
         }
+        
     }
     cout << "]\n";
     while (tempTankList.pop(tempTank))
@@ -125,4 +126,15 @@ int earthArmy::getEarthTankCount() {
 
 int earthArmy::getEarthGunneryCount() {
     return EGlist.getCount();
+}
+int earthArmy::getEarthdestructedGunneryCount() const {
+    return earthdestructedGunneryCount;
+}
+
+int earthArmy::getEarthdestructedSoldierCount() const {
+    return earthdestructedSoldierCount;
+}
+
+int earthArmy::getEarthdestructedTankCount() const {
+    return earthdestructedTankCount;
 }
