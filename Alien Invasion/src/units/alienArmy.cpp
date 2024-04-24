@@ -115,3 +115,7 @@ int alienArmy::getAliendestructedSoldierCount() const {
 int alienArmy::getAliendestructedDroneCount() const {
     return aliendestructedDroneCount;
 }
+
+unit *alienArmy::getRandomUnit() {
+    return nullptr;
+}

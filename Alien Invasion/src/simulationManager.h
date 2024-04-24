@@ -51,6 +51,7 @@ public:
     static void intro();
 
     simulationManager(operationMode); //initializes the simulation
+    ~simulationManager();
 
     void updateSimulation(int);
 
@@ -60,7 +61,7 @@ public:
 
     void ManageHealing();
 
-    void loadtoOutputFile(LinkedQueue<unit> KilledList);
+    void loadtoOutputFile(LinkedQueue<unit *> KilledList);
 
     void showStats(unit *, unit *) const;
 

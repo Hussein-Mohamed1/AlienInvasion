@@ -5,35 +5,37 @@
 
 #include "../simulationManager.h"
 #include "unit.h"
-unit::unit() {}
-void unit::setDestructionTime(int t)
-{
-    Td = t;
+
+unit::unit() {};
+
+void unit::setDestructionTime(int t) {
+    TimeDeath = t;
 }
-int unit::getDestructionTime() const
-{
-    return Td;
+
+int unit::getDestructionTime() const {
+    return TimeDeath;
 }
-void unit::setfirstAttackedTime(int t)
-{
-    Ta = t;
+
+void unit::setfirstAttackedTime(int t) {
+    TimeFirstAttacked = t;
 }
-int unit::getfirstAttackedTime() const
-{
-    return Ta;
+
+int unit::getfirstAttackedTime() const {
+    return TimeFirstAttacked;
 }
-int unit::getDf() const
-{
-    return Ta - Tj;
+
+int unit::getDf() const {
+    return TimeFirstAttacked - this->joinTime;
 }
-int unit::getDd() const
-{
-    return Td - Ta;
+
+int unit::getDd() const {
+    return TimeDeath - TimeFirstAttacked;
 }
-int unit::getDb() const
-{
-    return Td - Tj;
+
+int unit::getDb() const {
+    return TimeDeath - this->joinTime;
 }
+
 void unit::print() const {
     cout << "ID: " << ID << " type: " << [this]() -> string {
         switch (type) {
@@ -112,9 +114,9 @@ void unit::setSimPtr(simulationManager *nSimPtr) {
     unit::simPtr = nSimPtr;
 }
 
-unit::unit(int id, Type type, int joinTime, double health, double power, int attackCapacity, simulationManager* simPtr)
-    : ID(id), type(type), joinTime(joinTime), health(health), power(power), attackCapacity(attackCapacity),
-    simPtr(simPtr), StillInHealingList(0) , OriginalHealth(health){}
+unit::unit(int id, Type type, int joinTime, double health, double power, int attackCapacity, simulationManager *simPtr)
+        : ID(id), type(type), joinTime(joinTime), health(health), power(power), attackCapacity(attackCapacity),
+          simPtr(simPtr), StillInHealingList(false), OriginalHealth(health) {}
 
 bool unit::damageEnemy(unit *Enemy) {
     if (Enemy) {
@@ -127,15 +129,15 @@ bool unit::damageEnemy(unit *Enemy) {
     }
     return false;
 }
-void  unit::UpdateStillHealing()
-{
+
+void unit::UpdateStillHealing() {
     StillInHealingList++;
 }
-int unit::GetStillHealing()  const
-{
+
+int unit::GetStillHealing() const {
     return StillInHealingList;
 }
-int unit::GetOriginalHealth() const
-{
+
+int unit::GetOriginalHealth() const {
     return OriginalHealth;
 }

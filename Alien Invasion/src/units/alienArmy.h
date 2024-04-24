@@ -51,6 +51,8 @@ public:
     int getAlienSoldierCount();
 
     int getCurrentMonstersIndex();
+
+    unit *getRandomUnit();
 };
 
 
