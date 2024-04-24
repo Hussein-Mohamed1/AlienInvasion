@@ -19,22 +19,29 @@ class unit {
 protected:
     int ID;
     Type type;
-    int Tj;
+    int joinTime;
     double health;
     double power;
     int attackCapacity;
     simulationManager *simPtr;
+    int StillInHealingList;
+    const int OriginalHealth;
     int Ta;
     int Td;
 public:
-    unit();
     unit(int id, Type type, int joinTime, double health, double power, int attackCapacity, simulationManager *simPtr);
 
     virtual bool damageEnemy(unit *);
 
     virtual void print() const;
 
+    int GetOriginalHealth() const;
+
     int getId() const;
+
+    int GetStillHealing () const;
+
+    void UpdateStillHealing();
 
     void setId(int id);
 

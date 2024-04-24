@@ -13,7 +13,6 @@ int main() {
             simManager.updateSimulation(i);
             cout << "Current TimeStep is:" << i;
             cout << "\n🔢 Current Random num is " << randNum << "\n";
-            simManager.phase12TestFunction(randNum);
             cout << "⏩ Press Enter to proceed to the next time step..." << endl;
             cin.get();
         }

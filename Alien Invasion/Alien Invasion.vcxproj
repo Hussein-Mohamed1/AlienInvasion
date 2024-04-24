@@ -137,6 +137,7 @@
     <ClCompile Include="src\units\earthArmy.cpp" />
     <ClCompile Include="src\units\Egunnery.cpp" />
     <ClCompile Include="src\units\Esoldier.cpp" />
+    <ClCompile Include="src\units\HealUnit.cpp" />
     <ClCompile Include="src\units\Monster.cpp" />
     <ClCompile Include="src\units\Tank.cpp" />
     <ClCompile Include="src\units\unit.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="src\units\earthArmy.h" />
     <ClInclude Include="src\units\Egunnery.h" />
     <ClInclude Include="src\units\Esoldier.h" />
+    <ClInclude Include="src\units\HealUnit.h" />
     <ClInclude Include="src\units\Monster.h" />
     <ClInclude Include="src\units\Tank.h" />
     <ClInclude Include="src\units\unit.h" />
