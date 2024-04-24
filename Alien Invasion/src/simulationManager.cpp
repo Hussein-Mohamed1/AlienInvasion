@@ -450,3 +450,20 @@ simulationManager::~simulationManager() {
         OutputFile.close();
     }
 }
+
+void simulationManager::handleUnit(unit *attackingUnit, unit *&defendingUnit, Army *defendingArmy) {
+    bool enqueuedOnce = false;
+    if (attackingUnit) {
+        for (int i = 0; i < attackingUnit->getAttackCapacity(); ++i) {
+            defendingUnit = defendingArmy->getRandomUnit();
+            if (attackingUnit->damageEnemy(defendingUnit)) {
+                showStats(attackingUnit, defendingUnit);
+                if (!enqueuedOnce) {
+                    enqueuedOnce = true;
+                    tempList.enqueue(attackingUnit);
+                }
+                tempList.enqueue(defendingUnit);
+            }
+        }
+    }
+}

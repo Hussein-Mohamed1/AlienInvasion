@@ -26,10 +26,10 @@ class earthArmy : public Army {
     alienArmy *alienArmyPtr;
     int earthGunneryCount{0};
     int earthSoldierCount{0};
-    int earthTankCount{ 0 };
-    int earthdestructedGunneryCount{ 0 };
-    int earthdestructedSoldierCount{ 0 };
-    int earthdestructedTankCount{ 0 };
+    int earthTankCount{0};
+    int earthdestructedGunneryCount{0};
+    int earthdestructedSoldierCount{0};
+    int earthdestructedTankCount{0};
 public:
 
     int getEarthdestructedGunneryCount() const;
@@ -37,6 +37,7 @@ public:
     int getEarthdestructedSoldierCount() const;
 
     int getEarthdestructedTankCount() const;
+
     unit *getRandomUnit();
 
     unit *Attack(unit *enemy);
