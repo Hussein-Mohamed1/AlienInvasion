@@ -11,14 +11,16 @@
 #include "./units/ASolider.h"
 #include "./units/Monster.h"
 #include "./units/Drone.h"
+#include "HealUnit.h"
 
 using namespace std;
 
 
-randGen::randGen() {
+randGen::randGen(simulationManager *simPtr) : simPtr(simPtr) {
     srand(time(nullptr));
     string S, temps, unitrang[4];
-    fstream *infile = new fstream("./src/test.txt", ios::in);
+    fstream *infile = new fstream(""
+                                  "test.txt", ios::in);
     if (infile->is_open()) {
         getline(*infile, S);
         unitscreated = stoi(S);
@@ -92,42 +94,40 @@ unit *randGen::generatUnit(armyType unitType, int timestep) {
     powerAunit = rand() % int(RangeAP2 - RangeAP1 + 1) + RangeAP1; //randome power of alien unit
     Aattackcap = rand() % (RangeAC2 - RangeAC1 + 1) + RangeAC1;    //randome attackcap of alien unit
     switch (unitType) {
-        case earthUnit:
-        {
+        case earthUnit: {
             num = rand() % 101;
             if (num <= perES) {
-                unit *soldier = new Esoldier(Eid++, timestep, healthEunit, powerEunit, Eattackcap, nullptr);
+                unit *soldier = new Esoldier(Eid++, timestep, healthEunit, powerEunit, Eattackcap, simPtr);
                 return soldier;
             } else if (num <= (perES + perET)) {
-                Tank *tank = new Tank(Eid++, timestep, healthEunit, powerEunit, Eattackcap, nullptr);
+                Tank *tank = new Tank(Eid++, timestep, healthEunit, powerEunit, Eattackcap, simPtr);
                 return tank;
-            } else if(num <= (perES + perET+perEG))
-            {
-                unit *gunnery = new Egunnery(Eid++, timestep, healthEunit, powerEunit, Eattackcap, nullptr);
+            } else if (num <= (perES + perET + perEG)) {
+                unit *gunnery = new Egunnery(Eid++, timestep, healthEunit, powerEunit, Eattackcap, simPtr);
                 return gunnery;
-            }
-            else
-            {
-                //todo generate Health Unit
-            }
-        }
-        case alienUnit: {
-            num = rand() % 101;
-            if (num <= perAS) {
-                unit *soldier = new ASolider(Aid++, timestep, healthAunit, powerAunit, Aattackcap, nullptr);
-                return soldier;
-            } else if (num <= (perAS + perAM)) {
-                unit *monster = new Monster(Aid++, timestep, healthEunit, powerEunit, Eattackcap, nullptr);
-                return monster;
             } else {
-                unit *drone = new Drone(Aid++, timestep, healthEunit, powerEunit, Eattackcap, nullptr);
-                return drone;
+                ///@todo create a healer unit here, hussein!
+                unit *healer = new HealUnit(Eid++, Healer, timestep, healthEunit, powerEunit, Eattackcap, simPtr);
+                return healer;
             }
+            case alienUnit: {
+                num = rand() % 101;
+                if (num <= perAS) {
+                    unit *soldier = new ASolider(Aid++, timestep, healthAunit, powerAunit, Aattackcap, simPtr);
+                    return soldier;
+                } else if (num <= (perAS + perAM)) {
+                    unit *monster = new Monster(Aid++, timestep, healthEunit, powerEunit, Eattackcap, simPtr);
+                    return monster;
+                } else {
+                    unit *drone = new Drone(Aid++, timestep, healthEunit, powerEunit, Eattackcap, simPtr);
+                    return drone;
+                }
+            }
+            default:
+                break;
         }
-        default:
-            break;
+            return nullptr;
     }
-    return nullptr;
 }
 
 bool randGen::creatEarthUnits() const {
@@ -154,4 +154,3 @@ int randGen::getnumofunits() {
 
 int randGen::Eid = 1;
 int randGen::Aid = 2000;
-

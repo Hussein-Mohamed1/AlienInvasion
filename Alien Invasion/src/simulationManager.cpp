@@ -10,11 +10,20 @@
 #include "windows.h"
 #include "iostream"
 
+armyType (*getArmyType)(unit *armyUnit) =[](
+        unit *armyUnit) -> armyType { ///@details just a utility method to get the type of the army
+    if (armyUnit->getType() == EarthSoldier || armyUnit->getType() == EarthTank ||
+        armyUnit->getType() == Gunnery)
+        return earthUnit;
+    else
+        return alienUnit;
+};
+
 simulationManager::simulationManager(operationMode operationModeVal) : operationModeVal(operationModeVal) {
     alienArmyPtr = new alienArmy();
     earthArmyPtr = new earthArmy();
     srand(time(nullptr));
-    RandomGenerator = new randGen;
+    RandomGenerator = new randGen(this);
     OutputFile.open("output.txt", std::ios::app | std::ios::out);
 
     // Check if the file was opened successfully
@@ -30,13 +39,23 @@ simulationManager::simulationManager(operationMode operationModeVal) : operation
 
 
 void simulationManager::updateSimulation(int timestep) {
+    currentTimeStep = timestep;
     manageAdding(timestep);
+
+    emptyTempList();
+    ManageHealing();
+
+    if (operationModeVal == Interactive) {
+        cout << "TimeStep: " << timestep << endl;
+        cout << "Earth Army Units: " << getEarthArmyUnitsCount() << endl;
+        cout << "Alien Army Units: " << getAlienArmyUnitsCount() << endl;
+    }
 
     unit *earthUnit = earthArmyPtr->getRandomUnit();
     unit *alienUnit = alienArmyPtr->getRandomUnit();
 
-    handleUnit(earthUnit, alienUnit, alienArmyPtr);
-    handleUnit(alienUnit, earthUnit, earthArmyPtr);
+    handleUnit(earthUnit);
+    handleUnit(alienUnit);
 }
 
 ///@details adds the unit to the earth army
@@ -79,9 +98,40 @@ void simulationManager::addNewUnit(unit *newUnit) {
 void simulationManager::showStats(unit *AttackingUnit, unit *DamagedUnit) const {
     if (operationModeVal == Interactive)
         if (AttackingUnit && DamagedUnit)
-            cout << AttackingUnit->getId() << " " << AttackingUnit->getType() << " has attacked"
+            cout << "ID:" << AttackingUnit->getId() << ":" << [&AttackingUnit]() -> string {
+                switch (AttackingUnit->getType()) {
+                    case EarthSoldier:
+                        return "Earth Soldier";
+                    case EarthTank:
+                        return "Earth Tank";
+                    case Gunnery:
+                        return "Gunnery";
+                    case alienSoldier:
+                        return "Alien Soldier";
+                    case DronePair:
+                        return "Drone";
+                    case MonsterType:
+                        return "Monster";
+                }
+            }()
+                 << " has attacked unit of ID:"
                  << DamagedUnit->getId()
-                 << " " << DamagedUnit->getType() << endl;
+                 << " " << [&DamagedUnit]() -> string {
+                switch (DamagedUnit->getType()) {
+                    case EarthSoldier:
+                        return "Earth Soldier";
+                    case EarthTank:
+                        return "Earth Tank";
+                    case Gunnery:
+                        return "Gunnery";
+                    case alienSoldier:
+                        return "Alien Soldier";
+                    case DronePair:
+                        return "Drone";
+                    case MonsterType:
+                        return "Monster";
+                }
+            }() << endl;
 }
 
 void simulationManager::manageAdding(int timestep) {
@@ -263,7 +313,8 @@ void simulationManager::loadtoOutputFile(LinkedQueue<unit *> killedList) {
                << "Db" << endl;
     unit *killedU;
     while (killedList.dequeue(killedU)) {
-        if (killedU->getType() == EarthSoldier || killedU->getType() == Gunnery || killedU->getType() == EarthTank) {
+        if (killedU->getType() == EarthSoldier || killedU->getType() == Gunnery ||
+            killedU->getType() == EarthTank) {
             OutputFile << killedU->getDestructionTime() << "     " << killedU->getId() << "     "
                        << killedU->getJoinTime() << "     " << killedU->getDf() << "     " << killedU->getDd()
                        << "     " << killedU->getDb() << endl;
@@ -362,9 +413,9 @@ void simulationManager::ManageHealing() {
 
     priQueue<unit *> Soldiers;
 
-    while (!UnitMaintenceList.isEmpty()) {
+    while (!UnitMaintenanceList.isEmpty()) {
         unit *Inj;
-        UnitMaintenceList.dequeue(Inj);
+        UnitMaintenanceList.dequeue(Inj);
         if (Inj->getType() == EarthSoldier) {
             Soldiers.enqueue(Inj, Inj->getHealth(), 1);
         } else if (Inj->getType() == EarthTank) {
@@ -422,24 +473,24 @@ void simulationManager::ManageHealing() {
         unit *S;
         int p;
         Soldiers.dequeue(S, p);
-        UnitMaintenceList.enqueue(S);
+        UnitMaintenanceList.enqueue(S);
     }
     while (!tank.isEmpty()) {
         unit *t;
         tank.dequeue(t);
-        UnitMaintenceList.enqueue(t);
+        UnitMaintenanceList.enqueue(t);
     }
     while (!T.isEmpty()) {
         unit *t;
         T.dequeue(t);
-        UnitMaintenceList.enqueue(t);
+        UnitMaintenanceList.enqueue(t);
     }
 
 
     while (!tempList.isEmpty()) {
         unit *T;
         tempList.dequeue(T);
-        UnitMaintenceList.enqueue(T);
+        UnitMaintenanceList.enqueue(T);
     }
 
     delete Healer;
@@ -451,19 +502,102 @@ simulationManager::~simulationManager() {
     }
 }
 
-void simulationManager::handleUnit(unit *attackingUnit, unit *&defendingUnit, Army *defendingArmy) {
+void simulationManager::handleUnit(unit *attackingUnit) {
     bool enqueuedOnce = false;
-    if (attackingUnit) {
-        for (int i = 0; i < attackingUnit->getAttackCapacity(); ++i) {
-            defendingUnit = defendingArmy->getRandomUnit();
-            if (attackingUnit->damageEnemy(defendingUnit)) {
-                showStats(attackingUnit, defendingUnit);
-                if (!enqueuedOnce) {
-                    enqueuedOnce = true;
-                    tempList.enqueue(attackingUnit);
-                }
-                tempList.enqueue(defendingUnit);
+    ///@details makes the two units fight each other, but if one of them is null just return them to their armies
+    if (!attackingUnit) { return; }
+    else {
+        unit *secondAttackingDrone{nullptr};
+        unit *defendingUnit{nullptr};
+
+        ///@note if the attacking unit is a drone , pick another drone to attack. if no other drone exists then return the attacking drone to its army;
+        if (attackingUnit->getType() == DronePair) {
+            secondAttackingDrone = alienArmyPtr->getDronePair();
+            if (!secondAttackingDrone) {
+                alienArmyPtr->addUnit(attackingUnit);
+                return;
             }
         }
+
+        for (int i = 0; i < min(attackingUnit->getAttackCapacity(),
+                                secondAttackingDrone ? secondAttackingDrone->getAttackCapacity()
+                                                     : attackingUnit->getAttackCapacity()); ++i) {
+            ///@note if the attacking unit is from the alien army, it will attack an earth unit else pick an alien unit
+            if ((*getArmyType)(attackingUnit) == alienUnit)
+                defendingUnit = earthArmyPtr->getRandomUnit();
+            else
+                defendingUnit = alienArmyPtr->getRandomUnit();
+
+            if (defendingUnit) {
+
+                if (attackingUnit->damageEnemy(defendingUnit)) {
+                    if (operationModeVal == Interactive) {
+                        showStats(attackingUnit, defendingUnit);
+                        if (secondAttackingDrone) {
+                            secondAttackingDrone->damageEnemy(defendingUnit);
+                            showStats(secondAttackingDrone, defendingUnit);
+                        }
+                    }
+
+                    if (!enqueuedOnce) {
+                        enqueuedOnce = true;
+                        tempList.enqueue(attackingUnit);
+                        if (secondAttackingDrone)
+                            tempList.enqueue(secondAttackingDrone);
+                    }
+
+                    tempList.enqueue(defendingUnit);
+                }
+
+            }
+        }
+
+    }
+
+    if (!enqueuedOnce)
+        if ((*getArmyType)(attackingUnit) == alienUnit)
+            alienArmyPtr->addUnit(attackingUnit);
+        else earthArmyPtr->addUnit(attackingUnit);
+
+
+}
+
+void simulationManager::emptyTempList() {
+    unit *attackingUnit{nullptr};
+    unit *defendingUnit{nullptr};
+    while (tempList.dequeue(defendingUnit)) {
+        while (tempList.peek(attackingUnit) && (*getArmyType)(attackingUnit) != (*getArmyType)(defendingUnit)) {
+            tempList.dequeue(attackingUnit);
+            if (attackingUnit->getHealth() <= 0)
+                returnUnitToArmy(attackingUnit);
+            else {
+                attackingUnit->damageEnemy(defendingUnit);
+                showStats(attackingUnit, defendingUnit);
+                returnUnitToArmy(attackingUnit);
+            }
+        }
+        returnUnitToArmy(defendingUnit);
     }
 }
+
+void simulationManager::returnUnitToArmy(unit *unitPtr) {
+    if (unitPtr->getHealth() <= 0) {
+        KilledList.enqueue(unitPtr);
+        return;
+    }
+
+    if (unitPtr->getHealth() <= 0.2 * unitPtr->GetOriginalHealth()) {
+        unitPtr->UpdateStillHealing();
+        UnitMaintenanceList.enqueue(unitPtr);
+        return;
+    }
+
+    if ((*getArmyType)(unitPtr) == alienUnit)
+        alienArmyPtr->addUnit(unitPtr);
+    else earthArmyPtr->addUnit(unitPtr);
+}
+
+int simulationManager::getCurrentTimeStep() {
+    return currentTimeStep;
+}
+

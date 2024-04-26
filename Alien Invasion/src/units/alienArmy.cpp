@@ -118,6 +118,13 @@ int alienArmy::getAliendestructedDroneCount() const {
 
 /// @details returns a randomUnit and removes it from its adt.
 unit *alienArmy::getRandomUnit() {
-    auto random_number = rand() % 3;
+    auto random_number = rand() % 3 + 3;
     return getUnit(static_cast<Type>(random_number));
+}
+
+unit *alienArmy::getDronePair() {
+    Drone *drone;
+    if (DroneUnits.DoublyDequeue(drone))
+        return drone;
+    return nullptr;
 }

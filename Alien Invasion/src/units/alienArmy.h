@@ -48,6 +48,8 @@ public:
     int getCurrentMonstersIndex() const;
 
     unit *getRandomUnit();
+
+    unit *getDronePair();
 };
 
 

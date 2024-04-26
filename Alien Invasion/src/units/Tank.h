@@ -15,6 +15,7 @@ public:
             : unit(
             id, EarthTank, joinTime, health, power, attackCapacity, simPtr) {};
 
+    bool Tank::damageEnemy(unit *);
 };
 
 

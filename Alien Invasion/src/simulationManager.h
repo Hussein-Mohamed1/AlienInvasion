@@ -32,7 +32,8 @@ protected:
     LinkedQueue<unit *> KilledList;
     randGen *RandomGenerator;
     fstream OutputFile;
-    ///@note deleted these
+    int currentTimeStep{0};
+    ///@note delete these
     int sumOfEDf{0};
     int EDfcount{0};
     int sumOfEDd{0};
@@ -48,7 +49,7 @@ protected:
     int numofHealedunits{0};
 
     ArrayStack<HealUnit *> HealList;
-    LinkedQueue<unit *> UnitMaintenceList;
+    LinkedQueue<unit *> UnitMaintenanceList;
 public:
     static void intro();
 
@@ -71,9 +72,16 @@ public:
 
     int getEarthArmyUnitsCount() const;
 
-    void handleUnit(unit *attackingUnit, unit *&defendingUnit, Army *defendingArmy);
+    void handleUnit(unit *attackingUnit);
 
     void printKilledList();
 
     void printTempList();
+
+    void emptyTempList();
+
+    void returnUnitToArmy(unit *);
+
+    int getCurrentTimeStep();
+
 };

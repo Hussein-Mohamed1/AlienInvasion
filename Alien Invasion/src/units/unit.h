@@ -8,7 +8,7 @@ class simulationManager;
 
 using namespace std;
 enum Type {
-    Gunnery, EarthSoldier, EarthTank, alienSoldier, DronePair, MonsterType
+    Gunnery, EarthSoldier, EarthTank, alienSoldier, DronePair, MonsterType, Healer
 };
 
 enum armyType {
@@ -24,11 +24,11 @@ protected:
     double health;
     double power;
     int attackCapacity;
-    simulationManager *simPtr;
-    bool StillInHealingList;
-    double OriginalHealth;
-    int TimeFirstAttacked;
-    int TimeDeath;
+    simulationManager *simPtr{nullptr};
+    bool StillInHealingList{false};
+    double OriginalHealth{0};
+    int TimeFirstAttacked{};
+    int TimeDeath{0};
 public:
     unit(int id, Type type, int joinTime, double health, double power, int attackCapacity, simulationManager *simPtr);
 
