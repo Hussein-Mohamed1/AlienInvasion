@@ -17,6 +17,7 @@ enum armyType {
 
 class unit {
 protected:
+
     int ID;
     Type type;
     int joinTime;
@@ -24,10 +25,10 @@ protected:
     double power;
     int attackCapacity;
     simulationManager *simPtr;
-    int StillInHealingList;
-    const int OriginalHealth;
-    int Ta;
-    int Td;
+    bool StillInHealingList;
+    double OriginalHealth;
+    int TimeFirstAttacked;
+    int TimeDeath;
 public:
     unit(int id, Type type, int joinTime, double health, double power, int attackCapacity, simulationManager *simPtr);
 
@@ -39,7 +40,7 @@ public:
 
     int getId() const;
 
-    int GetStillHealing () const;
+    int GetStillHealing() const;
 
     void UpdateStillHealing();
 
@@ -68,14 +69,21 @@ public:
     simulationManager *getSimPtr() const;
 
     void setSimPtr(simulationManager *simPtr);
+
     int getDestructionTime() const;
 
     void setDestructionTime(int t);
+
     int getfirstAttackedTime() const;
 
     void setfirstAttackedTime(int t);
+
     int getDf() const;
+
     int getDd() const;
+
     int getDb() const;
+
+    unit();
 };
 

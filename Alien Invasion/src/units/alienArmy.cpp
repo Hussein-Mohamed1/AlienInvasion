@@ -67,34 +67,6 @@ void alienArmy::print() {
 
 }
 
-unit *alienArmy::getRandomUnit() {
-    auto random_number = rand() % 3 + 3;
-    /// @todo implement this after alienUnits Have been implemented
-
-    /// @todo Also get the new switch statements from earthArmy->getRandomUnit();
-    ///@todo Also decrement the count
-
-    //    switch (random_number) {
-//        case MonsterType: {
-//            Monster *removedTank;
-//            TankList.pop(removedTank);
-//            return removedTank;
-//        }
-//        case DronePair: {
-//            Drone *removedSoldier;
-//            ESlist.dequeue(removedSoldier);
-//            return removedSoldier;
-//        }
-//        case alienSoldier: {
-//            ASolider *removedGunnery;
-//            int priority{0};
-//            EGlist.dequeue(removedGunnery, priority);
-//            return removedGunnery;
-//        }
-//    }
-    return nullptr;
-}
-
 
 unit *alienArmy::getUnit(Type type) {
     switch (type) {
@@ -127,19 +99,25 @@ int alienArmy::getAlienSoldierCount() {
     return SoliderUnits.getCount();
 }
 
-int alienArmy::getCurrentMonstersIndex() {
+int alienArmy::getCurrentMonstersIndex() const {
     return currentMonstersIndex;
 }
 
 
 int alienArmy::getAliendestructedMonsterCount() const {
-    return aliendestructedMonsterCount;
+    return alienDestructedMonsterCount;
 }
 
 int alienArmy::getAliendestructedSoldierCount() const {
-    return aliendestructedSoldierCount;
+    return alienDestructedSoldierCount;
 }
 
 int alienArmy::getAliendestructedDroneCount() const {
-    return aliendestructedDroneCount;
+    return alienDestructedDroneCount;
+}
+
+/// @details returns a randomUnit and removes it from its adt.
+unit *alienArmy::getRandomUnit() {
+    auto random_number = rand() % 3;
+    return getUnit(static_cast<Type>(random_number));
 }

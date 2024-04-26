@@ -15,9 +15,6 @@ public:
             : unit(
             id, EarthTank, joinTime, health, power, attackCapacity, simPtr) {};
 
-
-private:
-    bool damageEnemy(unit *);
 };
 
 
