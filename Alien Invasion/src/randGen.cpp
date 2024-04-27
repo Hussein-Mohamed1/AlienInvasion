@@ -11,7 +11,8 @@
 #include "./units/ASolider.h"
 #include "./units/Monster.h"
 #include "./units/Drone.h"
-#include "HealUnit.h"
+#include "./units/HealUnit.h"
+
 
 using namespace std;
 
@@ -19,8 +20,7 @@ using namespace std;
 randGen::randGen(simulationManager *simPtr) : simPtr(simPtr) {
     srand(time(nullptr));
     string S, temps, unitrang[4];
-    fstream *infile = new fstream(""
-                                  "test.txt", ios::in);
+    fstream *infile = new fstream("./src/test.txt", ios::in);
     if (infile->is_open()) {
         getline(*infile, S);
         unitscreated = stoi(S);
@@ -106,7 +106,6 @@ unit *randGen::generatUnit(armyType unitType, int timestep) {
                 unit *gunnery = new Egunnery(Eid++, timestep, healthEunit, powerEunit, Eattackcap, simPtr);
                 return gunnery;
             } else {
-                ///@todo create a healer unit here, hussein!
                 unit *healer = new HealUnit(Eid++, Healer, timestep, healthEunit, powerEunit, Eattackcap, simPtr);
                 return healer;
             }

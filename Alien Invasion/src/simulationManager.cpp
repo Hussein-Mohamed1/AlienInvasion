@@ -89,6 +89,11 @@ void simulationManager::addNewUnit(unit *newUnit) {
             alienArmyPtr->addUnit(newUnit);
             return;
         }
+        if (newUnit->getType() == Healer)
+        {
+            HealList.push(newUnit);
+            return;
+        }
     }
 }
 
@@ -309,8 +314,8 @@ void simulationManager::printTempList() {
 }
 
 void simulationManager::loadtoOutputFile(LinkedQueue<unit *> killedList) {
-    OutputFile << "TimeDeath" << "     " << "ID" << "     " << "Tj" << "     " << "Df" << "     " << "Dd" << "     "
-               << "Db" << endl;
+
+    int sumOfEDf{ 0 }, EDfcount{ 0 }, sumOfEDd{ 0 }, EDdcount{ 0 }, sumOfEDb{ 0 }, EDbcount{ 0 }, sumOfADf{ 0 }, ADfcount{ 0 }, sumOfADd{ 0 }, ADdcount{ 0 }, sumOfADb{ 0 }, ADbcount{ 0 }, numofHealedunits{ 0 };
     unit *killedU;
     while (killedList.dequeue(killedU)) {
         if (killedU->getType() == EarthSoldier || killedU->getType() == Gunnery ||
@@ -402,7 +407,7 @@ void simulationManager::loadtoOutputFile(LinkedQueue<unit *> killedList) {
 /// ! When Insert in PriQueue observe that the decleartion was changed for UML
 void simulationManager::ManageHealing() {
 
-    HealUnit *Healer;
+    unit *Healer;
     if (!HealList.pop(Healer))
         return;
     int Cap = Healer->getAttackCapacity();
@@ -434,7 +439,7 @@ void simulationManager::ManageHealing() {
             KilledList.enqueue(InjSol);
 
         else {
-            Healer->Heal(InjSol);
+            Healer->damageEnemy(InjSol);
 
             if (InjSol->getHealth() > (0.2 * InjSol->GetOriginalHealth())) {
                 addNewUnit(InjSol);
@@ -456,7 +461,7 @@ void simulationManager::ManageHealing() {
             KilledList.enqueue(InjTank);
 
         else {
-            Healer->Heal(InjTank);
+            Healer->damageEnemy(InjTank);
 
             if (InjTank->getHealth() > (0.2 * InjTank->GetOriginalHealth())) {
                 addNewUnit(InjTank);

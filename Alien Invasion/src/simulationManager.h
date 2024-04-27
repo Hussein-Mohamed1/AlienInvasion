@@ -33,22 +33,8 @@ protected:
     randGen *RandomGenerator;
     fstream OutputFile;
     int currentTimeStep{0};
-    ///@note delete these
-    int sumOfEDf{0};
-    int EDfcount{0};
-    int sumOfEDd{0};
-    int EDdcount{0};
-    int sumOfEDb{0};
-    int EDbcount{0};
-    int sumOfADf{0};
-    int ADfcount{0};
-    int sumOfADd{0};
-    int ADdcount{0};
-    int sumOfADb{0};
-    int ADbcount{0};
-    int numofHealedunits{0};
 
-    ArrayStack<HealUnit *> HealList;
+    ArrayStack<unit*> HealList;
     LinkedQueue<unit *> UnitMaintenanceList;
 public:
     static void intro();
