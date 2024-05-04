@@ -19,7 +19,7 @@ class unit {
 protected:
 
     int ID;
-    Type type;
+    Type type ;
     int joinTime;
     double health;
     double power;

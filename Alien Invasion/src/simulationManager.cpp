@@ -327,21 +327,24 @@ void simulationManager::loadtoOutputFile() {
             earthdestructedTankCount{0};
     unit *killedU;
     while (killedList.dequeue(killedU)) {
-        switch (killedU->getType()) {
-            case EarthSoldier :
-                earthdestructedSoldierCount++;
-            case Gunnery:
-                earthdestructedGunneryCount++;
-            case EarthTank:
-                earthdestructedTankCount++;
-            default:
-                break;
-        }
         if (killedU->getType() == EarthSoldier || killedU->getType() == Gunnery ||
             killedU->getType() == EarthTank) {
+            switch (killedU->getType()) {
+            case EarthSoldier:
+                earthdestructedSoldierCount++;
+                break;
+            case Gunnery:
+                earthdestructedGunneryCount++;
+                break;
+            case EarthTank:
+                earthdestructedTankCount++;
+                break;
+            default:
+                break;
+            }
             OutputFile << killedU->getDestructionTime() << "     " << killedU->getId() << "     "
                        << killedU->getJoinTime() << "     " << killedU->getDf() << "     " << killedU->getDd()
-                       << "     " << killedU->getDb() << endl;
+                       << "     " << killedU->getDb() << "     " << killedU->typetostring(killedU->getType()) << endl;
             EDfcount++;
             EDdcount++;
             EDbcount++;
@@ -352,16 +355,19 @@ void simulationManager::loadtoOutputFile() {
             switch (killedU->getType()) {
                 case alienSoldier:
                     alienDestructedSoldierCount++;
+                    break;
                 case DronePair:
                     alienDestructedDroneCount++;
+                    break;
                 case MonsterType:
                     alienDestructedMonsterCount++;
+                    break;
                 default:
                     break;
             }
             OutputFile << killedU->getDestructionTime() << "     " << killedU->getId() << "     "
-                       << killedU->getJoinTime() << "     " << killedU->getDf() << "     " << killedU->getDd()
-                       << "     " << killedU->getDb() << endl;
+                << killedU->getJoinTime() << "     " << killedU->getDf() << "     " << killedU->getDd()
+                << "     " << killedU->getDb()<<"     " << killedU->typetostring(killedU->getType()) << endl;
             ADfcount++;
             ADdcount++;
             ADbcount++;
@@ -372,27 +378,39 @@ void simulationManager::loadtoOutputFile() {
         }
     }
 
-    // cout<<"win" or cout<<"drawn" or cout<<"loss"
-    OutputFile << "========================= Battle result =========================\n";
+    switch (assertWinner())
+    {
+    case earthArmyType :
+        OutputFile << "========================= Earth Win =========================\n";
+        break;
+    case alienArmyType:
+        OutputFile << "========================= Alien Win =========================\n";
+        break;
+    case Nan:
+        OutputFile << "========================= Draw =========================\n";
+        break;
+    default:
+        break;
+    }
     OutputFile << "======================================== For Earth Army ===========================" << endl;
-    OutputFile << "total number of ES---> " << earthArmyPtr->getEarthSoldierCount() << endl;
-    OutputFile << "total number of ET---> " << earthArmyPtr->getEarthTankCount() << endl;
-    OutputFile << "total number of EG---> " << earthArmyPtr->getEarthGunneryCount() << endl;
-    if (earthArmyPtr->getEarthSoldierCount() != 0)
+    OutputFile << "total number of ES---> " << earthArmyPtr->getEarthSoldierCount() + earthdestructedSoldierCount << endl;
+    OutputFile << "total number of ET---> " << earthArmyPtr->getEarthTankCount() + earthdestructedTankCount << endl;
+    OutputFile << "total number of EG---> " << earthArmyPtr->getEarthGunneryCount() + earthdestructedGunneryCount << endl;
+    if ((earthdestructedSoldierCount + earthArmyPtr->getEarthSoldierCount()) != 0)
         OutputFile << "percentage of destructed ES----> "
-                << (double(earthdestructedSoldierCount) / earthArmyPtr->getEarthSoldierCount()) *
+                << (double(earthdestructedSoldierCount) / (earthdestructedSoldierCount+ earthArmyPtr->getEarthSoldierCount())) *
                    100 << endl;
-    if (earthArmyPtr->getEarthTankCount() != 0)
+    if ((earthdestructedTankCount + earthArmyPtr->getEarthTankCount()) != 0)
         OutputFile << "percentage of destructed ET----> "
-                << (double(earthdestructedTankCount) / earthArmyPtr->getEarthTankCount()) * 100
+                << (double(earthdestructedTankCount) / (earthdestructedTankCount+ earthArmyPtr->getEarthTankCount())) * 100
                 << endl;
-    if (earthArmyPtr->getEarthGunneryCount() != 0)
+    if ((earthdestructedGunneryCount + earthArmyPtr->getEarthGunneryCount()) != 0)
         OutputFile << "percentage of destructed EG----> "
-                << (double(earthdestructedGunneryCount) / earthArmyPtr->getEarthGunneryCount()) *
+                << (double(earthdestructedGunneryCount) / ( earthdestructedGunneryCount+ earthArmyPtr->getEarthGunneryCount())) *
                    100 << endl;
     int totaldestructedEarthArmy = earthdestructedGunneryCount + earthdestructedSoldierCount + earthdestructedTankCount;
     int totalEarthArmy = earthArmyPtr->getEarthSoldierCount() + earthArmyPtr->getEarthTankCount() +
-                         earthArmyPtr->getEarthGunneryCount();
+        earthArmyPtr->getEarthGunneryCount() + totaldestructedEarthArmy;
     if (totalEarthArmy != 0)
         OutputFile << "percentage of total destructed Earth units----> "
                 << (double(totaldestructedEarthArmy) / totalEarthArmy) * 100 << endl;
@@ -418,17 +436,18 @@ void simulationManager::loadtoOutputFile() {
                << endl;
     OutputFile << "total number of AM---> " << alienArmyPtr->getCurrentMonstersIndex() + alienDestructedMonsterCount + 1
                << endl;
-    if (alienArmyPtr->getCurrentAlienSoldierCount() != 0)
+    if ((alienArmyPtr->getCurrentAlienSoldierCount() + alienDestructedSoldierCount) != 0)
         OutputFile << "percentage of destructed AS----> "
                 << (double(alienDestructedSoldierCount) /
                     (alienArmyPtr->getCurrentAlienSoldierCount() + alienDestructedSoldierCount)) *
                    100 << endl;
-    if (alienArmyPtr->getCurrentAlienDroneCount() != 0)
+    if ((alienArmyPtr->getCurrentAlienDroneCount() + alienDestructedDroneCount) != 0)
         OutputFile << "percentage of destructed AD----> "
                 << (double(alienDestructedDroneCount) /
                     (alienArmyPtr->getCurrentAlienDroneCount() + alienDestructedDroneCount)) * 100
                 << endl;
-    if (alienArmyPtr->getCurrentMonstersIndex() != 0)
+    if ((alienArmyPtr->getCurrentMonstersIndex() +
+        alienDestructedMonsterCount + 1) != 0)
         OutputFile << "percentage of destructed AM----> " <<
                                                           (double(alienDestructedMonsterCount) /
                                                            (alienArmyPtr->getCurrentMonstersIndex() +
@@ -437,7 +456,7 @@ void simulationManager::loadtoOutputFile() {
     int totaldestructedAlienArmy =
             alienDestructedDroneCount + alienDestructedMonsterCount + alienDestructedSoldierCount;
     int totalAlienArmy = alienArmyPtr->getCurrentAlienSoldierCount() + alienArmyPtr->getCurrentAlienDroneCount() +
-                         alienArmyPtr->getCurrentMonstersIndex();
+        alienArmyPtr->getCurrentMonstersIndex() + totaldestructedAlienArmy;
     if (totalAlienArmy != 0)
         OutputFile << "percentage of total destructed Alien units----> "
                 << (double(totaldestructedAlienArmy) / totalAlienArmy) * 100 << endl;
@@ -672,13 +691,112 @@ void simulationManager::printWinner(armyType type) {
     system("cls");
     //create an ascii art for the winner
     if (type == alienArmyType) {
-        cout
-                << "Alien Army Wins\n";
+        auto clearScreen = []() {
+            std::cout << "\033[2J\033[1;1H";
+            };
+
+        // Function to draw the Alien Spaceship
+        auto drawAlienSpaceship = []() {
+            std::cout << "           /\\     /\\             \n";
+            std::cout << "      ____/__\\___/__\\____        \n";
+            std::cout << "     /         \\ /         \\      \n";
+            std::cout << "     | _________V_________ |      \n";
+            std::cout << "     |* * * * * | * * * * *|      \n";
+            std::cout << "     \\* * * * *|* * * * * */      \n";
+            std::cout << "      \\_________|_________/       \n";
+            std::cout << "     /          |          \\      \n";
+            std::cout << "     \\         / \\         /      \n";
+            std::cout << "      \\_______/   \\_______/       \n";
+            };
+
+        // Function to draw the Alien Planet
+        auto drawAlienPlanet = []() {
+            std::cout << "                             \n";
+            std::cout << "           _   _   _          \n";
+            std::cout << "         / / / / / /\\         \n";
+            std::cout << "        / / / / / /  \\        \n";
+            std::cout << "       / / / / / /    \\       \n";
+            std::cout << "      / / / / / /      \\      \n";
+            std::cout << "     / / / / / /        \\     \n";
+            std::cout << "     \\ \\ \\ \\ \\ \\        /     \n";
+            std::cout << "      \\ \\ \\ \\ \\ \\      /      \n";
+            std::cout << "       \\ \\ \\ \\ \\ \\    /       \n";
+            std::cout << "        \\_\\_\\_\\_\\_\\__/        \n";
+            std::cout << "                             \n";
+            };
+
+        // Function to display the defeat message
+        auto displayDefeatMessage = []() {
+            std::cout << "\nAlien army wins the battle!\n";
+            };
+
+        // Animation loop
+        for (int i = 0; i < 10; ++i) {
+            clearScreen(); // Clear screen before drawing
+            drawAlienSpaceship(); // Draw the Alien Spaceship
+            drawAlienPlanet(); // Draw the Alien Planet
+            Sleep(80); // Pause for 1 second
+            clearScreen(); // Clear screen again
+            Sleep(80); // Pause for 1 second
+        }
+
+        // Display defeat message
+        displayDefeatMessage();
         return;
 
     } else if (type == earthArmyType) {
-        cout
-                << "Earth Army Wins\n";
+        // Function to clear the console screen
+        auto clearScreen = []() {
+            std::cout << "\033[2J\033[1;1H";
+            };
+
+        // Function to draw the Earth
+        auto drawEarth = []() {
+            std::cout << "          .--.              .--.          \n";
+            std::cout << "        /  .__\\            /__.__\\.        \n";
+            std::cout << "    \\    \\     /          \\      /    /    \n";
+            std::cout << "   .-'    |\\_/|    _    |\\_/|    '-.      \n";
+            std::cout << "  |       /|   |\\   \\    /|   |\\       |   \n";
+            std::cout << "  |      /_|   | \\   |  | |   |_\\      |   \n";
+            std::cout << "  |       ||___|  \\_\\ | /_/  |___||      | \n";
+            std::cout << "   '-._             \\_/             _.-'  \n";
+            std::cout << "       '-._________________________.-'      \n";
+            };
+
+        // Function to draw the Earth planet
+        auto drawEarthPlanet = []() {
+            std::cout << "                  _________    \n";
+            std::cout << "             ,-'',  _______\\   \n";
+            std::cout << "           ,'      `'-/      `  \n";
+            std::cout << "         ,'           (         \n";
+            std::cout << "        ;            ___`-.      \n";
+            std::cout << "        \\  ______.-'`     `-.   \n";
+            std::cout << "         \\                  ;  \\ \n";
+            std::cout << "         |                  |   ;\n";
+            std::cout << "         |                  |   |\n";
+            std::cout << "         |                  |   |\n";
+            std::cout << "          \\                /   /\n";
+            std::cout << "           `-.__________.-'   / \n";
+            std::cout << "                             \n";
+            };
+
+        // Function to display the victory message
+        auto displayVictoryMessage = []() {
+            std::cout << "\nEarth army wins the battle!\n";
+            };
+
+        // Animation loop
+        for (int i = 0; i < 10; ++i) {
+            clearScreen(); // Clear screen before drawing
+            drawEarth(); // Draw the Earth
+            drawEarthPlanet(); // Draw the Earth planet
+            Sleep(80); // Pause for 1 second
+            clearScreen(); // Clear screen again
+            Sleep(80); // Pause for 1 second
+        }
+
+        // Display victory message
+        displayVictoryMessage();
 
     }
 }
