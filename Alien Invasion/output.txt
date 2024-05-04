@@ -1,1 +1,39 @@
 TimeDeath     ID      Tj      Df      Dd      Db
+70     2035     12     16     42     58
+75     2182     73     1     1     2
+151     2034     9     13     129     142
+204     2096     36     58     110     168
+211     398     195     16     0     16
+212     441     210     0     2     2
+212     427     204     8     0     8
+213     416     202     6     5     11
+214     2047     15     85     114     199
+215     2098     45     56     114     170
+254     2063     20     37     197     234
+========================= Battle result =========================
+======================================== For Earth Army ===========================
+total number of ES---> 291
+total number of ET---> 85
+total number of EG---> 29
+percentage of destructed ES----> 0
+percentage of destructed ET----> 4.70588
+percentage of destructed EG----> 10.3448
+percentage of total destructed Earth units----> 1.7284
+percentage of total Healed units----> 1.23457
+Average of Df---> 7
+Average of Dd---> 1
+Average of Db---> 9
+Df/Db % ----> 81.0811
+Dd/Db % ----> 18.9189
+======================================== For Alien Army ===========================
+total number of AS---> 557
+total number of AD---> 0
+total number of AM---> 3
+percentage of destructed AS----> 1.0772
+percentage of destructed AM----> 450
+percentage of total destructed Alien units----> 3.39893
+Average of Df---> 38
+Average of Dd---> 101
+Average of Db---> 139
+Df/Db % ----> 27.3381
+Dd/Db % ----> 72.6619

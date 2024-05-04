@@ -106,17 +106,7 @@ int alienArmy::getCurrentMonstersIndex() const {
 }
 
 
-int alienArmy::getAliendestructedMonsterCount() const {
-    return alienDestructedMonsterCount;
-}
 
-int alienArmy::getAliendestructedSoldierCount() const {
-    return alienDestructedSoldierCount;
-}
-
-int alienArmy::getAliendestructedDroneCount() const {
-    return alienDestructedDroneCount;
-}
 
 /// @details returns a randomUnit and removes it from its adt.
 unit *alienArmy::getRandomUnit() {

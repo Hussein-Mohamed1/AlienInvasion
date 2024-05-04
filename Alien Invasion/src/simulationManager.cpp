@@ -301,10 +301,26 @@ void simulationManager::printKilledList() {
 
 void simulationManager::loadtoOutputFile() {
 
-    int sumOfEDf{0}, EDfcount{0}, sumOfEDd{0}, EDdcount{0}, sumOfEDb{0}, EDbcount{0}, sumOfADf{0}, ADfcount{
-            0}, sumOfADd{0}, ADdcount{0}, sumOfADb{0}, ADbcount{0}, numofHealedunits{0};
+    int sumOfEDf{ 0 }, EDfcount{ 0 }, sumOfEDd{ 0 }, EDdcount{ 0 }, sumOfEDb{ 0 }, EDbcount{ 0 }, sumOfADf{ 0 }, ADfcount{
+            0 }, sumOfADd{ 0 }, ADdcount{ 0 }, sumOfADb{ 0 }, ADbcount{ 0 }, numofHealedunits= UnitMaintenanceList.getCount(), alienDestructedSoldierCount{0},
+            alienDestructedMonsterCount{ 0 },
+            alienDestructedDroneCount{ 0 },
+            earthdestructedGunneryCount{ 0 },
+            earthdestructedSoldierCount{ 0 },
+            earthdestructedTankCount{ 0 };
     unit *killedU;
     while (killedList.dequeue(killedU)) {
+        switch (killedU->getType())
+        {
+        case EarthSoldier :
+            earthdestructedSoldierCount++;
+        case Gunnery:
+            earthdestructedGunneryCount++;
+        case EarthTank:
+            earthdestructedTankCount++;
+        default:
+            break;
+        }
         if (killedU->getType() == EarthSoldier || killedU->getType() == Gunnery ||
             killedU->getType() == EarthTank) {
             OutputFile << killedU->getDestructionTime() << "     " << killedU->getId() << "     "
@@ -317,7 +333,17 @@ void simulationManager::loadtoOutputFile() {
             sumOfEDd += killedU->getDd();
             sumOfEDb += killedU->getDb();
         } else {
-
+            switch (killedU->getType())
+            {
+            case alienSoldier:
+                alienDestructedSoldierCount ++;
+            case DronePair:
+                alienDestructedDroneCount++;
+            case MonsterType:
+                alienDestructedMonsterCount++;
+            default:
+                break;
+            }
             OutputFile << killedU->getDestructionTime() << "     " << killedU->getId() << "     "
                        << killedU->getJoinTime() << "     " << killedU->getDf() << "     " << killedU->getDd()
                        << "     " << killedU->getDb() << endl;
@@ -327,6 +353,7 @@ void simulationManager::loadtoOutputFile() {
             sumOfADf += killedU->getDf();
             sumOfADd += killedU->getDd();
             sumOfADb += killedU->getDb();
+            
         }
     }
 
@@ -338,19 +365,17 @@ void simulationManager::loadtoOutputFile() {
     OutputFile << "total number of EG---> " << earthArmyPtr->getEarthGunneryCount() << endl;
     if (earthArmyPtr->getEarthSoldierCount() != 0)
         OutputFile << "percentage of destructed ES----> "
-                << (double(earthArmyPtr->getEarthdestructedSoldierCount()) / earthArmyPtr->getEarthSoldierCount()) *
+                << (double(earthdestructedSoldierCount) / earthArmyPtr->getEarthSoldierCount()) *
                    100 << endl;
     if (earthArmyPtr->getEarthTankCount() != 0)
         OutputFile << "percentage of destructed ET----> "
-                << (double(earthArmyPtr->getEarthdestructedTankCount()) / earthArmyPtr->getEarthTankCount()) * 100
+                << (double(earthdestructedTankCount) / earthArmyPtr->getEarthTankCount()) * 100
                 << endl;
     if (earthArmyPtr->getEarthGunneryCount() != 0)
         OutputFile << "percentage of destructed EG----> "
-                << (double(earthArmyPtr->getEarthdestructedGunneryCount()) / earthArmyPtr->getEarthGunneryCount()) *
+                << (double(earthdestructedGunneryCount) / earthArmyPtr->getEarthGunneryCount()) *
                    100 << endl;
-    int totaldestructedEarthArmy =
-            earthArmyPtr->getEarthdestructedSoldierCount() + earthArmyPtr->getEarthdestructedTankCount() +
-            earthArmyPtr->getEarthdestructedGunneryCount();
+    int totaldestructedEarthArmy = earthdestructedGunneryCount + earthdestructedSoldierCount + earthdestructedTankCount;
     int totalEarthArmy = earthArmyPtr->getEarthSoldierCount() + earthArmyPtr->getEarthTankCount() +
                          earthArmyPtr->getEarthGunneryCount();
     if (totalEarthArmy != 0)
@@ -377,20 +402,18 @@ void simulationManager::loadtoOutputFile() {
     OutputFile << "total number of AM---> " << alienArmyPtr->getCurrentMonstersIndex() + 1 << endl;
     if (alienArmyPtr->getAlienSoldierCount() != 0)
         OutputFile << "percentage of destructed AS----> "
-                << (double(alienArmyPtr->getAliendestructedSoldierCount()) / alienArmyPtr->getAlienSoldierCount()) *
+                << (double(alienDestructedSoldierCount) / alienArmyPtr->getAlienSoldierCount()) *
                    100 << endl;
     if (alienArmyPtr->getAlienDroneCount() != 0)
         OutputFile << "percentage of destructed AD----> "
-                << (double(alienArmyPtr->getAliendestructedDroneCount()) / alienArmyPtr->getAlienDroneCount()) * 100
+                << (double(alienDestructedDroneCount) / alienArmyPtr->getAlienDroneCount()) * 100
                 << endl;
     if (alienArmyPtr->getCurrentMonstersIndex() != 0)
         OutputFile << "percentage of destructed AM----> " <<
-                                                          (double(alienArmyPtr->getAliendestructedMonsterCount()) /
-                                                           alienArmyPtr->getCurrentMonstersIndex()) *
-                                                          100 << endl;
-    int totaldestructedAlienArmy =
-            alienArmyPtr->getAliendestructedSoldierCount() + alienArmyPtr->getAliendestructedDroneCount() +
-            alienArmyPtr->getAliendestructedMonsterCount();
+        (double(alienDestructedMonsterCount) /
+            alienArmyPtr->getCurrentMonstersIndex() + 1) *
+        100 << endl;
+    int totaldestructedAlienArmy = alienDestructedDroneCount + alienDestructedMonsterCount + alienDestructedSoldierCount;
     int totalAlienArmy = alienArmyPtr->getAlienSoldierCount() + alienArmyPtr->getAlienDroneCount() +
                          alienArmyPtr->getCurrentMonstersIndex();
     if (totalAlienArmy != 0)
