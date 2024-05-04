@@ -43,7 +43,7 @@ void earthArmy::print() {
     cout << "ES [ ";
     while (ESlist.dequeue(soldier)) {
         {
-            cout << soldier->getId() << ", ";
+            cout << soldier->getId() << (ESlist.isEmpty() ? "" : ", ");
             TempESlist.enqueue(soldier);
         }
     }
@@ -59,8 +59,8 @@ void earthArmy::print() {
     int garbage;
     priQueue<Egunnery *> tempEgunnery;
     while (EGlist.dequeue(tempGunnery, garbage)) {
-        { ///@todo fix these
-            cout << tempGunnery->getId() << ", ";
+        {
+            cout << tempGunnery->getId() << (EGlist.isEmpty() ? "" : ", ");
             tempEgunnery.enqueue(tempGunnery, garbage);
         }
     }
@@ -75,7 +75,7 @@ void earthArmy::print() {
     Tank *tempTank{nullptr};
     while (TankList.pop(tempTank)) {
         {
-            cout << tempTank->getId() << ", ";
+            cout << tempTank->getId() << (TankList.isEmpty() ? "" : ", ");
             tempTankList.push(tempTank);
         }
 

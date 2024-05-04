@@ -142,7 +142,7 @@ int unit::GetStillHealing() const {
     return StillInHealingList;
 }
 
-int unit::GetOriginalHealth() const {
+double unit::GetOriginalHealth() const {
     return OriginalHealth;
 }
 armyType unit::getArmyType()

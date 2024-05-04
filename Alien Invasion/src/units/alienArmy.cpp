@@ -38,7 +38,8 @@ void alienArmy::print() {
     cout << "👽 Alien Soldier Count is: " << SoliderUnits.getCount() << endl;
     cout << "AS [ ";
     while (SoliderUnits.dequeue(soldier)) {
-        cout << soldier->getId() << ", ";
+        cout << soldier->getId() << (SoliderUnits.isEmpty() ?
+                                     "" : ", ");
         TempASlist.enqueue(soldier);
     }
     cout << "]\n";
@@ -51,7 +52,7 @@ void alienArmy::print() {
     Drone *tempDrone{nullptr};
     DoublyLinkedQueue<Drone *> tempDroneQueue;
     while (DroneUnits.dequeue(tempDrone)) {
-        cout << tempDrone->getId() << ", ";
+        cout << tempDrone->getId() << (DroneUnits.isEmpty() ? "" : ", ");
         tempDroneQueue.enqueue(tempDrone);
     }
     cout << "]\n";
@@ -61,7 +62,8 @@ void alienArmy::print() {
     cout << "👽 Alien Monster Count is: " << currentMonstersIndex + 1 << endl;
     cout << "AM [ ";
     for (int i = 0; i <= currentMonstersIndex; ++i) {
-        cout << MonsterUnits[currentMonstersIndex]->getId() << ", ";
+        cout << MonsterUnits[currentMonstersIndex]->getId() << (i == currentMonstersIndex
+                                                                ? "" : ", ");
     }
     cout << "]\n";
 

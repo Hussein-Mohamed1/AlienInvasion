@@ -28,7 +28,6 @@ protected:
     operationMode operationModeVal;
     alienArmy *alienArmyPtr;
     earthArmy *earthArmyPtr;
-    LinkedQueue<unit *> tempList;
     LinkedQueue<unit *> killedList;
     randGen *RandomGenerator;
     ofstream OutputFile;
@@ -62,11 +61,9 @@ public:
 
     void printKilledList();
 
-    void emptyTempList();
-
     void returnUnitToArmy(unit *);
 
-    int getCurrentTimeStep();
-    
-    void printinfoCurrentfight();
+    int getCurrentTimeStep() const;
+
+    void printinfoCurrentfight(LinkedQueue<unit *> &tempList);
 };

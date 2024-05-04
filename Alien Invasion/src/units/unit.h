@@ -27,7 +27,7 @@ protected:
     simulationManager *simPtr{nullptr};
     bool StillInHealingList{false};
     double OriginalHealth{0};
-    int TimeFirstAttacked{};
+    int TimeFirstAttacked{0};
     int TimeDeath{0};
 public:
     unit(int id, Type type, int joinTime, double health, double power, int attackCapacity, simulationManager *simPtr);
@@ -36,7 +36,7 @@ public:
 
     virtual void print() const;
 
-    int GetOriginalHealth() const;
+    double GetOriginalHealth() const;
 
     int getId() const;
 
