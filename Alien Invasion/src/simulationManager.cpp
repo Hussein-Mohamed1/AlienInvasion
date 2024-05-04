@@ -14,9 +14,9 @@ armyType (*getArmyType)(unit *armyUnit) =[](
         unit *armyUnit) -> armyType { ///@details just a utility method to get the type of the army
     if (armyUnit->getType() == EarthSoldier || armyUnit->getType() == EarthTank ||
         armyUnit->getType() == Gunnery)
-        return earthUnit;
+        return earthArmyType;
     else
-        return alienUnit;
+        return alienArmyType;
 };
 
 simulationManager::simulationManager(operationMode operationModeVal) : operationModeVal(operationModeVal) {
@@ -37,8 +37,23 @@ simulationManager::simulationManager(operationMode operationModeVal) : operation
     OutputFile << "TimeDeath     ID      Tj      Df      Dd      Db" << endl;
 }
 
+armyType simulationManager::assertWinner() const {
+    if (currentTimeStep >= 40)
+        if (getAlienArmyUnitsCount() == 0 && getEarthArmyUnitsCount() >= 1)
+            return earthArmyType;
+        else if (getEarthArmyUnitsCount() == 0 && getAlienArmyUnitsCount() >= 1)
+            return alienArmyType;
+        else return Nan;
+    return Nan;
+}
 
-void simulationManager::updateSimulation(int timestep) {
+armyType simulationManager::updateSimulation(int timestep) {
+    if (assertWinner() != Nan) {
+        printWinner(assertWinner());
+        return assertWinner();
+    }
+
+
     currentTimeStep = timestep;
     manageAdding(timestep);
 
@@ -57,9 +72,9 @@ void simulationManager::updateSimulation(int timestep) {
     handleUnit(alienUnit);
     earthArmyPtr->print();
     alienArmyPtr->print();
-    // to do units fight at current step 
     printKilledList();
 
+    return Nan;
 
 }
 
@@ -146,12 +161,12 @@ void simulationManager::showStats(unit *AttackingUnit, unit *DamagedUnit) const 
 void simulationManager::manageAdding(int timestep) {
     if (RandomGenerator->creatEarthUnits()) {
         for (int i = 0; i < RandomGenerator->getnumofunits(); i++) {
-            addNewUnit(RandomGenerator->generatUnit(earthUnit, timestep));
+            addNewUnit(RandomGenerator->generatUnit(earthArmyType, timestep));
         }
     }
     if (RandomGenerator->creatAlienUnits()) {
         for (int i = 0; i < RandomGenerator->getnumofunits(); i++) {
-            addNewUnit(RandomGenerator->generatUnit(alienUnit, timestep));
+            addNewUnit(RandomGenerator->generatUnit(alienArmyType, timestep));
         }
     }
 }
@@ -338,15 +353,18 @@ void simulationManager::loadtoOutputFile() {
     OutputFile << "total number of EG---> " << earthArmyPtr->getEarthGunneryCount() << endl;
     if (earthArmyPtr->getEarthSoldierCount() != 0)
         OutputFile << "percentage of destructed ES----> "
-                << (double(earthArmyPtr->getEarthdestructedSoldierCount()) / earthArmyPtr->getEarthSoldierCount()) *
+                <<
+                (double(earthArmyPtr->getEarthdestructedSoldierCount()) / earthArmyPtr->getEarthSoldierCount()) *
                    100 << endl;
     if (earthArmyPtr->getEarthTankCount() != 0)
         OutputFile << "percentage of destructed ET----> "
-                << (double(earthArmyPtr->getEarthdestructedTankCount()) / earthArmyPtr->getEarthTankCount()) * 100
+                << (double(earthArmyPtr->getEarthdestructedTankCount()) / earthArmyPtr->getEarthTankCount()) *
+                   100
                 << endl;
     if (earthArmyPtr->getEarthGunneryCount() != 0)
         OutputFile << "percentage of destructed EG----> "
-                << (double(earthArmyPtr->getEarthdestructedGunneryCount()) / earthArmyPtr->getEarthGunneryCount()) *
+                <<
+                (double(earthArmyPtr->getEarthdestructedGunneryCount()) / earthArmyPtr->getEarthGunneryCount()) *
                    100 << endl;
     int totaldestructedEarthArmy =
             earthArmyPtr->getEarthdestructedSoldierCount() + earthArmyPtr->getEarthdestructedTankCount() +
@@ -377,11 +395,13 @@ void simulationManager::loadtoOutputFile() {
     OutputFile << "total number of AM---> " << alienArmyPtr->getCurrentMonstersIndex() + 1 << endl;
     if (alienArmyPtr->getAlienSoldierCount() != 0)
         OutputFile << "percentage of destructed AS----> "
-                << (double(alienArmyPtr->getAliendestructedSoldierCount()) / alienArmyPtr->getAlienSoldierCount()) *
+                <<
+                (double(alienArmyPtr->getAliendestructedSoldierCount()) / alienArmyPtr->getAlienSoldierCount()) *
                    100 << endl;
     if (alienArmyPtr->getAlienDroneCount() != 0)
         OutputFile << "percentage of destructed AD----> "
-                << (double(alienArmyPtr->getAliendestructedDroneCount()) / alienArmyPtr->getAlienDroneCount()) * 100
+                << (double(alienArmyPtr->getAliendestructedDroneCount()) / alienArmyPtr->getAlienDroneCount()) *
+                   100
                 << endl;
     if (alienArmyPtr->getCurrentMonstersIndex() != 0)
         OutputFile << "percentage of destructed AM----> " <<
@@ -535,7 +555,7 @@ void simulationManager::handleUnit(unit *attackingUnit) {
                                 secondAttackingDrone ? secondAttackingDrone->getAttackCapacity()
                                                      : attackingUnit->getAttackCapacity()); ++i) {
             ///@note if the attacking unit is from the alien army, it will attack an earth unit else pick an alien unit
-            if ((*getArmyType)(attackingUnit) == alienUnit)
+            if ((*getArmyType)(attackingUnit) == alienArmyType)
                 defendingUnit = earthArmyPtr->getRandomUnit();
             else
                 defendingUnit = alienArmyPtr->getRandomUnit();
@@ -567,7 +587,7 @@ void simulationManager::handleUnit(unit *attackingUnit) {
     }
 
     if (!enqueuedOnce) {
-        if ((*getArmyType)(attackingUnit) == alienUnit)
+        if ((*getArmyType)(attackingUnit) == alienArmyType)
             alienArmyPtr->addUnit(attackingUnit);
         else earthArmyPtr->addUnit(attackingUnit);
         return;
@@ -595,7 +615,7 @@ void simulationManager::returnUnitToArmy(unit *unitPtr) {
             return;
         }
 
-        if ((*getArmyType)(unitPtr) == alienUnit)
+        if ((*getArmyType)(unitPtr) == alienArmyType)
             alienArmyPtr->addUnit(unitPtr);
         else earthArmyPtr->addUnit(unitPtr);
     }
@@ -623,3 +643,17 @@ void simulationManager::printinfoCurrentfight(LinkedQueue<unit *> &tempList) {
         tempList.enqueue(unitShot);
 }
 
+void simulationManager::printWinner(armyType type) {
+    system("cls");
+    //create an ascii art for the winner
+    if (type == alienArmyType) {
+        cout
+                << "Alien Army Wins\n";
+        return;
+
+    } else if (type == earthArmyType) {
+        cout
+                << "Earth Army Wins\n";
+
+    }
+}

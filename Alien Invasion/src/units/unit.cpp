@@ -148,9 +148,9 @@ double unit::GetOriginalHealth() const {
 armyType unit::getArmyType()
 {
     if (this->getType() == EarthSoldier || this->getType() == EarthTank || this->getType() == Gunnery)
-        return earthUnit;
+        return earthArmyType;
     else
-        return alienUnit;
+        return alienArmyType;
 }
 string unit::typetostring(Type t) 
 {

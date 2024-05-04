@@ -10,15 +10,16 @@ int main() {
         int timeStep{0};
         for (int i = 0; i < 500; i++) {
             int randNum = rand() % 100;
-//            system("cls");
+            system("cls");
             cout << "Current TimeStep is:" << timeStep;
             cout << "\n🔢 Current Random num is " << randNum << "\n";
             cout << "⏩ Press Enter to proceed to the next time step..." << endl;
-            simManager.updateSimulation(timeStep);
-//            cin.get();
+            if (simManager.updateSimulation(timeStep) != Nan)
+                break;
+            cin.get();
             timeStep++;
         }
-       simManager.loadtoOutputFile();
+        simManager.loadtoOutputFile();
     } catch (const runtime_error &e) {
         cout << "⚠️ " << e.what() << endl;
         cin.get();

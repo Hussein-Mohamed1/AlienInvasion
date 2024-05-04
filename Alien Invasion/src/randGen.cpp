@@ -94,7 +94,7 @@ unit *randGen::generatUnit(armyType unitType, int timestep) {
     powerAunit = rand() % int(RangeAP2 - RangeAP1 + 1) + RangeAP1; //randome power of alien unit
     Aattackcap = rand() % (RangeAC2 - RangeAC1 + 1) + RangeAC1;    //randome attackcap of alien unit
     switch (unitType) {
-        case earthUnit: {
+        case earthArmyType: {
             num = rand() % 101;
             if (num <= perES) {
                 unit *soldier = new Esoldier(Eid++, timestep, healthEunit, powerEunit, Eattackcap, simPtr);
@@ -109,7 +109,7 @@ unit *randGen::generatUnit(armyType unitType, int timestep) {
                 unit *healer = new HealUnit(Eid++, Healer, timestep, healthEunit, powerEunit, Eattackcap, simPtr);
                 return healer;
             }
-            case alienUnit: {
+            case alienArmyType: {
                 num = rand() % 101;
                 if (num <= perAS) {
                     unit *soldier = new ASolider(Aid++, timestep, healthAunit, powerAunit, Aattackcap, simPtr);

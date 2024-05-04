@@ -33,7 +33,7 @@ protected:
     ofstream OutputFile;
     int currentTimeStep{0};
 
-    ArrayStack<unit*> HealList;
+    ArrayStack<unit *> HealList;
     LinkedQueue<unit *> UnitMaintenanceList;
 public:
     static void intro();
@@ -41,7 +41,7 @@ public:
     simulationManager(operationMode); //initializes the simulation
     ~simulationManager();
 
-    void updateSimulation(int);
+    armyType updateSimulation(int);
 
     void addNewUnit(unit *);
 
@@ -66,4 +66,8 @@ public:
     int getCurrentTimeStep() const;
 
     void printinfoCurrentfight(LinkedQueue<unit *> &tempList);
+
+    armyType assertWinner() const;
+
+    static void printWinner(armyType type);
 };

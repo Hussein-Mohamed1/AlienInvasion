@@ -12,7 +12,7 @@ enum Type {
 };
 
 enum armyType {
-    earthUnit, alienUnit
+    earthArmyType, alienArmyType, Nan
 };
 
 class unit {
