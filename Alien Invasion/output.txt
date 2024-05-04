@@ -1,39 +1,43 @@
 TimeDeath     ID      Tj      Df      Dd      Db
-70     2035     12     16     42     58
-75     2182     73     1     1     2
-151     2034     9     13     129     142
-204     2096     36     58     110     168
-211     398     195     16     0     16
-212     441     210     0     2     2
-212     427     204     8     0     8
-213     416     202     6     5     11
-214     2047     15     85     114     199
-215     2098     45     56     114     170
-254     2063     20     37     197     234
+5     2001     1     1     3     4
+6     2000     1     4     1     5
+11     2009     5     3     3     6
+18     2020     8     3     7     10
+26     2014     8     1     17     18
+56     2002     1     1     54     55
+99     2041     12     9     78     87
+172     2034     10     8     154     162
+175     2156     36     45     94     139
+189     2012     5     3     181     184
+196     2177     41     54     101     155
+210     2079     22     79     109     188
+212     2083     22     24     166     190
+222     932     217     1     4     5
+279     3151     277     1     1     2
+291     2119     28     36     227     263
 ========================= Battle result =========================
 ======================================== For Earth Army ===========================
-total number of ES---> 291
-total number of ET---> 85
-total number of EG---> 29
+total number of ES---> 629
+total number of ET---> 131
+total number of EG---> 5
 percentage of destructed ES----> 0
-percentage of destructed ET----> 4.70588
-percentage of destructed EG----> 10.3448
-percentage of total destructed Earth units----> 1.7284
-percentage of total Healed units----> 1.23457
-Average of Df---> 7
-Average of Dd---> 1
-Average of Db---> 9
-Df/Db % ----> 81.0811
-Dd/Db % ----> 18.9189
+percentage of destructed ET----> 0.763359
+percentage of destructed EG----> 0
+percentage of total destructed Earth units----> 0.130719
+percentage of total Healed units----> 1.17647
+Average of Df---> 1
+Average of Dd---> 4
+Average of Db---> 5
+Df/Db % ----> 20
+Dd/Db % ----> 80
 ======================================== For Alien Army ===========================
-total number of AS---> 557
+total number of AS---> 971
 total number of AD---> 0
-total number of AM---> 3
-percentage of destructed AS----> 1.0772
-percentage of destructed AM----> 450
-percentage of total destructed Alien units----> 3.39893
-Average of Df---> 38
-Average of Dd---> 101
-Average of Db---> 139
-Df/Db % ----> 27.3381
-Dd/Db % ----> 72.6619
+total number of AM---> 1
+percentage of destructed AS----> 1.44181
+percentage of total destructed Alien units----> 4.53141
+Average of Df---> 18
+Average of Dd---> 79
+Average of Db---> 97
+Df/Db % ----> 18.5286
+Dd/Db % ----> 81.4714

@@ -314,6 +314,7 @@ void simulationManager::printKilledList() {
 }
 
 
+
 void simulationManager::loadtoOutputFile() {
 
     int sumOfEDf{ 0 }, EDfcount{ 0 }, sumOfEDd{ 0 }, EDdcount{ 0 }, sumOfEDb{ 0 }, EDbcount{ 0 }, sumOfADf{ 0 }, ADfcount{
@@ -368,7 +369,7 @@ void simulationManager::loadtoOutputFile() {
             sumOfADf += killedU->getDf();
             sumOfADd += killedU->getDd();
             sumOfADb += killedU->getDb();
-
+            
         }
     }
 
