@@ -35,9 +35,9 @@ public:
 
     unit *getUnit(Type type);
 
-    int getAlienDroneCount();
+    int getCurrentAlienDroneCount();
 
-    int getAlienSoldierCount();
+    int getCurrentAlienSoldierCount();
 
     int getCurrentMonstersIndex() const;
 

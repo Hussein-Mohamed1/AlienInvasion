@@ -93,11 +93,11 @@ unit *alienArmy::getUnit(Type type) {
     return nullptr;
 }
 
-int alienArmy::getAlienDroneCount() {
+int alienArmy::getCurrentAlienDroneCount() {
     return DroneUnits.getCount();
 }
 
-int alienArmy::getAlienSoldierCount() {
+int alienArmy::getCurrentAlienSoldierCount() {
     return SoliderUnits.getCount();
 }
 

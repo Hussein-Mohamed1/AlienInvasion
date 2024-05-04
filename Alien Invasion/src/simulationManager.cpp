@@ -173,7 +173,7 @@ void simulationManager::manageAdding(int timestep) {
 
 
 int simulationManager::getAlienArmyUnitsCount() const {
-    return alienArmyPtr->getAlienSoldierCount() + alienArmyPtr->getAlienDroneCount() +
+    return alienArmyPtr->getCurrentAlienSoldierCount() + alienArmyPtr->getCurrentAlienDroneCount() +
            alienArmyPtr->getCurrentMonstersIndex() + 1;
 }
 
@@ -317,25 +317,25 @@ void simulationManager::printKilledList() {
 
 void simulationManager::loadtoOutputFile() {
 
-    int sumOfEDf{ 0 }, EDfcount{ 0 }, sumOfEDd{ 0 }, EDdcount{ 0 }, sumOfEDb{ 0 }, EDbcount{ 0 }, sumOfADf{ 0 }, ADfcount{
-            0 }, sumOfADd{ 0 }, ADdcount{ 0 }, sumOfADb{ 0 }, ADbcount{ 0 }, numofHealedunits= UnitMaintenanceList.getCount(), alienDestructedSoldierCount{0},
-            alienDestructedMonsterCount{ 0 },
-            alienDestructedDroneCount{ 0 },
-            earthdestructedGunneryCount{ 0 },
-            earthdestructedSoldierCount{ 0 },
-            earthdestructedTankCount{ 0 };
+    int sumOfEDf{0}, EDfcount{0}, sumOfEDd{0}, EDdcount{0}, sumOfEDb{0}, EDbcount{0}, sumOfADf{0}, ADfcount{
+            0}, sumOfADd{0}, ADdcount{0}, sumOfADb{0}, ADbcount{
+            0}, numofHealedunits = UnitMaintenanceList.getCount(), alienDestructedSoldierCount{0},
+            alienDestructedMonsterCount{0},
+            alienDestructedDroneCount{0},
+            earthdestructedGunneryCount{0},
+            earthdestructedSoldierCount{0},
+            earthdestructedTankCount{0};
     unit *killedU;
     while (killedList.dequeue(killedU)) {
-        switch (killedU->getType())
-        {
-        case EarthSoldier :
-            earthdestructedSoldierCount++;
-        case Gunnery:
-            earthdestructedGunneryCount++;
-        case EarthTank:
-            earthdestructedTankCount++;
-        default:
-            break;
+        switch (killedU->getType()) {
+            case EarthSoldier :
+                earthdestructedSoldierCount++;
+            case Gunnery:
+                earthdestructedGunneryCount++;
+            case EarthTank:
+                earthdestructedTankCount++;
+            default:
+                break;
         }
         if (killedU->getType() == EarthSoldier || killedU->getType() == Gunnery ||
             killedU->getType() == EarthTank) {
@@ -349,16 +349,15 @@ void simulationManager::loadtoOutputFile() {
             sumOfEDd += killedU->getDd();
             sumOfEDb += killedU->getDb();
         } else {
-            switch (killedU->getType())
-            {
-            case alienSoldier:
-                alienDestructedSoldierCount ++;
-            case DronePair:
-                alienDestructedDroneCount++;
-            case MonsterType:
-                alienDestructedMonsterCount++;
-            default:
-                break;
+            switch (killedU->getType()) {
+                case alienSoldier:
+                    alienDestructedSoldierCount++;
+                case DronePair:
+                    alienDestructedDroneCount++;
+                case MonsterType:
+                    alienDestructedMonsterCount++;
+                default:
+                    break;
             }
             OutputFile << killedU->getDestructionTime() << "     " << killedU->getId() << "     "
                        << killedU->getJoinTime() << "     " << killedU->getDf() << "     " << killedU->getDd()
@@ -413,24 +412,31 @@ void simulationManager::loadtoOutputFile() {
 
 
     OutputFile << "======================================== For Alien Army ===========================" << endl;
-    OutputFile << "total number of AS---> " << alienArmyPtr->getAlienSoldierCount() << endl;
-    OutputFile << "total number of AD---> " << alienArmyPtr->getAlienDroneCount() << endl;
-    OutputFile << "total number of AM---> " << alienArmyPtr->getCurrentMonstersIndex() + 1 << endl;
-    if (alienArmyPtr->getAlienSoldierCount() != 0)
+    OutputFile << "total number of AS---> " << alienArmyPtr->getCurrentAlienSoldierCount() + alienDestructedSoldierCount
+               << endl;
+    OutputFile << "total number of AD---> " << alienArmyPtr->getCurrentAlienDroneCount() + alienDestructedDroneCount
+               << endl;
+    OutputFile << "total number of AM---> " << alienArmyPtr->getCurrentMonstersIndex() + alienDestructedMonsterCount + 1
+               << endl;
+    if (alienArmyPtr->getCurrentAlienSoldierCount() != 0)
         OutputFile << "percentage of destructed AS----> "
-                << (double(alienDestructedSoldierCount) / alienArmyPtr->getAlienSoldierCount()) *
+                << (double(alienDestructedSoldierCount) /
+                    (alienArmyPtr->getCurrentAlienSoldierCount() + alienDestructedSoldierCount)) *
                    100 << endl;
-    if (alienArmyPtr->getAlienDroneCount() != 0)
+    if (alienArmyPtr->getCurrentAlienDroneCount() != 0)
         OutputFile << "percentage of destructed AD----> "
-                << (double(alienDestructedDroneCount) / alienArmyPtr->getAlienDroneCount()) * 100
+                << (double(alienDestructedDroneCount) /
+                    (alienArmyPtr->getCurrentAlienDroneCount() + alienDestructedDroneCount)) * 100
                 << endl;
     if (alienArmyPtr->getCurrentMonstersIndex() != 0)
         OutputFile << "percentage of destructed AM----> " <<
-        (double(alienDestructedMonsterCount) /
-            alienArmyPtr->getCurrentMonstersIndex() + 1) *
-        100 << endl;
-    int totaldestructedAlienArmy = alienDestructedDroneCount + alienDestructedMonsterCount + alienDestructedSoldierCount;
-    int totalAlienArmy = alienArmyPtr->getAlienSoldierCount() + alienArmyPtr->getAlienDroneCount() +
+                                                          (double(alienDestructedMonsterCount) /
+                                                           (alienArmyPtr->getCurrentMonstersIndex() +
+                                                            alienDestructedMonsterCount + 1)) *
+                                                          100 << endl;
+    int totaldestructedAlienArmy =
+            alienDestructedDroneCount + alienDestructedMonsterCount + alienDestructedSoldierCount;
+    int totalAlienArmy = alienArmyPtr->getCurrentAlienSoldierCount() + alienArmyPtr->getCurrentAlienDroneCount() +
                          alienArmyPtr->getCurrentMonstersIndex();
     if (totalAlienArmy != 0)
         OutputFile << "percentage of total destructed Alien units----> "
