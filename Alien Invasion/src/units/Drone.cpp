@@ -10,3 +10,11 @@ void Drone::print() const
 	std::cout << "Drone -->> \n";
 	unit::print();
 }
+bool Drone::damageEnemy(unit* attackedUnit)
+{
+	if (attackedUnit->getType() == EarthTank || attackedUnit->getType() == Gunnery)
+	{
+		return unit::damageEnemy(attackedUnit);
+	}
+	return false;
+}

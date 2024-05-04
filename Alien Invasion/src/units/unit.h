@@ -83,7 +83,8 @@ public:
     int getDd() const;
 
     int getDb() const;
-
+    armyType getArmyType();
     unit();
+    string typetostring(Type);
 };
 

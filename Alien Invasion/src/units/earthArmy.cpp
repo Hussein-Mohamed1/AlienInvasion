@@ -38,7 +38,7 @@ bool earthArmy::addUnit(unit *earthUnit) {
 void earthArmy::print() {
     LinkedQueue<Esoldier *> TempESlist;
     Esoldier *soldier{nullptr};
-    cout << "======================== Eartht Army Alive units ==================================\n";
+    cout << "======================== Earth Army Alive units ==================================\n";
     cout << "🌍 Earth Soldiers Count is: " << ESlist.getCount() << endl;
     cout << "ES [ ";
     while (ESlist.dequeue(soldier)) {

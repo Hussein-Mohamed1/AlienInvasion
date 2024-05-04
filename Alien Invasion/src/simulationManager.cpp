@@ -24,8 +24,8 @@ simulationManager::simulationManager(operationMode operationModeVal) : operation
     earthArmyPtr = new earthArmy();
     srand(time(nullptr));
     RandomGenerator = new randGen(this);
-    OutputFile.open("output.txt", std::ios::app | std::ios::out);
-
+    OutputFile.open("output.txt", std::ios::in | std::ios::out);
+    ofstream outputFile("output.txt", std::ofstream::out | std::ofstream::trunc);
     // Check if the file was opened successfully
     if (!OutputFile) {
         cout << "Unable to open file for writing." << endl;
@@ -55,7 +55,15 @@ void simulationManager::updateSimulation(int timestep) {
     unit *alienUnit = alienArmyPtr->getRandomUnit();
 
     handleUnit(earthUnit);
+    printinfoCurrentfight();
     handleUnit(alienUnit);
+    printinfoCurrentfight();
+    earthArmyPtr->print();
+    alienArmyPtr->print();
+    // to do units fight at current step 
+    printKilledList();
+
+
 }
 
 ///@details adds the unit to the earth army
@@ -277,10 +285,10 @@ void simulationManager::intro() {
 void simulationManager::printKilledList() {
     unit *killedUnit = nullptr;
     LinkedQueue<unit *> temp;
-    cout << "================ Killed Units ====================\n";
-    cout << "💀 " << KilledList.getCount() << " Units killed [ ";
-    while (!KilledList.isEmpty()) {
-        KilledList.dequeue(killedUnit);
+    cout << "================ ☠️Killed Units☠️ ====================\n";
+    cout << "💀 " << killedList.getCount() << " Units killed [ ";
+    while (!killedList.isEmpty()) {
+        killedList.dequeue(killedUnit);
         temp.enqueue(killedUnit);
         if (killedUnit) {
             cout << killedUnit->getId() << " , ";
@@ -289,31 +297,14 @@ void simulationManager::printKilledList() {
     cout << " ]\n";
     while (!temp.isEmpty()) {
         temp.dequeue(killedUnit);
-        KilledList.enqueue(killedUnit);
+        killedList.enqueue(killedUnit);
     }
 
 }
 
-void simulationManager::printTempList() {
-    unit *tempUnit = nullptr;
-    LinkedQueue<unit *> temp;
-    cout << "================ Temp Units ====================\n";
-    cout << "🕒 " << tempList.getCount() << " Units in Temp [ ";
-    while (!tempList.isEmpty()) {
-        tempList.dequeue(tempUnit);
-        temp.enqueue(tempUnit);
-        if (tempUnit) {
-            cout << tempUnit->getId() << " , ";
-        }
-    }
-    cout << " ]\n";
-    while (!temp.isEmpty()) {
-        temp.dequeue(tempUnit);
-        tempList.enqueue(tempUnit);
-    }
-}
 
-void simulationManager::loadtoOutputFile(LinkedQueue<unit *> killedList) {
+
+void simulationManager::loadtoOutputFile() {
 
     int sumOfEDf{ 0 }, EDfcount{ 0 }, sumOfEDd{ 0 }, EDdcount{ 0 }, sumOfEDb{ 0 }, EDbcount{ 0 }, sumOfADf{ 0 }, ADfcount{ 0 }, sumOfADd{ 0 }, ADdcount{ 0 }, sumOfADb{ 0 }, ADbcount{ 0 }, numofHealedunits{ 0 };
     unit *killedU;
@@ -345,61 +336,80 @@ void simulationManager::loadtoOutputFile(LinkedQueue<unit *> killedList) {
 
     // todo knowing result of fight
     // cout<<"win" or cout<<"drawn" or cout<<"loss"
-    OutputFile << "========================= Battle result =========================";
+    OutputFile << "========================= Battle result =========================\n";
     OutputFile << "======================================== For Earth Army ===========================" << endl;
     OutputFile << "total number of ES---> " << earthArmyPtr->getEarthSoldierCount() << endl;
     OutputFile << "total number of ET---> " << earthArmyPtr->getEarthTankCount() << endl;
     OutputFile << "total number of EG---> " << earthArmyPtr->getEarthGunneryCount() << endl;
-    OutputFile << "percentage of destructed ES----> "
-               << (double(earthArmyPtr->getEarthdestructedSoldierCount()) / earthArmyPtr->getEarthSoldierCount()) *
-                  100 << endl;
-    OutputFile << "percentage of destructed ET----> "
-               << (double(earthArmyPtr->getEarthdestructedTankCount()) / earthArmyPtr->getEarthTankCount()) * 100
-               << endl;
-    OutputFile << "percentage of destructed EG----> "
-               << (double(earthArmyPtr->getEarthdestructedGunneryCount()) / earthArmyPtr->getEarthGunneryCount()) *
-                  100 << endl;
+    if (earthArmyPtr->getEarthSoldierCount() != 0)
+        OutputFile << "percentage of destructed ES----> "
+        << (double(earthArmyPtr->getEarthdestructedSoldierCount()) / earthArmyPtr->getEarthSoldierCount()) *
+        100 << endl;
+    if (earthArmyPtr->getEarthTankCount() != 0)
+        OutputFile << "percentage of destructed ET----> "
+        << (double(earthArmyPtr->getEarthdestructedTankCount()) / earthArmyPtr->getEarthTankCount()) * 100
+        << endl;
+    if (earthArmyPtr->getEarthGunneryCount() != 0)
+        OutputFile << "percentage of destructed EG----> "
+        << (double(earthArmyPtr->getEarthdestructedGunneryCount()) / earthArmyPtr->getEarthGunneryCount()) *
+        100 << endl;
     int totaldestructedEarthArmy =
             earthArmyPtr->getEarthdestructedSoldierCount() + earthArmyPtr->getEarthdestructedTankCount() +
             earthArmyPtr->getEarthdestructedGunneryCount();
     int totalEarthArmy = earthArmyPtr->getEarthSoldierCount() + earthArmyPtr->getEarthTankCount() +
                          earthArmyPtr->getEarthGunneryCount();
-    OutputFile << "percentage of total destructed Earth units----> "
-               << (double(totaldestructedEarthArmy) / totalEarthArmy) * 100 << endl;
-    OutputFile << "percentage of total Healed units----> " << (double(numofHealedunits) / totalEarthArmy) * 100
-               << endl;
-    OutputFile << "Average of Df---> " << sumOfEDf / EDfcount << endl;
-    OutputFile << "Average of Dd---> " << sumOfEDd / EDdcount << endl;
-    OutputFile << "Average of Db---> " << sumOfEDb / EDbcount << endl;
-    OutputFile << "Df/Db % ----> " << (double(sumOfEDf) / sumOfEDb) * 100 << endl;
-    OutputFile << "Dd/Db % ----> " << (double(sumOfEDd) / sumOfEDb) * 100 << endl;
+    if (totalEarthArmy != 0)
+        OutputFile << "percentage of total destructed Earth units----> "
+        << (double(totaldestructedEarthArmy) / totalEarthArmy) * 100 << endl;
+    if (totalEarthArmy != 0)
+        OutputFile << "percentage of total Healed units----> " << (double(numofHealedunits) / totalEarthArmy) * 100
+        << endl;
+    if (EDfcount != 0)
+        OutputFile << "Average of Df---> " << sumOfEDf / EDfcount << endl;
+    if (EDdcount != 0)
+        OutputFile << "Average of Dd---> " << sumOfEDd / EDdcount << endl;
+    if (EDbcount != 0)
+        OutputFile << "Average of Db---> " << sumOfEDb / EDbcount << endl;
+    if (sumOfEDb != 0)
+        OutputFile << "Df/Db % ----> " << (double(sumOfEDf) / sumOfEDb) * 100 << endl;
+    if (sumOfEDb != 0)
+        OutputFile << "Dd/Db % ----> " << (double(sumOfEDd) / sumOfEDb) * 100 << endl;
 
 
     OutputFile << "======================================== For Alien Army ===========================" << endl;
     OutputFile << "total number of AS---> " << alienArmyPtr->getAlienSoldierCount() << endl;
     OutputFile << "total number of AD---> " << alienArmyPtr->getAlienDroneCount() << endl;
     OutputFile << "total number of AM---> " << alienArmyPtr->getCurrentMonstersIndex() << endl;
-    OutputFile << "percentage of destructed AS----> "
-               << (double(alienArmyPtr->getAliendestructedSoldierCount()) / alienArmyPtr->getAlienSoldierCount()) *
-                  100 << endl;
-    OutputFile << "percentage of destructed AD----> "
-               << (double(alienArmyPtr->getAliendestructedDroneCount()) / alienArmyPtr->getAlienDroneCount()) * 100
-               << endl;
-    OutputFile << "percentage of destructed AM----> " <<
-               (double(alienArmyPtr->getAliendestructedMonsterCount()) / alienArmyPtr->getCurrentMonstersIndex()) *
-               100 << endl;
+    if (alienArmyPtr->getAlienSoldierCount() != 0)
+        OutputFile << "percentage of destructed AS----> "
+        << (double(alienArmyPtr->getAliendestructedSoldierCount()) / alienArmyPtr->getAlienSoldierCount()) *
+        100 << endl;
+    if (alienArmyPtr->getAlienDroneCount() != 0)
+        OutputFile << "percentage of destructed AD----> "
+        << (double(alienArmyPtr->getAliendestructedDroneCount()) / alienArmyPtr->getAlienDroneCount()) * 100
+        << endl;
+    if (alienArmyPtr->getCurrentMonstersIndex() != 0)
+        OutputFile << "percentage of destructed AM----> " <<
+        (double(alienArmyPtr->getAliendestructedMonsterCount()) / alienArmyPtr->getCurrentMonstersIndex()) *
+        100 << endl;
     int totaldestructedAlienArmy =
             alienArmyPtr->getAliendestructedSoldierCount() + alienArmyPtr->getAliendestructedDroneCount() +
             alienArmyPtr->getAliendestructedMonsterCount();
     int totalAlienArmy = alienArmyPtr->getAlienSoldierCount() + alienArmyPtr->getAlienDroneCount() +
                          alienArmyPtr->getCurrentMonstersIndex();
-    OutputFile << "percentage of total destructed Alien units----> "
-               << (double(totaldestructedAlienArmy) / totalAlienArmy) * 100 << endl;
-    OutputFile << "Average of Df---> " << sumOfADf / ADfcount << endl;
-    OutputFile << "Average of Dd---> " << sumOfADd / ADdcount << endl;
-    OutputFile << "Average of Db---> " << sumOfADb / ADbcount << endl;
-    OutputFile << "Df/Db % ----> " << (double(sumOfADf) / sumOfADb) * 100 << endl;
-    OutputFile << "Dd/Db % ----> " << (double(sumOfADd) / sumOfADb) * 100 << endl;
+    if (totalAlienArmy != 0)
+        OutputFile << "percentage of total destructed Alien units----> "
+        << (double(totaldestructedAlienArmy) / totalAlienArmy) * 100 << endl;
+    if (ADfcount != 0)
+        OutputFile << "Average of Df---> " << sumOfADf / ADfcount << endl;
+    if (ADdcount != 0)
+        OutputFile << "Average of Dd---> " << sumOfADd / ADdcount << endl;
+    if (ADbcount != 0)
+        OutputFile << "Average of Db---> " << sumOfADb / ADbcount << endl;
+    if (sumOfADb != 0)
+        OutputFile << "Df/Db % ----> " << (double(sumOfADf) / sumOfADb) * 100 << endl;
+    if (sumOfADb != 0)
+        OutputFile << "Dd/Db % ----> " << (double(sumOfADd) / sumOfADb) * 100 << endl;
 
 
 }
@@ -436,7 +446,7 @@ void simulationManager::ManageHealing() {
         Soldiers.dequeue(InjSol, p);
 
         if (InjSol->GetStillHealing() == 10)
-            KilledList.enqueue(InjSol);
+            killedList.enqueue(InjSol);
 
         else {
             Healer->damageEnemy(InjSol);
@@ -458,7 +468,7 @@ void simulationManager::ManageHealing() {
 
 
         if (InjTank->GetStillHealing() == 10)
-            KilledList.enqueue(InjTank);
+            killedList.enqueue(InjTank);
 
         else {
             Healer->damageEnemy(InjTank);
@@ -587,7 +597,7 @@ void simulationManager::emptyTempList() {
 
 void simulationManager::returnUnitToArmy(unit *unitPtr) {
     if (unitPtr->getHealth() <= 0) {
-        KilledList.enqueue(unitPtr);
+        killedList.enqueue(unitPtr);
         return;
     }
 
@@ -604,5 +614,28 @@ void simulationManager::returnUnitToArmy(unit *unitPtr) {
 
 int simulationManager::getCurrentTimeStep() {
     return currentTimeStep;
+}
+void simulationManager::printinfoCurrentfight()
+{
+    cout << "================= ⚔️units fighting at current step⚔️ =======================\n";
+    unit* unitShot, *attackedunit;
+    while (tempList.dequeue(unitShot))
+    {
+        cout << unitShot->typetostring(unitShot->getType()) << "  " << unitShot->getId() << " [ ";
+            while (tempList.peek(attackedunit))
+            {
+                if (attackedunit->getArmyType()!=unitShot->getArmyType())
+                {
+                    tempList.dequeue(attackedunit);
+                    cout << attackedunit->getId() << "  , ";
+                }
+                else
+                {
+                    break;
+                }
+            }
+            cout<< " ]" << endl;
+    }
+    cout << endl;
 }
 

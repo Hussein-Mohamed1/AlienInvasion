@@ -29,9 +29,9 @@ protected:
     alienArmy *alienArmyPtr;
     earthArmy *earthArmyPtr;
     LinkedQueue<unit *> tempList;
-    LinkedQueue<unit *> KilledList;
+    LinkedQueue<unit *> killedList;
     randGen *RandomGenerator;
-    fstream OutputFile;
+    ofstream OutputFile;
     int currentTimeStep{0};
 
     ArrayStack<unit*> HealList;
@@ -50,7 +50,7 @@ public:
 
     void ManageHealing();
 
-    void loadtoOutputFile(LinkedQueue<unit *> KilledList);
+    void loadtoOutputFile();
 
     void showStats(unit *, unit *) const;
 
@@ -62,12 +62,11 @@ public:
 
     void printKilledList();
 
-    void printTempList();
-
     void emptyTempList();
 
     void returnUnitToArmy(unit *);
 
     int getCurrentTimeStep();
-
+    
+    void printinfoCurrentfight();
 };

@@ -145,3 +145,32 @@ int unit::GetStillHealing() const {
 int unit::GetOriginalHealth() const {
     return OriginalHealth;
 }
+armyType unit::getArmyType()
+{
+    if (this->getType() == EarthSoldier || this->getType() == EarthTank || this->getType() == Gunnery)
+        return earthUnit;
+    else
+        return alienUnit;
+}
+string unit::typetostring(Type t) 
+{
+    switch (t)
+    {
+    case Gunnery:
+        return "EG";
+    case EarthSoldier:
+        return "ES";
+    case EarthTank:
+        return "ET";
+    case alienSoldier:
+        return "AS";
+    case DronePair:
+        return "AD";
+    case MonsterType:
+        return "AM";
+    case Healer:
+        return "EH";
+    default:
+        break;
+    }
+}
