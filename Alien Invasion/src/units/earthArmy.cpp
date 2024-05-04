@@ -128,17 +128,7 @@ int earthArmy::getEarthGunneryCount() {
     return EGlist.getCount();
 }
 
-int earthArmy::getEarthdestructedGunneryCount() const {
-    return earthdestructedGunneryCount;
-}
 
-int earthArmy::getEarthdestructedSoldierCount() const {
-    return earthdestructedSoldierCount;
-}
-
-int earthArmy::getEarthdestructedTankCount() const {
-    return earthdestructedTankCount;
-}
 
 /// @details returns a randomUnit and removes it from its adt.
 unit *earthArmy::getRandomUnit() {
