@@ -38,12 +38,12 @@ bool earthArmy::addUnit(unit *earthUnit) {
 void earthArmy::print() {
     LinkedQueue<Esoldier *> TempESlist;
     Esoldier *soldier{nullptr};
-    cout << "======================== Eartht Army Alive units ==================================\n";
+    cout << "======================== Earth Army Alive units ==================================\n";
     cout << "🌍 Earth Soldiers Count is: " << ESlist.getCount() << endl;
     cout << "ES [ ";
     while (ESlist.dequeue(soldier)) {
         {
-            cout << soldier->getId() << ", ";
+            cout << soldier->getId() << (ESlist.isEmpty() ? "" : ", ");
             TempESlist.enqueue(soldier);
         }
     }
@@ -59,8 +59,8 @@ void earthArmy::print() {
     int garbage;
     priQueue<Egunnery *> tempEgunnery;
     while (EGlist.dequeue(tempGunnery, garbage)) {
-        { ///@todo fix these
-            cout << tempGunnery->getId() << ", ";
+        {
+            cout << tempGunnery->getId() << (EGlist.isEmpty() ? "" : ", ");
             tempEgunnery.enqueue(tempGunnery, garbage);
         }
     }
@@ -75,7 +75,7 @@ void earthArmy::print() {
     Tank *tempTank{nullptr};
     while (TankList.pop(tempTank)) {
         {
-            cout << tempTank->getId() << ", ";
+            cout << tempTank->getId() << (TankList.isEmpty() ? "" : ", ");
             tempTankList.push(tempTank);
         }
 
@@ -128,17 +128,7 @@ int earthArmy::getEarthGunneryCount() {
     return EGlist.getCount();
 }
 
-int earthArmy::getEarthdestructedGunneryCount() const {
-    return earthdestructedGunneryCount;
-}
 
-int earthArmy::getEarthdestructedSoldierCount() const {
-    return earthdestructedSoldierCount;
-}
-
-int earthArmy::getEarthdestructedTankCount() const {
-    return earthdestructedTankCount;
-}
 
 /// @details returns a randomUnit and removes it from its adt.
 unit *earthArmy::getRandomUnit() {

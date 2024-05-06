@@ -10,5 +10,6 @@ public:
             id, MonsterType, joinTime, health, power, attackCapacity, simPtr) {};
 
     virtual void print() const;
+    bool damageEnemy(unit*);
 };
 

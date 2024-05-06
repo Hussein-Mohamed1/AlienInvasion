@@ -10,3 +10,11 @@ void Esoldier::print() const {
     cout << "Earth Soldier --->";
     unit::print();
 }
+bool Esoldier::damageEnemy(unit* attackedUnit)
+{
+    if (attackedUnit->getType() == alienSoldier)
+    {
+        return unit::damageEnemy(attackedUnit);
+    }
+    return false;
+}

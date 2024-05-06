@@ -1,5 +1,5 @@
 #pragma once
-#include "unit.h"
+#include "./unit.h"
 #include"../ds/LinkedQueue.h"
 class ASolider : public unit
 {
@@ -8,6 +8,6 @@ public:
 		: unit(
             id, alienSoldier, joinTime, health, power, attackCapacity, simPtr) {};
 	void print() const;
-
+	bool damageEnemy(unit*);
 };
 

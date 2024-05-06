@@ -38,7 +38,8 @@ void alienArmy::print() {
     cout << "👽 Alien Soldier Count is: " << SoliderUnits.getCount() << endl;
     cout << "AS [ ";
     while (SoliderUnits.dequeue(soldier)) {
-        cout << soldier->getId() << ", ";
+        cout << soldier->getId() << (SoliderUnits.isEmpty() ?
+                                     "" : ", ");
         TempASlist.enqueue(soldier);
     }
     cout << "]\n";
@@ -51,7 +52,7 @@ void alienArmy::print() {
     Drone *tempDrone{nullptr};
     DoublyLinkedQueue<Drone *> tempDroneQueue;
     while (DroneUnits.dequeue(tempDrone)) {
-        cout << tempDrone->getId() << ", ";
+        cout << tempDrone->getId() << (DroneUnits.isEmpty() ? "" : ", ");
         tempDroneQueue.enqueue(tempDrone);
     }
     cout << "]\n";
@@ -61,7 +62,8 @@ void alienArmy::print() {
     cout << "👽 Alien Monster Count is: " << currentMonstersIndex + 1 << endl;
     cout << "AM [ ";
     for (int i = 0; i <= currentMonstersIndex; ++i) {
-        cout << MonsterUnits[currentMonstersIndex]->getId() << ", ";
+        cout << MonsterUnits[currentMonstersIndex]->getId() << (i == currentMonstersIndex
+                                                                ? "" : ", ");
     }
     cout << "]\n";
 
@@ -91,11 +93,11 @@ unit *alienArmy::getUnit(Type type) {
     return nullptr;
 }
 
-int alienArmy::getAlienDroneCount() {
+int alienArmy::getCurrentAlienDroneCount() {
     return DroneUnits.getCount();
 }
 
-int alienArmy::getAlienSoldierCount() {
+int alienArmy::getCurrentAlienSoldierCount() {
     return SoliderUnits.getCount();
 }
 
@@ -104,20 +106,17 @@ int alienArmy::getCurrentMonstersIndex() const {
 }
 
 
-int alienArmy::getAliendestructedMonsterCount() const {
-    return alienDestructedMonsterCount;
-}
 
-int alienArmy::getAliendestructedSoldierCount() const {
-    return alienDestructedSoldierCount;
-}
-
-int alienArmy::getAliendestructedDroneCount() const {
-    return alienDestructedDroneCount;
-}
 
 /// @details returns a randomUnit and removes it from its adt.
 unit *alienArmy::getRandomUnit() {
-    auto random_number = rand() % 3;
+    auto random_number = rand() % 3 + 3;
     return getUnit(static_cast<Type>(random_number));
+}
+
+unit *alienArmy::getDronePair() {
+    Drone *drone;
+    if (DroneUnits.DoublyDequeue(drone))
+        return drone;
+    return nullptr;
 }

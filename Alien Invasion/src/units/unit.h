@@ -8,27 +8,27 @@ class simulationManager;
 
 using namespace std;
 enum Type {
-    Gunnery, EarthSoldier, EarthTank, alienSoldier, DronePair, MonsterType
+    Gunnery, EarthSoldier, EarthTank, alienSoldier, DronePair, MonsterType, Healer
 };
 
 enum armyType {
-    earthUnit, alienUnit
+    earthArmyType, alienArmyType, Nan
 };
 
 class unit {
 protected:
 
     int ID;
-    Type type;
+    Type type ;
     int joinTime;
     double health;
     double power;
     int attackCapacity;
-    simulationManager *simPtr;
-    bool StillInHealingList;
-    double OriginalHealth;
-    int TimeFirstAttacked;
-    int TimeDeath;
+    simulationManager *simPtr{nullptr};
+    bool StillInHealingList{false};
+    double OriginalHealth{0};
+    int TimeFirstAttacked{0};
+    int TimeDeath{0};
 public:
     unit(int id, Type type, int joinTime, double health, double power, int attackCapacity, simulationManager *simPtr);
 
@@ -36,7 +36,7 @@ public:
 
     virtual void print() const;
 
-    int GetOriginalHealth() const;
+    double GetOriginalHealth() const;
 
     int getId() const;
 
@@ -83,7 +83,8 @@ public:
     int getDd() const;
 
     int getDb() const;
-
+    armyType getArmyType();
     unit();
+    string typetostring(Type);
 };
 

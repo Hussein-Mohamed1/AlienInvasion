@@ -119,25 +119,58 @@ unit::unit(int id, Type type, int joinTime, double health, double power, int att
           simPtr(simPtr), StillInHealingList(false), OriginalHealth(health) {}
 
 bool unit::damageEnemy(unit *Enemy) {
+    if (health <= 0) {
+        power = 0;
+        return false;
+    }
     if (Enemy) {
-
         double Damage = (getPower() * (getHealth() / 100)) / sqrt(Enemy->getHealth());
         double NewHealth = Enemy->getHealth() - Damage;
         Enemy->setHealth(NewHealth);
-
+        if (Enemy->getfirstAttackedTime() == 0)
+            Enemy->setfirstAttackedTime(simPtr->getCurrentTimeStep());
         return true;
     }
     return false;
 }
 
 void unit::UpdateStillHealing() {
-    StillInHealingList++;
+    StillInHealingList = !StillInHealingList;
 }
 
 int unit::GetStillHealing() const {
     return StillInHealingList;
 }
 
-int unit::GetOriginalHealth() const {
+double unit::GetOriginalHealth() const {
     return OriginalHealth;
+}
+armyType unit::getArmyType()
+{
+    if (this->getType() == EarthSoldier || this->getType() == EarthTank || this->getType() == Gunnery)
+        return earthArmyType;
+    else
+        return alienArmyType;
+}
+string unit::typetostring(Type t) 
+{
+    switch (t)
+    {
+    case Gunnery:
+        return "EG";
+    case EarthSoldier:
+        return "ES";
+    case EarthTank:
+        return "ET";
+    case alienSoldier:
+        return "AS";
+    case DronePair:
+        return "AD";
+    case MonsterType:
+        return "AM";
+    case Healer:
+        return "EH";
+    default:
+        break;
+    }
 }

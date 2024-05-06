@@ -15,6 +15,7 @@ public:
             id, DronePair, joinTime, health, power, attackCapacity, simPtr) {};
 
     virtual void print() const;
+    bool damageEnemy(unit*);
 };
 
 
