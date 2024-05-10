@@ -70,4 +70,8 @@ public:
     armyType assertWinner() const;
 
     static void printWinner(armyType type);
+
+    int getAlienSoldiersCount() const;
+
+    int getEarthSoldiersCount() const;
 };
