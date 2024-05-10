@@ -19,7 +19,7 @@ using namespace std;
 
 randGen::randGen(simulationManager *simPtr) : simPtr(simPtr) {
     srand(time(nullptr));
-    string S, temps, unitrang[4], probabilites[3];
+    string S, temps, unitrang[4], probabilites[4];
     fstream *infile = new fstream("./src//test.txt", ios::in);
     if (infile->is_open()) {
         getline(*infile, S);
@@ -46,11 +46,12 @@ randGen::randGen(simulationManager *simPtr) : simPtr(simPtr) {
 
         getline(*infile, S);
         stringstream sP(S);
-        for (int i{}; i < 3; i++)
+        for (int i{}; i < 4; i++)
             sP >> probabilites[i];
         prob = stoi(probabilites[0]);
         InfectedProb = stoi(probabilites[1]);
         Saverprob = stoi(probabilites[2]);
+        probofcallSaver = stoi(probabilites[3]);
         //get ranges of health / power / capasity of Earth army
         getline(*infile, S);
         stringstream ranges(S);
@@ -194,7 +195,10 @@ int randGen::getnumofunits() {
 int randGen::getnumofSaver() {
     return numofSaver;
 }
-
+int randGen::get_probofcallSaver()
+{
+    return probofcallSaver;
+}
 int randGen::Eid = 1;
 int randGen::Aid = 2000;
 int randGen::Sid = 4000;
