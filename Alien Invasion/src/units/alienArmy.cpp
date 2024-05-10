@@ -106,8 +106,6 @@ int alienArmy::getCurrentMonstersIndex() const {
 }
 
 
-
-
 /// @details returns a randomUnit and removes it from its adt.
 unit *alienArmy::getRandomUnit() {
     auto random_number = rand() % 3 + 3;
@@ -118,5 +116,23 @@ unit *alienArmy::getDronePair() {
     Drone *drone;
     if (DroneUnits.DoublyDequeue(drone))
         return drone;
+    return nullptr;
+}
+
+unit *alienArmy::getAnEnemyFor(Type attackersType, int enemyType) {
+    switch (attackersType) {
+        case EarthTank:
+            if (!enemyType)
+                return getUnit(MonsterType);
+            else
+                return getUnit(alienSoldier);
+        case EarthSoldier:
+            return getUnit(alienSoldier);
+        case Gunnery:
+            if (!enemyType)
+                return getDronePair();
+            else
+                return getUnit(MonsterType);
+    }
     return nullptr;
 }
