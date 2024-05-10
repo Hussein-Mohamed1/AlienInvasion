@@ -27,6 +27,7 @@ class earthArmy : public Army {
     int earthGunneryCount{0};
     int earthSoldierCount{0};
     int earthTankCount{0};
+    int earthInfectedSoldierCount{ 0 };
 
 public:
 

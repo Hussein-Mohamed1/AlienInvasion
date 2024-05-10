@@ -52,7 +52,7 @@ void earthArmy::print() {
         if (soldier)
             ESlist.enqueue(soldier);
 
-    cout << "🦠 Earth Soldiers Infected Count is: " << ESlist.getCount() << endl;
+    cout << "🦠 Earth Soldiers Infected Count is: " << earthInfectedSoldierCount << endl;
     cout << "ES [ ";
     while (ESlist.dequeue(soldier)) {
         {
@@ -65,8 +65,8 @@ void earthArmy::print() {
     while (TempESlist.dequeue(soldier))
         if (soldier)
             ESlist.enqueue(soldier);
-
-    cout<< "percentage of Infected ES----> "<< (double(Esoldier::numofInfectedES) / (earthSoldierCount)) *100 << endl;
+    if (earthSoldierCount != 0)
+        cout << "percentage of Infected ES----> " << (double(earthInfectedSoldierCount) / (earthSoldierCount)) * 100 << endl;
 
 
 
