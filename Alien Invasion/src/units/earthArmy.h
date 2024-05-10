@@ -7,12 +7,15 @@
 #include "../ds/ArrayStack.h"
 #include "Army.h"
 #include "Tank.h"
+#include "SaverUnit.h"
 
 class Esoldier;
 
 class Egunnery;
 
 class alienArmy;
+
+class SaverUnit;
 
 enum earthType {
     ES, EG, ET
@@ -21,20 +24,20 @@ enum earthType {
 class earthArmy : public Army {
 
     LinkedQueue<Esoldier *> ESlist;
+    LinkedQueue<SaverUnit *> SaverUnitList;
+    status SAVStatus{hasntCallSAV};
+
     priQueue<Egunnery *> EGlist;
     ArrayStack<Tank *> TankList;
     alienArmy *alienArmyPtr{nullptr};
-    int earthGunneryCount{0};
-    int earthSoldierCount{0};
-    int earthTankCount{0};
     int infectedSoldierCount{0};
 public:
     int getEarthInfectedSoldierCount() const;
 
-    void setEarthInfectedSoldierCount(const int earthInfectedSoldierCount);
+    void setEarthInfectedSoldierCount(int earthInfectedSoldierCount);
 
 public:
-    earthArmy();
+    earthArmy(simulationManager *pManager);
 
 
     unit *getRandomUnit();
@@ -54,6 +57,12 @@ public:
     int getEarthGunneryCount();
 
     unit *getAnEnemyFor(Type attackersType, int enemyType = 0);
+
+    bool hasCalledSAVArmy() const;
+
+    void destroySavArmy();
+
+    virtual ~earthArmy();
 };
 
 

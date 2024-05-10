@@ -21,12 +21,9 @@ class alienArmy : public Army {
     int currentMonstersIndex{-1};
     int alienSoldierCount{0};
     int alienDroneCount{0};
-
 public:
 
-
-
-    ///@todo all member functions for alienUnits must be implemented
+    alienArmy(simulationManager *pManager);
 
     bool addUnit(unit *);
 
@@ -45,6 +42,9 @@ public:
     unit *getDronePair();
 
     unit *getAnEnemyFor(Type attackersType, int enemyType = 0);
+
+    virtual ~alienArmy();
+
 };
 
 

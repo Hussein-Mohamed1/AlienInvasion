@@ -12,7 +12,7 @@
 #include "./units/Monster.h"
 #include "./units/Drone.h"
 #include "./units/HealUnit.h"
-
+#include "./units/SaverUnit.h"
 
 using namespace std;
 
@@ -21,11 +21,13 @@ randGen::randGen(simulationManager *simPtr) : simPtr(simPtr) {}
 
 void randGen::loadInputFile() {
     srand(time(nullptr));
-    string S, temps, unitrang[4], probabilites[2];
+    string S, temps, unitrang[4], probabilites[4];
     fstream *infile = new fstream("test.txt", ios::in);
     if (infile->is_open()) {
         getline(*infile, S);
         unitscreated = stoi(S);
+        getline(*infile, S);
+        numofSaver = stoi(S);
         //get ranges of ES / ET / EG /HU
         getline(*infile, S);
         stringstream sE(S);
@@ -46,10 +48,12 @@ void randGen::loadInputFile() {
 
         getline(*infile, S);
         stringstream sP(S);
-        for (int i{}; i < 2; i++)
+        for (int i{}; i < 4; i++)
             sP >> probabilites[i];
         prob = stoi(probabilites[0]);
         InfectedProb = stoi(probabilites[1]);
+        Saverprob = stoi(probabilites[2]);
+        probofcallSaver = stoi(probabilites[3]);
         //get ranges of health / power / capasity of Earth army
         getline(*infile, S);
         stringstream ranges(S);
@@ -74,6 +78,18 @@ void randGen::loadInputFile() {
         Ranges >> temps;
         RangeAC1 = stoi(temps.substr(0, temps.find('-')));
         RangeAC2 = stoi(temps.substr(temps.find('-') + 1, temps.size() - temps.find('-') - 1));
+        //get ranges of Saver units health / power / capasity of Alien army
+        getline(*infile, S);
+        stringstream SRanges(S);
+        SRanges >> temps;
+        RangeSP1 = stod(temps.substr(0, temps.find('-')));
+        RangeSP2 = stod(temps.substr(temps.find('-') + 1, temps.size() - temps.find('-') - 1));
+        SRanges >> temps;
+        RangeSH1 = stod(temps.substr(0, temps.find('-')));
+        RangeSH2 = stod(temps.substr(temps.find('-') + 1, temps.size() - temps.find('-') - 1));
+        SRanges >> temps;
+        RangeSC1 = stoi(temps.substr(0, temps.find('-')));
+        RangeSC2 = stoi(temps.substr(temps.find('-') + 1, temps.size() - temps.find('-') - 1));
     } else throw runtime_error("Oops No file is found to read data from!");
 };
 
@@ -89,6 +105,10 @@ unit *randGen::generatUnit(armyType unitType, int timestep) {
     healthAunit = rand() % int(RangeAH2 - RangeAH1 + 1) + RangeAH1; //randome Health of alien unit
     powerAunit = rand() % int(RangeAP2 - RangeAP1 + 1) + RangeAP1; //randome power of alien unit
     Aattackcap = rand() % (RangeAC2 - RangeAC1 + 1) + RangeAC1;    //randome attackcap of alien unit
+
+
+
+
     switch (unitType) {
         case earthArmyType: {
             num = rand() % 101;
@@ -125,6 +145,16 @@ unit *randGen::generatUnit(armyType unitType, int timestep) {
     }
 }
 
+unit *randGen::generatSaver(int T) {
+    double healthSunit, powerSunit;
+    int Sattackcap;
+    healthSunit = rand() % int(RangeSH2 - RangeSH1 + 1) + RangeSH1; //randome Health of saver unit
+    powerSunit = rand() % int(RangeSP2 - RangeSP1 + 1) + RangeSP1; //randome power of saver unit
+    Sattackcap = rand() % (RangeSC2 - RangeSC1 + 1) + RangeSC1;    //randome power of saver unit
+    unit *saverU = new SaverUnit(Sid++, T, healthSunit, powerSunit, Sattackcap, simPtr);
+    return saverU;
+}
+
 bool randGen::creatEarthUnits() const {
     int num;
     num = rand() % 100;
@@ -152,9 +182,28 @@ bool randGen::canInfected() const {
     return false;
 }
 
+bool randGen::creatSaverUnit() {
+    int num;
+    num = rand() % 100;
+    if (num <= Saverprob) {
+        return true;
+    }
+    return false;
+}
+
 int randGen::getnumofunits() {
     return unitscreated;
 }
 
+int randGen::getnumofSaver() {
+    return numofSaver;
+}
+
+int randGen::get_probofcallSaver() const {
+    return probofcallSaver;
+}
+
 int randGen::Eid = 1;
 int randGen::Aid = 2000;
+int randGen::Sid = 4000;
+

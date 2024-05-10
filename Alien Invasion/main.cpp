@@ -8,7 +8,7 @@ int main() {
         simulationManager simManager(Interactive);
 //        simulationManager::intro();
         int timeStep{0};
-        while (true) {
+        while (timeStep < 100) {
             int randNum = rand() % 100;
             system("cls");
             cout << "Current TimeStep is:" << timeStep;

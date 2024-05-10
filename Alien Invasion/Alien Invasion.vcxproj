@@ -139,6 +139,7 @@
     <ClCompile Include="src\units\Esoldier.cpp" />
     <ClCompile Include="src\units\HealUnit.cpp" />
     <ClCompile Include="src\units\Monster.cpp" />
+    <ClCompile Include="src\units\SaverUnit.cpp" />
     <ClCompile Include="src\units\Tank.cpp" />
     <ClCompile Include="src\units\unit.cpp" />
   </ItemGroup>
@@ -162,6 +163,7 @@
     <ClInclude Include="src\units\Esoldier.h" />
     <ClInclude Include="src\units\HealUnit.h" />
     <ClInclude Include="src\units\Monster.h" />
+    <ClInclude Include="src\units\SaverUnit.h" />
     <ClInclude Include="src\units\Tank.h" />
     <ClInclude Include="src\units\unit.h" />
   </ItemGroup>

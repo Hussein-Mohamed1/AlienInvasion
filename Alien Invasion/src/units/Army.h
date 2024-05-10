@@ -7,10 +7,15 @@
 
 #include "unit.h"
 
-class Army {
-public:
-    virtual bool addUnit(unit *) = 0;
+class simulationManager;
 
+class Army {
+protected:
+    simulationManager *simPtr{nullptr};
+public:
+    Army(simulationManager *simPtr) : simPtr(simPtr) {};
+
+    virtual bool addUnit(unit *) = 0;
 
     virtual unit *getUnit(Type type) = 0;
 

@@ -78,6 +78,9 @@
     <ClInclude Include="src\ds\DoublyLinkedQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\units\SaverUnit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\simulationManager.cpp">
@@ -124,6 +127,9 @@
     </ClCompile>
     <ClCompile Include="src\units\earthArmy.cpp">
       <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\units\SaverUnit.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

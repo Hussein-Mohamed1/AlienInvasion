@@ -44,4 +44,5 @@ add_executable(AlienInvasion
         "Alien Invasion/src/randGen.h"
         "Alien Invasion/src/simulationManager.cpp"
         "Alien Invasion/src/simulationManager.h"
-        "Alien Invasion/main.cpp")
+        "Alien Invasion/main.cpp"
+        "Alien Invasion/src/units/SaverUnit.cpp")

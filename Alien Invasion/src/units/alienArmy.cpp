@@ -6,6 +6,7 @@
 #include "Monster.h"
 #include "ASolider.h"
 #include "Drone.h"
+#include "simulationManager.h"
 
 bool alienArmy::addUnit(unit *AlienUnit) {
 
@@ -117,11 +118,13 @@ unit *alienArmy::getDronePair() {
 
 unit *alienArmy::getAnEnemyFor(Type attackersType, int enemyType) {
     switch (attackersType) {
-        case EarthTank:
+        case EarthTank: {
             if (!enemyType)
                 return getUnit(MonsterType);
             else
                 return getUnit(alienSoldier);
+        }
+
         case EarthSoldier:
             return getUnit(alienSoldier);
         case Gunnery:
@@ -130,5 +133,26 @@ unit *alienArmy::getAnEnemyFor(Type attackersType, int enemyType) {
             else
                 return getUnit(MonsterType);
     }
+
     return nullptr;
+}
+
+alienArmy::alienArmy(simulationManager *pManager) : Army(pManager) {
+
+}
+
+alienArmy::~alienArmy() {
+    ASolider *tempASolider;
+    while (SoliderUnits.dequeue(tempASolider))
+        delete tempASolider;
+
+    Drone *tempDrone;
+    while (DroneUnits.dequeue(tempDrone))
+        delete tempDrone;
+
+    Monster *tempMonster;
+    for (int i = 0; i <= currentMonstersIndex; ++i) {
+        tempMonster = MonsterUnits[i];
+        delete tempMonster;
+    }
 }

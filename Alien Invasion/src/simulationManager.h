@@ -39,7 +39,6 @@ public:
     static void intro();
 
     simulationManager(operationMode); //initializes the simulation
-    ~simulationManager();
 
     armyType updateSimulation(int);
 
@@ -65,7 +64,7 @@ public:
 
     int getCurrentTimeStep() const;
 
-    void printinfoCurrentfight(LinkedQueue<unit *> &tempList);
+    void printCurrentFightInfo(LinkedQueue<unit *> &tempList);
 
     armyType assertWinner() const;
 
@@ -84,4 +83,8 @@ public:
     void setEarthInfectedSoldierCount(const int earthInfectedSoldierCount);
 
     void infectUnits();
+
+    int getCallSAVPer() const;
+
+    virtual ~simulationManager();
 };

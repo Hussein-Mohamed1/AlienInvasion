@@ -15,7 +15,7 @@
 
 armyType (*getArmyType)(unit *armyUnit) =[](
         unit *armyUnit) -> armyType { ///@details just a utility method to get the type of the army
-    if (armyUnit->getType() == EarthSoldier || armyUnit->getType() == EarthTank ||
+    if (armyUnit->getType() == EarthSoldier || armyUnit->getType() == Saver || armyUnit->getType() == EarthTank ||
         armyUnit->getType() == Gunnery)
         return earthArmyType;
     else
@@ -23,12 +23,14 @@ armyType (*getArmyType)(unit *armyUnit) =[](
 };
 
 simulationManager::simulationManager(operationMode operationModeVal) : operationModeVal(operationModeVal) {
-    alienArmyPtr = new alienArmy();
-    earthArmyPtr = new earthArmy();
+    alienArmyPtr = new alienArmy(this);
+    earthArmyPtr = new earthArmy(this);
     srand(time(nullptr));
     RandomGenerator = new randGen(this);
     RandomGenerator->loadInputFile();
-    infectUnits();
+    if (getEarthArmyUnitsCount() != 0 &&
+        getEarthInfectedSoldierCount() / getEarthArmyUnitsCount() > RandomGenerator->get_probofcallSaver())
+        infectUnits();
 }
 
 armyType simulationManager::assertWinner() const {
@@ -110,6 +112,9 @@ void simulationManager::addNewUnit(unit *newUnit) {
             HealList.push(newUnit);
             return;
         }
+        if (newUnit->getType() == Saver) {
+            earthArmyPtr->addUnit(newUnit);
+        }
     }
 }
 
@@ -133,6 +138,8 @@ void simulationManager::showStats(unit *AttackingUnit, unit *DamagedUnit) const 
                         return "Drone";
                     case MonsterType:
                         return "Monster";
+                    case Saver:
+                        return "Support Unit";
                 }
             }()
                  << " has attacked unit of ID:"
@@ -153,6 +160,8 @@ void simulationManager::showStats(unit *AttackingUnit, unit *DamagedUnit) const 
                         return "Monster";
                     case Healer:
                         return "Healer";
+                    case Saver:
+                        return "Support Unit";
                 }
             }() << endl;
 }
@@ -166,6 +175,11 @@ void simulationManager::manageAdding(int timestep) {
     if (RandomGenerator->creatAlienUnits()) {
         for (int i = 0; i < RandomGenerator->getnumofunits(); i++) {
             addNewUnit(RandomGenerator->generatUnit(alienArmyType, timestep));
+        }
+    }
+    if (!earthArmyPtr->hasCalledSAVArmy() && RandomGenerator->creatSaverUnit() == hasntCallSAV) {
+        for (int i{}; i < RandomGenerator->getnumofSaver(); i++) {
+            addNewUnit(RandomGenerator->generatSaver(timestep));
         }
     }
 }
@@ -482,6 +496,9 @@ simulationManager::~simulationManager() {
     if (OutputFile.is_open()) {
         OutputFile.close();
     }
+    alienArmyPtr->~alienArmy();
+    earthArmyPtr->~earthArmy();
+    delete RandomGenerator;
 }
 
 void simulationManager::handleUnit(unit *attackingUnit) {
@@ -574,7 +591,7 @@ void simulationManager::handleUnit(unit *attackingUnit) {
         return;
     }
 
-    printinfoCurrentfight(tempList);
+    printCurrentFightInfo(tempList);
     unit *temp{nullptr};
     while (tempList.dequeue(temp))
         returnUnitToArmy(temp);
@@ -590,7 +607,7 @@ void simulationManager::returnUnitToArmy(unit *unitPtr) {
             return;
         }
 
-        if (unitPtr->typeToString() != "EG" && unitPtr->getArmyType() == earthArmyType &&
+        if (unitPtr->typeToString() == "EG" && unitPtr->getArmyType() == earthArmyType &&
             unitPtr->getHealth() <= 0.2 * unitPtr->GetOriginalHealth()) {
             unitPtr->UpdateStillHealing();
             UnitMaintenanceList.enqueue(unitPtr);
@@ -603,11 +620,12 @@ void simulationManager::returnUnitToArmy(unit *unitPtr) {
     }
 }
 
+
 int simulationManager::getCurrentTimeStep() const {
     return currentTimeStep;
 }
 
-void simulationManager::printinfoCurrentfight(LinkedQueue<unit *> &tempList) {
+void simulationManager::printCurrentFightInfo(LinkedQueue<unit *> &tempList) {
     cout << "================= ⚔️units fighting at current step⚔️ =======================\n";
     LinkedQueue<unit *> tempList2;
     unit *unitShot{nullptr}, *secondDrone{nullptr}, *attackedUnit{nullptr};
@@ -886,22 +904,28 @@ void simulationManager::infectUnits() {
             unit *tempSoldier{nullptr};
             LinkedQueue<unit *> temp;
             int j{1};
-            for (; j < idxOfRandomSoldier; ++j) {
-                tempSoldier = this->earthArmyPtr->getUnit(EarthSoldier);
-                if (tempSoldier)
-                    temp.enqueue(tempSoldier);
+            if (earthArmyPtr->hasCalledSAVArmy() != CalledSav) {
+                for (; j < idxOfRandomSoldier; ++j) {
+                    tempSoldier = this->earthArmyPtr->getUnit(EarthSoldier);
+                    if (tempSoldier)
+                        temp.enqueue(tempSoldier);
+                }
+
+                Esoldier *soldierToBeInfected{nullptr};
+                soldierToBeInfected = dynamic_cast<Esoldier *>(this->earthArmyPtr->getUnit(EarthSoldier));
+                soldierToBeInfected->setInfected();
+
+                this->returnUnitToArmy(soldierToBeInfected);
+
+                while (temp.dequeue(tempSoldier))
+                    this->returnUnitToArmy(tempSoldier);
             }
-
-            Esoldier *soldierToBeInfected{nullptr};
-            soldierToBeInfected = dynamic_cast<Esoldier *>(this->earthArmyPtr->getUnit(EarthSoldier));
-            soldierToBeInfected->setInfected();
-
-            this->returnUnitToArmy(soldierToBeInfected);
-
-            while (temp.dequeue(tempSoldier))
-                this->returnUnitToArmy(tempSoldier);
         }
     }
 
 
 };
+
+int simulationManager::getCallSAVPer() const {
+    return RandomGenerator->get_probofcallSaver();
+}

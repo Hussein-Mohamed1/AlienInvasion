@@ -169,6 +169,8 @@ string unit::typeToString() {
             return "AM";
         case Healer:
             return "EH";
+        case Saver:
+            return "SV";
         default:
             break;
     }

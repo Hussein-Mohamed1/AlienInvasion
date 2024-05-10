@@ -1,12 +1,12 @@
 #pragma once
 
-#include <thread>
-#include <mutex>
+
 #include "earthArmy.h"
 #include "Esoldier.h"
 #include "Egunnery.h"
 #include "alienArmy.h"
-
+#include "SaverUnit.h"
+#include "simulationManager.h"
 
 bool earthArmy::addUnit(unit *earthUnit) {
 
@@ -24,7 +24,10 @@ bool earthArmy::addUnit(unit *earthUnit) {
                 Tank *newTank = dynamic_cast<Tank *>(earthUnit);
                 if (!TankList.push(newTank))
                     return false;
+                return true;
             }
+            case Saver:
+                return SaverUnitList.enqueue(dynamic_cast<SaverUnit *>(earthUnit));
         }
         return true;
     } else
@@ -50,7 +53,11 @@ void earthArmy::print() {
         if (soldier)
             ESlist.enqueue(soldier);
 
+
     cout << "🦠 Earth Soldiers Infected Count is: " << infectedSoldierCount << endl;
+    if (infectedSoldierCount != 0)
+        cout << "🦠 percentage of Infected ES----> " << (double(infectedSoldierCount) / (ESlist.getCount())) * 100
+             << endl;
     cout << "ES [ ";
     int crtCounter = getEarthInfectedSoldierCount();
     while (ESlist.dequeue(soldier)) {
@@ -63,10 +70,6 @@ void earthArmy::print() {
     while (TempESlist.dequeue(soldier))
         if (soldier)
             ESlist.enqueue(soldier);
-    if (earthSoldierCount != 0)
-        cout << "percentage of Infected ES----> " << (double(infectedSoldierCount) / (earthSoldierCount)) * 100
-             << endl;
-
 
     cout << "🌍 Earth Gunnery Count is: " << EGlist.getCount() << endl;
     cout << "EG [ ";
@@ -100,16 +103,45 @@ void earthArmy::print() {
         if (tempTank)
             TankList.push(tempTank);
 
+    cout << "🌍 Earth Saver Count is: " << SaverUnitList.getCount() << endl;
+    cout << "Saver [ ";
+    SaverUnit *tempSaver{nullptr};
+    LinkedQueue<SaverUnit *> tempSaverList;
+    while (SaverUnitList.dequeue(tempSaver)) {
+        {
+            cout << tempSaver->getId() << (SaverUnitList.isEmpty() ? "" : ", ");
+            tempSaverList.enqueue(tempSaver);
+        }
+    }
+    cout << "]\n";
+
+    while (tempSaverList.dequeue(tempSaver))
+        if (tempSaver)
+            SaverUnitList.enqueue(tempSaver);
 }
 
 unit *earthArmy::getUnit(Type type) {
     switch (type) {
         case EarthSoldier: {
-            Esoldier *temp{nullptr};
-            if (ESlist.dequeue(temp)) {
-                return temp;
+            if (ESlist.getCount() != 0 &&
+                (SAVStatus == hasntCallSAV &&
+                 double(infectedSoldierCount) / ESlist.getCount() * 100 >= simPtr->getCallSAVPer()) ||
+                SAVStatus == CalledSav) {
+                SAVStatus = CalledSav;
+                if (double(infectedSoldierCount) / ESlist.getCount() * 100 <= 10)
+                    destroySavArmy();
+                SaverUnit *temp{nullptr};
+                if (SaverUnitList.dequeue(temp))
+                    return temp;
+                else return nullptr;
+            } else {
+                Esoldier *temp{nullptr};
+
+                if (ESlist.dequeue(temp)) {
+                    return temp;
+                }
+                return nullptr;
             }
-            return nullptr;
         }
         case EarthTank: {
             Tank *temp{nullptr};
@@ -125,9 +157,10 @@ unit *earthArmy::getUnit(Type type) {
                 return temp;
             }
             return nullptr;
-
         }
+
     };
+
     return nullptr;
 }
 
@@ -176,5 +209,34 @@ void earthArmy::setEarthInfectedSoldierCount(const int earthInfectedSoldierCount
     earthArmy::infectedSoldierCount = earthInfectedSoldierCount;
 }
 
-earthArmy::earthArmy() {};
+earthArmy::earthArmy(simulationManager *pManager) : Army(pManager) {}
 
+bool earthArmy::hasCalledSAVArmy() const {
+    return SAVStatus;
+}
+
+void earthArmy::destroySavArmy() {
+    SaverUnit *temp{nullptr};
+    SAVStatus = ConsumedSav;
+    while (SaverUnitList.dequeue(temp))
+        delete temp;
+};
+
+earthArmy::~earthArmy() {
+    Esoldier *temp{nullptr};
+    while (ESlist.dequeue(temp))
+        delete temp;
+
+    Egunnery *tempGunnery{nullptr};
+    int garbage;
+    while (EGlist.dequeue(tempGunnery, garbage))
+        delete tempGunnery;
+
+    Tank *tempTank{nullptr};
+    while (TankList.pop(tempTank))
+        delete tempTank;
+
+    SaverUnit *tempSaver{nullptr};
+    while (SaverUnitList.dequeue(tempSaver))
+        delete tempSaver;
+}
