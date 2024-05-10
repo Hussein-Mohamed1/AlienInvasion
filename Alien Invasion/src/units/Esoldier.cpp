@@ -10,30 +10,34 @@ void Esoldier::print() const {
     cout << "Earth Soldier --->";
     unit::print();
 }
-bool Esoldier::damageEnemy(unit* attackedUnit)
-{
-    if (attackedUnit->getType() == alienSoldier)
-    {
+
+bool Esoldier::damageEnemy(unit *attackedUnit) {
+    if (attackedUnit->getType() == alienSoldier) {
         return unit::damageEnemy(attackedUnit);
     }
     return false;
 }
-void Esoldier::setInfected()
-{
-    Infected = true;
-    numofInfectedES++;
+
+bool Esoldier::setInfected() {
+    if (Immune) {
+        Infected = true;
+        numofInfectedES++;
+        return true;
+    } else return false;
 }
-bool Esoldier::is_Infected()
-{
+
+bool Esoldier::is_Infected() {
     return Infected;
 }
-void Esoldier::setImmuned()
-{
-    Immuned = true;
+
+void Esoldier::makeImmune() {
+    Immune = true;
+    Infected = false;
     numofInfectedES--;
 }
-bool Esoldier::is_Immuned()
-{
-    return Immuned;
+
+bool Esoldier::isImmune() {
+    return Immune;
 }
+
 int Esoldier::numofInfectedES = 0;

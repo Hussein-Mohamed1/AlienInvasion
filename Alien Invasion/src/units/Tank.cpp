@@ -8,16 +8,18 @@
 bool Tank::keepAttackingEarthSoldiers = false;
 
 bool Tank::damageEnemy(unit *enemy) {
+
     if (enemy)
-        if ((enemy->getType() == alienSoldier && simPtr->getEarthArmyUnitsCount() <=
-                                                 0.3 * simPtr->getAlienArmyUnitsCount()) ||
+        if ((enemy->getType() == alienSoldier && simPtr->getEarthSoldiersCount() &&
+             simPtr->getEarthSoldiersCount() <= 0.3 * (simPtr->getAlienSoldiersCount() + 1)) ||
             (enemy->getType() == alienSoldier && keepAttackingEarthSoldiers) || enemy->getType() == MonsterType) {
 
             if (enemy->getType() == alienSoldier) {
-                if (keepAttackingEarthSoldiers &&
-                    simPtr->getEarthSoldiersCount() >= 0.8 * simPtr->getAlienArmyUnitsCount())
+                if (keepAttackingEarthSoldiers && simPtr->getEarthSoldiersCount() &&
+                    simPtr->getEarthSoldiersCount() >= 0.8 * (simPtr->getAlienSoldiersCount() + 1))
                     keepAttackingEarthSoldiers = false;
-                if (simPtr->getEarthArmyUnitsCount() <= 0.3 * simPtr->getAlienArmyUnitsCount())
+                if (!keepAttackingEarthSoldiers && simPtr->getEarthSoldiersCount() &&
+                    simPtr->getEarthSoldiersCount() <= 0.3 * (simPtr->getAlienSoldiersCount() + 1))
                     keepAttackingEarthSoldiers = true;
             }
 

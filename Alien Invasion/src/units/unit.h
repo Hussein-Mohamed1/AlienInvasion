@@ -19,13 +19,13 @@ class unit {
 protected:
 
     int ID;
-    Type type ;
+    Type type;
     int joinTime;
     double health;
     double power;
     int attackCapacity;
     simulationManager *simPtr{nullptr};
-    bool StillInHealingList{false};
+    int StillInHealingList{0};
     double OriginalHealth{0};
     int TimeFirstAttacked{0};
     int TimeDeath{0};
@@ -83,7 +83,9 @@ public:
     int getDd() const;
 
     int getDb() const;
+
     armyType getArmyType();
+
     unit();
 
     string typeToString();

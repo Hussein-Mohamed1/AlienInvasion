@@ -10,6 +10,7 @@
 #include "./units/unit.h"
 #include "windows.h"
 #include "iostream"
+#include "./units/Esoldier.h"
 
 armyType (*getArmyType)(unit *armyUnit) =[](
         unit *armyUnit) -> armyType { ///@details just a utility method to get the type of the army
@@ -58,7 +59,7 @@ armyType simulationManager::updateSimulation(int timestep) {
     currentTimeStep = timestep;
     manageAdding(timestep);
 
-//    ManageHealing();
+    ManageHealing();
 
     if (operationModeVal == Interactive) {
         cout << "TimeStep: " << timestep << endl;
@@ -391,20 +392,18 @@ void simulationManager::ManageHealing() {
     int Cap = Healer->getAttackCapacity();
 
 
-    LinkedQueue<unit *> T;
     LinkedQueue<unit *> tank;
 
     priQueue<unit *> Soldiers;
 
     while (!UnitMaintenanceList.isEmpty()) {
-        unit *Inj;
+        unit *Inj{nullptr};
         UnitMaintenanceList.dequeue(Inj);
         if (Inj->getType() == EarthSoldier) {
             Soldiers.enqueue(Inj, Inj->getHealth(), 1);
         } else if (Inj->getType() == EarthTank) {
             tank.enqueue(Inj);
-        } else
-            T.enqueue(Inj);
+        }
 
     }
 
@@ -419,13 +418,16 @@ void simulationManager::ManageHealing() {
         else {
             Healer->damageEnemy(InjSol);
 
-            if (InjSol->getHealth() > (0.2 * InjSol->GetOriginalHealth())) {
-                addNewUnit(InjSol);
-            } else {
-                UnitMaintenanceList.enqueue(InjSol);
-            }
             InjSol->UpdateStillHealing();
+            returnUnitToArmy(InjSol);
+            Esoldier *tempSoldier = dynamic_cast<Esoldier *>(InjSol);
+
+            if (tempSoldier->is_Infected()) {
+                Cap--;
+                tempSoldier->makeImmune();
+            }
             Cap--;
+
         }
     }
 
@@ -440,13 +442,8 @@ void simulationManager::ManageHealing() {
 
         else {
             Healer->damageEnemy(InjTank);
-
-            if (InjTank->getHealth() > (0.2 * InjTank->GetOriginalHealth())) {
-                addNewUnit(InjTank);
-            } else {
-                UnitMaintenanceList.enqueue(InjTank);
-            }
             InjTank->UpdateStillHealing();
+            returnUnitToArmy(InjTank);
             Cap--;
         }
     }
@@ -463,19 +460,16 @@ void simulationManager::ManageHealing() {
         tank.dequeue(t);
         UnitMaintenanceList.enqueue(t);
     }
-    while (!T.isEmpty()) {
-        unit *t;
-        T.dequeue(t);
-        UnitMaintenanceList.enqueue(t);
-    }
+
 
     unit *Temp{nullptr};
     int UMLlength = UnitMaintenanceList.getCount();
     for (int i = 0; i < UMLlength; ++i) {
         returnUnitToArmy(Temp);
     }
-
-    delete Healer;
+    if (Cap != Healer->getAttackCapacity())
+        delete Healer;
+    else HealList.push(Healer);
 }
 
 simulationManager::~simulationManager() {
@@ -519,50 +513,52 @@ void simulationManager::handleUnit(unit *attackingUnit) {
 
             if (defendingUnit1) {
                 ///@details makes the attacker attack defendingUnit1 and if there is a drone pair then make both attack
-                attackingUnit->damageEnemy(defendingUnit1);
-                if (secondAttackingDrone)
-                    secondAttackingDrone->damageEnemy(defendingUnit1);
-
-
-                if (operationModeVal == Interactive) {
-                    showStats(attackingUnit, defendingUnit1);
+                if (attackingUnit->damageEnemy(defendingUnit1)) {
                     if (secondAttackingDrone)
-                        showStats(secondAttackingDrone, defendingUnit1);
-                }
+                        secondAttackingDrone->damageEnemy(defendingUnit1);
 
-                ///@details used to handle the adding of the attacking unit to templist only once
-                if (!enqueuedOnce) {
-                    enqueuedOnce = true;
-                    tempList.enqueue(attackingUnit);
-                    if (secondAttackingDrone)
-                        tempList.enqueue(secondAttackingDrone);
-                }
 
-                tempList.enqueue(defendingUnit1);
+                    if (operationModeVal == Interactive) {
+                        showStats(attackingUnit, defendingUnit1);
+                        if (secondAttackingDrone)
+                            showStats(secondAttackingDrone, defendingUnit1);
+                    }
+
+                    ///@details used to handle the adding of the attacking unit to templist only once
+                    if (!enqueuedOnce) {
+                        enqueuedOnce = true;
+                        tempList.enqueue(attackingUnit);
+                        if (secondAttackingDrone)
+                            tempList.enqueue(secondAttackingDrone);
+                    }
+
+                    tempList.enqueue(defendingUnit1);
+                }
             }
 
             if (defendingUnit2) {
-                attackingUnit->damageEnemy(defendingUnit2);
-                if (secondAttackingDrone)
-                    secondAttackingDrone->damageEnemy(defendingUnit2);
-
-
-                if (operationModeVal == Interactive) {
-                    showStats(attackingUnit, defendingUnit2);
+                if (attackingUnit->damageEnemy(defendingUnit2)) {
                     if (secondAttackingDrone)
-                        showStats(secondAttackingDrone, defendingUnit2);
-                }
+                        secondAttackingDrone->damageEnemy(defendingUnit2);
 
 
-                ///@details used to handle the adding of the attacking unit to templist only once
-                if (!enqueuedOnce) {
-                    enqueuedOnce = true;
-                    tempList.enqueue(attackingUnit);
-                    if (secondAttackingDrone)
-                        tempList.enqueue(secondAttackingDrone);
-                }
+                    if (operationModeVal == Interactive) {
+                        showStats(attackingUnit, defendingUnit2);
+                        if (secondAttackingDrone)
+                            showStats(secondAttackingDrone, defendingUnit2);
+                    }
 
-                tempList.enqueue(defendingUnit2);
+
+                    ///@details used to handle the adding of the attacking unit to templist only once
+                    if (!enqueuedOnce) {
+                        enqueuedOnce = true;
+                        tempList.enqueue(attackingUnit);
+                        if (secondAttackingDrone)
+                            tempList.enqueue(secondAttackingDrone);
+                    }
+
+                    tempList.enqueue(defendingUnit2);
+                } else returnUnitToArmy(defendingUnit2);
             }
         }
     }
@@ -588,7 +584,8 @@ void simulationManager::returnUnitToArmy(unit *unitPtr) {
             return;
         }
 
-        if (unitPtr->getHealth() <= 0.2 * unitPtr->GetOriginalHealth()) {
+        if (unitPtr->typeToString() != "EG" && unitPtr->getArmyType() == earthArmyType &&
+            unitPtr->getHealth() <= 0.2 * unitPtr->GetOriginalHealth()) {
             unitPtr->UpdateStillHealing();
             UnitMaintenanceList.enqueue(unitPtr);
             return;
