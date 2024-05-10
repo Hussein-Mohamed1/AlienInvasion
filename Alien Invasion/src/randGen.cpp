@@ -19,8 +19,8 @@ using namespace std;
 
 randGen::randGen(simulationManager *simPtr) : simPtr(simPtr) {
     srand(time(nullptr));
-    string S, temps, unitrang[4];
-    fstream *infile = new fstream("test.txt", ios::in);
+    string S, temps, unitrang[4], probabilites[2];
+    fstream *infile = new fstream("./src//test.txt", ios::in);
     if (infile->is_open()) {
         getline(*infile, S);
         unitscreated = stoi(S);
@@ -41,9 +41,13 @@ randGen::randGen(simulationManager *simPtr) : simPtr(simPtr) {
         perAS = stod(unitrang[0]);
         perAM = stod(unitrang[1]);
         perAD = stod(unitrang[2]);
-        getline(*infile, S);
-        prob = stoi(S);
 
+        getline(*infile, S);
+        stringstream sP(S);
+        for (int i{}; i < 2; i++)
+            sP >> probabilites[i];
+        prob = stoi(probabilites[0]);
+        InfectedProb = stoi(probabilites[1]);
         //get ranges of health / power / capasity of Earth army
         getline(*infile, S);
         stringstream ranges(S);
@@ -72,15 +76,6 @@ randGen::randGen(simulationManager *simPtr) : simPtr(simPtr) {
 }
 
 
-double randGen::handelPer(double per, int num) {
-
-    // handel num of units created depening on persentage
-    if ((((per * num) / 100) - int((per * num) / 100)) >= 0.5)
-        per = ceil(((per * num) / 100));
-    else
-        per = floor(((per * num) / 100));
-    return per;
-}
 
 unit *randGen::generatUnit(armyType unitType, int timestep) {
     double healthEunit, healthAunit, powerEunit, powerAunit;
@@ -147,6 +142,14 @@ bool randGen::creatAlienUnits() const {
     return false;
 }
 
+bool randGen::canInfected()  {
+    int num;
+    num = rand() % 100;
+    if (num <= InfectedProb) {
+        return true;
+    }
+    return false;
+}
 int randGen::getnumofunits() {
     return unitscreated;
 }

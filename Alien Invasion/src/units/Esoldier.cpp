@@ -18,3 +18,22 @@ bool Esoldier::damageEnemy(unit* attackedUnit)
     }
     return false;
 }
+void Esoldier::setInfected()
+{
+    Infected = true;
+    numofInfectedES++;
+}
+bool Esoldier::is_Infected()
+{
+    return Infected;
+}
+void Esoldier::setImmuned()
+{
+    Immuned = true;
+    numofInfectedES--;
+}
+bool Esoldier::is_Immuned()
+{
+    return Immuned;
+}
+int Esoldier::numofInfectedES = 0;
