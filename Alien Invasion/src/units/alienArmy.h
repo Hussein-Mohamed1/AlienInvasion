@@ -44,6 +44,8 @@ public:
     unit *getRandomUnit();
 
     unit* getDronePair();
+
+    unit *getAnEnemyFor(Type attackersType, int enemyType = 0);
 };
 
 
