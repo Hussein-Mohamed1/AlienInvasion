@@ -8,7 +8,7 @@ class simulationManager;
 
 using namespace std;
 enum Type {
-    Gunnery, EarthSoldier, EarthTank, alienSoldier, DronePair, MonsterType, Healer
+    Gunnery, EarthSoldier, EarthTank, alienSoldier, DronePair, MonsterType, Healer , Saver
 };
 
 enum armyType {

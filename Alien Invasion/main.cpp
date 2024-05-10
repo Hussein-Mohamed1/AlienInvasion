@@ -6,7 +6,7 @@ int main() {
     SetConsoleOutputCP(CP_UTF8);
     try {
         simulationManager simManager(Interactive);
-//        simulationManager::intro();
+        simulationManager::intro();
         int timeStep{0};
         for (int i = 0; i < 300; i++) {
             int randNum = rand() % 100;

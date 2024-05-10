@@ -174,6 +174,13 @@ void simulationManager::manageAdding(int timestep) {
             addNewUnit(RandomGenerator->generatUnit(alienArmyType, timestep));
         }
     }
+    if (RandomGenerator->creatSaverUnit())
+    {
+        for (int i{}; i < RandomGenerator->getnumofSaver(); i++)
+        {
+            addNewUnit(RandomGenerator->generatSaver(timestep));
+        }
+    }
 }
 
 

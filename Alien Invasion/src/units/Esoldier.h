@@ -1,6 +1,6 @@
 #pragma once
 #include "unit.h"
-class Esoldier :public unit
+class Esoldier : public unit
 {
 	bool Infected = false;
 	bool Immuned = false;
