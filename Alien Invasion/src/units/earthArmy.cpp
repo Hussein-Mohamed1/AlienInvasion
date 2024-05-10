@@ -116,6 +116,24 @@ unit *earthArmy::getUnit(Type type) {
     return nullptr;
 }
 
+unit *earthArmy::getAnEnemyFor(Type attackersType, int enemyType) {
+    switch (attackersType) {
+        case alienSoldier:
+            return getUnit(EarthSoldier);
+        case MonsterType:;
+            if (!enemyType)
+                return getUnit(EarthTank);
+            else
+                return getUnit(EarthSoldier);
+        case DronePair:
+            if (!enemyType)
+                return getUnit(EarthTank);
+            else
+                return getUnit(Gunnery);
+    }
+    return nullptr;
+}
+
 int earthArmy::getEarthSoldierCount() {
     return ESlist.getCount();
 }
@@ -127,7 +145,6 @@ int earthArmy::getEarthTankCount() {
 int earthArmy::getEarthGunneryCount() {
     return EGlist.getCount();
 }
-
 
 
 /// @details returns a randomUnit and removes it from its adt.

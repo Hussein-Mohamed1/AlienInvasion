@@ -152,9 +152,10 @@ armyType unit::getArmyType()
     else
         return alienArmyType;
 }
-string unit::typetostring(Type t) 
+
+string unit::typeToString()
 {
-    switch (t)
+    switch (type)
     {
     case Gunnery:
         return "EG";

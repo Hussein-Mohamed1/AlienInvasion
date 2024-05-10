@@ -10,6 +10,7 @@ class earthArmy;
 #include "unit.h"
 
 class Tank : public unit {
+    static bool keepAttackingEarthSoldiers;
 public:
     Tank(int id, int joinTime, double health, double power, int attackCapacity, simulationManager *simPtr = nullptr)
             : unit(

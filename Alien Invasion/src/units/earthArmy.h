@@ -31,7 +31,6 @@ class earthArmy : public Army {
 public:
 
 
-
     unit *getRandomUnit();
 
     unit *Attack(unit *enemy);
@@ -48,6 +47,8 @@ public:
     int getEarthTankCount();
 
     int getEarthGunneryCount();
+
+    unit *getAnEnemyFor(Type attackersType, int enemyType = 0);
 };
 
 

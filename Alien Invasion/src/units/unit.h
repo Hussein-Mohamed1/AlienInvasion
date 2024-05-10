@@ -85,6 +85,7 @@ public:
     int getDb() const;
     armyType getArmyType();
     unit();
-    string typetostring(Type);
+
+    string typeToString();
 };
 
