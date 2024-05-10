@@ -4,6 +4,7 @@
 #pragma once
 
 #include <string>
+#include <mutex>
 #include "simulationManager.h"
 #include "./units/alienArmy.h"
 #include "./units/earthArmy.h"
@@ -26,17 +27,8 @@ simulationManager::simulationManager(operationMode operationModeVal) : operation
     earthArmyPtr = new earthArmy();
     srand(time(nullptr));
     RandomGenerator = new randGen(this);
-    OutputFile.open("output.txt", std::ios::in | std::ios::out);
-    ofstream outputFile("output.txt", std::ofstream::out | std::ofstream::trunc);
-    // Check if the file was opened successfully
-    if (!OutputFile) {
-        cout << "Unable to open file for writing." << endl;
-        // Handle the error appropriately, e.g., by throwing an exception
-        throw std::runtime_error("Failed to open output file.");
-    }
-
-    // Write data to the file in the constructor
-    OutputFile << "TimeDeath     ID      Tj      Df      Dd      Db" << endl;
+    RandomGenerator->loadInputFile();
+    infectUnits();
 }
 
 armyType simulationManager::assertWinner() const {
@@ -78,6 +70,7 @@ armyType simulationManager::updateSimulation(int timestep) {
         alienArmyPtr->print();
         printKilledList();
     }
+    infectUnits();
     return Nan;
 
 }
@@ -218,7 +211,6 @@ void simulationManager::printKilledList() {
 
 }
 
-///@todo move this to randgen
 void simulationManager::loadtoOutputFile() {
 
     int sumOfEDf{0}, EDfcount{0}, sumOfEDd{0}, EDdcount{0}, sumOfEDb{0}, EDbcount{0}, sumOfADf{0}, ADfcount{
@@ -230,6 +222,20 @@ void simulationManager::loadtoOutputFile() {
             earthdestructedSoldierCount{0},
             earthdestructedTankCount{0};
     unit *killedU;
+
+
+    OutputFile.open("output.txt", std::ios::in | std::ios::out);
+    ofstream outputFile("output.txt", std::ofstream::out | std::ofstream::trunc);
+    // Check if the file was opened successfully
+    if (!OutputFile) {
+        cout << "Unable to open file for writing." << endl;
+        // Handle the error appropriately, e.g., by throwing an exception
+        throw std::runtime_error("Failed to open output file.");
+    }
+
+    // Write data to the file in the constructor
+    OutputFile << "TimeDeath     ID      Tj      Df      Dd      Db" << endl;
+
     while (killedList.dequeue(killedU)) {
         if (killedU->getType() == EarthSoldier || killedU->getType() == Gunnery ||
             killedU->getType() == EarthTank) {
@@ -856,3 +862,46 @@ void simulationManager::intro() {
 void simulationManager::addToKilledList(unit *pUnit) {
     killedList.enqueue(pUnit);
 }
+
+int simulationManager::canInfect() const {
+    return RandomGenerator->canInfected();
+}
+
+int simulationManager::getEarthInfectedSoldierCount() const {
+    return earthArmyPtr->getEarthInfectedSoldierCount();
+}
+
+void simulationManager::setEarthInfectedSoldierCount(const int earthInfectedSoldierCount) {
+    earthArmyPtr->setEarthInfectedSoldierCount(earthInfectedSoldierCount);
+}
+
+void simulationManager::infectUnits() {
+
+    int crtInfectCount = this->getEarthInfectedSoldierCount();
+    for (int i = 0; i < crtInfectCount; ++i) {
+        int random = rand() % 100;
+
+        if (random <= 2) {
+            int idxOfRandomSoldier = rand() % this->getEarthSoldiersCount();
+            unit *tempSoldier{nullptr};
+            LinkedQueue<unit *> temp;
+            int j{1};
+            for (; j < idxOfRandomSoldier; ++j) {
+                tempSoldier = this->earthArmyPtr->getUnit(EarthSoldier);
+                if (tempSoldier)
+                    temp.enqueue(tempSoldier);
+            }
+
+            Esoldier *soldierToBeInfected{nullptr};
+            soldierToBeInfected = dynamic_cast<Esoldier *>(this->earthArmyPtr->getUnit(EarthSoldier));
+            soldierToBeInfected->setInfected();
+
+            this->returnUnitToArmy(soldierToBeInfected);
+
+            while (temp.dequeue(tempSoldier))
+                this->returnUnitToArmy(tempSoldier);
+        }
+    }
+
+
+};

@@ -2,6 +2,7 @@
 
 #include "Esoldier.h"
 #include <cmath>
+#include "simulationManager.h"
 
 Esoldier::Esoldier(int id, int joinTime, double health, double power, int attackCapacity, simulationManager *simPtr)
         : unit(id, EarthSoldier, joinTime, health, power, attackCapacity, simPtr) {}
@@ -19,9 +20,9 @@ bool Esoldier::damageEnemy(unit *attackedUnit) {
 }
 
 bool Esoldier::setInfected() {
-    if (Immune) {
+    if (!Immune && !Infected) {
         Infected = true;
-        numofInfectedES++;
+        simPtr->setEarthInfectedSoldierCount(simPtr->getEarthInfectedSoldierCount() + 1);
         return true;
     } else return false;
 }
@@ -31,13 +32,11 @@ bool Esoldier::is_Infected() {
 }
 
 void Esoldier::makeImmune() {
+    simPtr->setEarthInfectedSoldierCount(simPtr->getEarthInfectedSoldierCount() - 1);
     Immune = true;
     Infected = false;
-    numofInfectedES--;
 }
 
 bool Esoldier::isImmune() {
     return Immune;
 }
-
-int Esoldier::numofInfectedES = 0;

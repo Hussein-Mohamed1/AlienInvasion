@@ -21,13 +21,12 @@ class alienArmy : public Army {
     int currentMonstersIndex{-1};
     int alienSoldierCount{0};
     int alienDroneCount{0};
-  
+
 public:
 
 
 
     ///@todo all member functions for alienUnits must be implemented
-    unit *Attack(unit *enemy);
 
     bool addUnit(unit *);
 
@@ -43,7 +42,7 @@ public:
 
     unit *getRandomUnit();
 
-    unit* getDronePair();
+    unit *getDronePair();
 
     unit *getAnEnemyFor(Type attackersType, int enemyType = 0);
 };

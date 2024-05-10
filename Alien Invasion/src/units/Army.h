@@ -11,7 +11,6 @@ class Army {
 public:
     virtual bool addUnit(unit *) = 0;
 
-    virtual unit *Attack(unit *) = 0;
 
     virtual unit *getUnit(Type type) = 0;
 

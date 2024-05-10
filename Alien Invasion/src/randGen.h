@@ -20,7 +20,9 @@ public:
     bool creatAlienUnits() const;
 
     int getnumofunits();
-    bool canInfected();
 
+    bool canInfected() const;
+
+    void loadInputFile();
 };
 

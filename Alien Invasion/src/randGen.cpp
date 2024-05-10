@@ -17,7 +17,9 @@
 using namespace std;
 
 
-randGen::randGen(simulationManager *simPtr) : simPtr(simPtr) {
+randGen::randGen(simulationManager *simPtr) : simPtr(simPtr) {}
+
+void randGen::loadInputFile() {
     srand(time(nullptr));
     string S, temps, unitrang[4], probabilites[2];
     fstream *infile = new fstream("test.txt", ios::in);
@@ -73,8 +75,7 @@ randGen::randGen(simulationManager *simPtr) : simPtr(simPtr) {
         RangeAC1 = stoi(temps.substr(0, temps.find('-')));
         RangeAC2 = stoi(temps.substr(temps.find('-') + 1, temps.size() - temps.find('-') - 1));
     } else throw runtime_error("Oops No file is found to read data from!");
-}
-
+};
 
 
 unit *randGen::generatUnit(armyType unitType, int timestep) {
@@ -142,7 +143,7 @@ bool randGen::creatAlienUnits() const {
     return false;
 }
 
-bool randGen::canInfected()  {
+bool randGen::canInfected() const {
     int num;
     num = rand() % 100;
     if (num <= InfectedProb) {
@@ -150,6 +151,7 @@ bool randGen::canInfected()  {
     }
     return false;
 }
+
 int randGen::getnumofunits() {
     return unitscreated;
 }

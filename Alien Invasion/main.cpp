@@ -20,6 +20,7 @@ int main() {
             timeStep++;
         }
         simManager.loadtoOutputFile();
+
     } catch (const runtime_error &e) {
         cout << "⚠️ " << e.what() << endl;
         cin.get();

@@ -7,10 +7,6 @@
 #include "ASolider.h"
 #include "Drone.h"
 
-unit *alienArmy::Attack(unit *enemy) {
-    return nullptr;
-}
-
 bool alienArmy::addUnit(unit *AlienUnit) {
 
     if (AlienUnit) {

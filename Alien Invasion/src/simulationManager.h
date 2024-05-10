@@ -76,4 +76,12 @@ public:
     int getEarthSoldiersCount() const;
 
     void addToKilledList(unit *pUnit);
+
+    int canInfect() const;
+
+    int getEarthInfectedSoldierCount() const;
+
+    void setEarthInfectedSoldierCount(const int earthInfectedSoldierCount);
+
+    void infectUnits();
 };

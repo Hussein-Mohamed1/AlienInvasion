@@ -23,17 +23,22 @@ class earthArmy : public Army {
     LinkedQueue<Esoldier *> ESlist;
     priQueue<Egunnery *> EGlist;
     ArrayStack<Tank *> TankList;
-    alienArmy *alienArmyPtr;
+    alienArmy *alienArmyPtr{nullptr};
     int earthGunneryCount{0};
     int earthSoldierCount{0};
     int earthTankCount{0};
+    int infectedSoldierCount{0};
+public:
+    int getEarthInfectedSoldierCount() const;
+
+    void setEarthInfectedSoldierCount(const int earthInfectedSoldierCount);
 
 public:
+    earthArmy();
 
 
     unit *getRandomUnit();
 
-    unit *Attack(unit *enemy);
 
     bool addUnit(unit *);
 

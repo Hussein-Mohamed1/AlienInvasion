@@ -1,14 +1,12 @@
 #pragma once
 
+#include <thread>
+#include <mutex>
 #include "earthArmy.h"
 #include "Esoldier.h"
 #include "Egunnery.h"
 #include "alienArmy.h"
 
-unit *earthArmy::Attack(unit *enemy) {
-    return nullptr;
-    /// @todo add the reset of unit
-}
 
 bool earthArmy::addUnit(unit *earthUnit) {
 
@@ -52,23 +50,22 @@ void earthArmy::print() {
         if (soldier)
             ESlist.enqueue(soldier);
 
-    cout << "🦠 Earth Soldiers Infected Count is: " << ESlist.getCount() << endl;
+    cout << "🦠 Earth Soldiers Infected Count is: " << infectedSoldierCount << endl;
     cout << "ES [ ";
+    int crtCounter = getEarthInfectedSoldierCount();
     while (ESlist.dequeue(soldier)) {
-        {
-            if (soldier->is_Infected())
-                cout << soldier->getId() << (ESlist.isEmpty() ? "" : ", ");
-            TempESlist.enqueue(soldier);
+        if (soldier->is_Infected()) {
+            cout << soldier->getId() << (--crtCounter ? "," : "");
         }
+        TempESlist.enqueue(soldier);
     }
     cout << "]\n";
     while (TempESlist.dequeue(soldier))
         if (soldier)
             ESlist.enqueue(soldier);
-
-    cout<< "percentage of Infected ES----> "<< (double(Esoldier::numofInfectedES) / (earthSoldierCount)) *100 << endl;
-
-
+    if (earthSoldierCount != 0)
+        cout << "percentage of Infected ES----> " << (double(infectedSoldierCount) / (earthSoldierCount)) * 100
+             << endl;
 
 
     cout << "🌍 Earth Gunnery Count is: " << EGlist.getCount() << endl;
@@ -170,3 +167,14 @@ unit *earthArmy::getRandomUnit() {
     auto random_number = rand() % 3;
     return getUnit(static_cast<Type>(random_number));
 }
+
+int earthArmy::getEarthInfectedSoldierCount() const {
+    return infectedSoldierCount;
+}
+
+void earthArmy::setEarthInfectedSoldierCount(const int earthInfectedSoldierCount) {
+    earthArmy::infectedSoldierCount = earthInfectedSoldierCount;
+}
+
+earthArmy::earthArmy() {};
+
