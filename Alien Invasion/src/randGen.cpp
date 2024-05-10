@@ -149,8 +149,8 @@ unit* randGen::generatSaver(int T)
     healthSunit = rand() % int(RangeSH2 - RangeSH1 + 1) + RangeSH1; //randome Health of saver unit
     powerSunit = rand() % int(RangeSP2 - RangeSP1 + 1) + RangeSP1; //randome power of saver unit
     Sattackcap = rand() % (RangeSC2 - RangeSC1 + 1) + RangeSC1;    //randome power of saver unit
-    unit* Saver = new SaverUnit(Sid++, T, healthSunit, powerSunit, Sattackcap, simPtr);
-
+    unit* saverU = new SaverUnit(Sid++, T, healthSunit, powerSunit, Sattackcap, simPtr);
+    return saverU;
 }
 bool randGen::creatEarthUnits() const {
     int num;
