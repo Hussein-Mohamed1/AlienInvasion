@@ -29,7 +29,7 @@ simulationManager::simulationManager(operationMode operationModeVal) : operation
     RandomGenerator = new randGen(this);
     RandomGenerator->loadInputFile();
     if (getEarthArmyUnitsCount() != 0 &&
-        getEarthInfectedSoldierCount() / getEarthArmyUnitsCount() > RandomGenerator->get_probofcallSaver())
+        (double(getEarthInfectedSoldierCount()) / getEarthArmyUnitsCount())*100 > RandomGenerator->get_probofcallSaver())
         infectUnits();
 }
 
@@ -177,7 +177,7 @@ void simulationManager::manageAdding(int timestep) {
             addNewUnit(RandomGenerator->generatUnit(alienArmyType, timestep));
         }
     }
-    if (!earthArmyPtr->hasCalledSAVArmy() && RandomGenerator->creatSaverUnit() == hasntCallSAV) {
+    if (RandomGenerator->creatSaverUnit() && earthArmyPtr->hasCalledSAVArmy() == hasntCallSAV) {
         for (int i{}; i < RandomGenerator->getnumofSaver(); i++) {
             addNewUnit(RandomGenerator->generatSaver(timestep));
         }

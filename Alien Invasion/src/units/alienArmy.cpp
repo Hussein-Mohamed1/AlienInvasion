@@ -6,7 +6,7 @@
 #include "Monster.h"
 #include "ASolider.h"
 #include "Drone.h"
-#include "simulationManager.h"
+#include "..\simulationManager.h"
 
 bool alienArmy::addUnit(unit *AlienUnit) {
 

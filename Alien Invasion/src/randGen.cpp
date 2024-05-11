@@ -22,7 +22,7 @@ randGen::randGen(simulationManager *simPtr) : simPtr(simPtr) {}
 void randGen::loadInputFile() {
     srand(time(nullptr));
     string S, temps, unitrang[4], probabilites[4];
-    fstream *infile = new fstream("test.txt", ios::in);
+    fstream *infile = new fstream("./src//test.txt", ios::in);
     if (infile->is_open()) {
         getline(*infile, S);
         unitscreated = stoi(S);
@@ -146,13 +146,13 @@ unit *randGen::generatUnit(armyType unitType, int timestep) {
 }
 
 unit *randGen::generatSaver(int T) {
-    double healthSunit, powerSunit;
-    int Sattackcap;
-    healthSunit = rand() % int(RangeSH2 - RangeSH1 + 1) + RangeSH1; //randome Health of saver unit
-    powerSunit = rand() % int(RangeSP2 - RangeSP1 + 1) + RangeSP1; //randome power of saver unit
-    Sattackcap = rand() % (RangeSC2 - RangeSC1 + 1) + RangeSC1;    //randome power of saver unit
-    unit *saverU = new SaverUnit(Sid++, T, healthSunit, powerSunit, Sattackcap, simPtr);
-    return saverU;
+        double healthSunit, powerSunit;
+        int Sattackcap;
+        healthSunit = rand() % int(RangeSH2 - RangeSH1 + 1) + RangeSH1; //randome Health of saver unit
+        powerSunit = rand() % int(RangeSP2 - RangeSP1 + 1) + RangeSP1; //randome power of saver unit
+        Sattackcap = rand() % (RangeSC2 - RangeSC1 + 1) + RangeSC1;    //randome power of saver unit
+        unit* saverU = new SaverUnit(Sid++, T, healthSunit, powerSunit, Sattackcap, simPtr);
+        return saverU;
 }
 
 bool randGen::creatEarthUnits() const {

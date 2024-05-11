@@ -1,6 +1,6 @@
 #include "Monster.h"
 #include<iostream>
-#include "simulationManager.h"
+#include "..\simulationManager.h"
 #include "Esoldier.h"
 
 void Monster::print() const {

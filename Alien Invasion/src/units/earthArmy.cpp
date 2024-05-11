@@ -6,7 +6,7 @@
 #include "Egunnery.h"
 #include "alienArmy.h"
 #include "SaverUnit.h"
-#include "simulationManager.h"
+#include "..\simulationManager.h"
 
 bool earthArmy::addUnit(unit *earthUnit) {
 
@@ -58,7 +58,7 @@ void earthArmy::print() {
     if (infectedSoldierCount != 0)
         cout << "🦠 percentage of Infected ES----> " << (double(infectedSoldierCount) / (ESlist.getCount())) * 100
              << endl;
-    cout << "ES [ ";
+    cout << "ESI [ ";
     int crtCounter = getEarthInfectedSoldierCount();
     while (ESlist.dequeue(soldier)) {
         if (soldier->is_Infected()) {
@@ -103,7 +103,7 @@ void earthArmy::print() {
         if (tempTank)
             TankList.push(tempTank);
 
-    cout << "🌍 Earth Saver Count is: " << SaverUnitList.getCount() << endl;
+    cout << "📞 Earth Saver Count is: " << SaverUnitList.getCount() << endl;
     cout << "Saver [ ";
     SaverUnit *tempSaver{nullptr};
     LinkedQueue<SaverUnit *> tempSaverList;
