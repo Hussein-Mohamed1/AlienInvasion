@@ -15,5 +15,6 @@ public:
     bool makeImmune();
 
     bool isImmune();
+
 };
 

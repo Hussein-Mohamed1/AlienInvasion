@@ -30,7 +30,6 @@ protected:
     earthArmy *earthArmyPtr;
     LinkedQueue<unit *> killedList;
     randGen *RandomGenerator;
-    ofstream OutputFile;
     int currentTimeStep{0};
 
     ArrayStack<unit *> HealList;
@@ -48,9 +47,9 @@ public:
 
     void ManageHealing();
 
-    void loadtoOutputFile();
+    void loadToOutputFile();
 
-    void showStats(unit *, unit *) const;
+//    void showStats(unit *, unit *) const;
 
     int getAlienArmyUnitsCount() const;
 
@@ -87,4 +86,6 @@ public:
     int getCallSAVPer() const;
 
     virtual ~simulationManager();
+
+    string getCurrentScenario();
 };

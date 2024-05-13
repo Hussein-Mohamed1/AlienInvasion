@@ -58,9 +58,6 @@ void earthArmy::print() {
 
 
     cout << "🦠 Earth Soldiers Infected Count is: " << infectedSoldierCount << endl;
-    if (infectedSoldierCount != 0)
-        cout << "🦠 percentage of Infected ES----> " << (double(infectedSoldierCount) / (ESlist.getCount())) * 100
-             << endl;
     cout << "ESI [ ";
     int crtCounter = getEarthInfectedSoldierCount();
     while (ESlist.dequeue(soldier)) {
@@ -129,8 +126,8 @@ unit *earthArmy::getUnit(Type type) {
             if (ESlist.getCount() != 0 &&
                 (SAVStatus == hasntCallSAV &&
                  double(infectedSoldierCount) / ESlist.getCount() * 100 >= simPtr->getCallSAVPer()) ||
-                SAVStatus == CalledSav) {
-                SAVStatus = CalledSav;
+                    SAVStatus == SAVBeingUsed) {
+                SAVStatus = SAVBeingUsed;
                 if (double(infectedSoldierCount) / ESlist.getCount() * 100 <= 10)
                     destroySavArmy();
                 SaverUnit *temp{nullptr};

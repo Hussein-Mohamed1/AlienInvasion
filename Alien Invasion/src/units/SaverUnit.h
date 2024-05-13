@@ -4,7 +4,7 @@
 #include "Esoldier.h"
 
 enum status {
-    hasntCallSAV, CalledSav, ConsumedSav
+    hasntCallSAV, SAVBeingUsed, ConsumedSav
 };
 
 class SaverUnit : public Esoldier {
