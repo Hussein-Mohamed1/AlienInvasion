@@ -131,10 +131,10 @@ unit *randGen::generatUnit(armyType unitType, int timestep) {
                     unit *soldier = new ASolider(Aid++, timestep, healthAunit, powerAunit, Aattackcap, simPtr);
                     return soldier;
                 } else if (num <= (perAS + perAM)) {
-                    unit *monster = new Monster(Aid++, timestep, healthEunit, powerEunit, Eattackcap, simPtr);
+                    unit *monster = new Monster(Aid++, timestep, healthAunit, powerAunit, Aattackcap, simPtr);
                     return monster;
                 } else {
-                    unit *drone = new Drone(Aid++, timestep, healthEunit, powerEunit, Eattackcap, simPtr);
+                    unit *drone = new Drone(Aid++, timestep, healthAunit, powerAunit, Aattackcap, simPtr);
                     return drone;
                 }
             }
