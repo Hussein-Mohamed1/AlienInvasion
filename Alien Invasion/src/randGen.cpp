@@ -22,7 +22,7 @@ randGen::randGen(simulationManager *simPtr) : simPtr(simPtr) {}
 void randGen::loadInputFile() {
     srand(time(nullptr));
     string S, temps, unitrang[4], probabilites[4];
-    fstream *infile = new fstream("./src//test.txt", ios::in);
+    fstream *infile = new fstream(scenario, ios::in);
     if (infile->is_open()) {
         getline(*infile, S);
         unitscreated = stoi(S);
@@ -158,7 +158,7 @@ unit *randGen::generatSaver(int T) {
 bool randGen::creatEarthUnits() const {
     int num;
     num = rand() % 100;
-    if (num <= prob) {
+    if ( Eid < 1000 && num <= prob) {
         return true;
     }
     return false;
@@ -167,7 +167,7 @@ bool randGen::creatEarthUnits() const {
 bool randGen::creatAlienUnits() const {
     int num;
     num = rand() % 100;
-    if (num <= prob) {
+    if ( Aid < 3000 && num <= prob) {
         return true;
     }
     return false;
@@ -185,7 +185,7 @@ bool randGen::canInfected() const {
 bool randGen::creatSaverUnit() {
     int num;
     num = rand() % 100;
-    if (num <= Saverprob) {
+    if ( Sid < 5000 && num < Saverprob) {
         return true;
     }
     return false;
@@ -202,7 +202,12 @@ int randGen::getnumofSaver() {
 int randGen::get_probofcallSaver() const {
     return probofcallSaver;
 }
-
+void randGen::set_Scenario(string s)
+{
+    scenario += "./src//";
+    scenario += s;
+    scenario += ".txt";
+}
 int randGen::Eid = 1;
 int randGen::Aid = 2000;
 int randGen::Sid = 4000;

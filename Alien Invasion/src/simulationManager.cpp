@@ -27,10 +27,6 @@ simulationManager::simulationManager(operationMode operationModeVal) : operation
     earthArmyPtr = new earthArmy(this);
     srand(time(nullptr));
     RandomGenerator = new randGen(this);
-    RandomGenerator->loadInputFile();
-    if (getEarthArmyUnitsCount() != 0 &&
-        (double(getEarthInfectedSoldierCount()) / getEarthArmyUnitsCount())*100 > RandomGenerator->get_probofcallSaver())
-        infectUnits();
 }
 
 armyType simulationManager::assertWinner() const {
@@ -44,6 +40,9 @@ armyType simulationManager::assertWinner() const {
 }
 
 armyType simulationManager::updateSimulation(int timestep) {
+    if (getEarthArmyUnitsCount() != 0 &&
+        (double(getEarthInfectedSoldierCount()) / getEarthArmyUnitsCount()) * 100 > RandomGenerator->get_probofcallSaver())
+        infectUnits();
     if (assertWinner() != Nan) {
         printWinner(assertWinner());
         return assertWinner();
@@ -399,6 +398,8 @@ void simulationManager::loadtoOutputFile() {
         OutputFile << "Df/Db % ----> " << (double(sumOfADf) / sumOfADb) * 100 << endl;
     if (sumOfADb != 0)
         OutputFile << "Dd/Db % ----> " << (double(sumOfADd) / sumOfADb) * 100 << endl;
+
+    outputFile << "======================================== For Bonus =============================\n";
 
 
 }
@@ -928,4 +929,20 @@ void simulationManager::infectUnits() {
 
 int simulationManager::getCallSAVPer() const {
     return RandomGenerator->get_probofcallSaver();
+}
+void simulationManager::chooseScenario()
+{
+    int choose;
+    cout << "please choose A scenario of fight : \n1- strong Earth & Weak Alien \n"
+        << "2- Weak Earth & strong Alien \n3- Weak Earth & Weak Alien \n4- strong Earth & strong Alien \n";
+    cin >> choose;
+    if (choose == 1)
+        RandomGenerator->set_Scenario("S&W");
+    else if (choose == 2)
+        RandomGenerator->set_Scenario("W&S");
+    else if (choose == 3)
+        RandomGenerator->set_Scenario("W&W");
+    else
+        RandomGenerator->set_Scenario("S&S");
+    RandomGenerator->loadInputFile();
 }

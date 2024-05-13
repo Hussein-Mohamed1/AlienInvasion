@@ -6,9 +6,10 @@ int main() {
     SetConsoleOutputCP(CP_UTF8);
     try {
         simulationManager simManager(Interactive);
-//        simulationManager::intro();
+        simManager.chooseScenario();
+        simulationManager::intro();
         int timeStep{0};
-        while (timeStep < 100) {
+        while (timeStep < 900) {
             int randNum = rand() % 100;
             system("cls");
             cout << "Current TimeStep is:" << timeStep;

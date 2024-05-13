@@ -44,7 +44,10 @@ void earthArmy::print() {
     cout << "ES [ ";
     while (ESlist.dequeue(soldier)) {
         {
-            cout << soldier->getId() << (ESlist.isEmpty() ? "" : ", ");
+            if (!soldier->is_Infected())
+                cout << soldier->getId() << (ESlist.isEmpty() ? "" : ", ");
+            else
+                cout<<"🤧" << soldier->getId() << (ESlist.isEmpty() ? "" : ", ");
             TempESlist.enqueue(soldier);
         }
     }

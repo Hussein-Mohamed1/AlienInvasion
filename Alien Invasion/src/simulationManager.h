@@ -41,7 +41,7 @@ public:
     simulationManager(operationMode); //initializes the simulation
 
     armyType updateSimulation(int);
-
+    void chooseScenario();
     void addNewUnit(unit *);
 
     void manageAdding(int);
