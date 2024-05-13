@@ -41,8 +41,9 @@ armyType simulationManager::assertWinner() const {
 
 armyType simulationManager::updateSimulation(int timestep) {
     if (getEarthArmyUnitsCount() != 0 &&
-        (double(getEarthInfectedSoldierCount()) / getEarthArmyUnitsCount()) * 100 > RandomGenerator->get_probofcallSaver())
+            earthArmyPtr->hasCalledSAVArmy() != SAVBeingUsed)
         infectUnits();
+
     if (assertWinner() != Nan) {
         printWinner(assertWinner());
         return assertWinner();
@@ -59,19 +60,27 @@ armyType simulationManager::updateSimulation(int timestep) {
         cout << "Earth Army Units: " << getEarthArmyUnitsCount() << endl;
         cout << "Alien Army Units: " << getAlienArmyUnitsCount() << endl;
     }
+    unit *earthUnit1 = earthArmyPtr->getUnit(EarthSoldier);
+    unit *earthUnit2 = earthArmyPtr->getUnit(EarthTank);
+    unit *earthUnit3 = earthArmyPtr->getUnit(Gunnery);
+    handleUnit(earthUnit1);
+    handleUnit(earthUnit2);
+    handleUnit(earthUnit3);
 
-    unit *earthUnit = earthArmyPtr->getRandomUnit();
-    unit *alienUnit = alienArmyPtr->getRandomUnit();
+    unit *alienUnit1 = alienArmyPtr->getUnit(alienSoldier);
+    unit *alienUnit2 = alienArmyPtr->getUnit(MonsterType);
+    unit *alienUnit3 = alienArmyPtr->getUnit(DronePair);
+    handleUnit(alienUnit1);
+    handleUnit(alienUnit2);
+    handleUnit(alienUnit3);
 
-    handleUnit(earthUnit);
-    handleUnit(alienUnit);
+
 
     if (operationModeVal == Interactive) {
         earthArmyPtr->print();
         alienArmyPtr->print();
         printKilledList();
     }
-    infectUnits();
     return Nan;
 
 }
@@ -118,52 +127,52 @@ void simulationManager::addNewUnit(unit *newUnit) {
 }
 
 
-///@param AttackingUnit: The unit attacking.
-///@param DamagedUnit: The unit being attacked.
-void simulationManager::showStats(unit *AttackingUnit, unit *DamagedUnit) const {
-    if (operationModeVal == Interactive)
-        if (AttackingUnit && DamagedUnit)
-            cout << "ID:" << AttackingUnit->getId() << ":" << [&AttackingUnit]() -> string {
-                switch (AttackingUnit->getType()) {
-                    case EarthSoldier:
-                        return "Earth Soldier ";
-                    case EarthTank:
-                        return "Earth Tank";
-                    case Gunnery:
-                        return "Gunnery";
-                    case alienSoldier:
-                        return "Alien Soldier";
-                    case DronePair:
-                        return "Drone";
-                    case MonsterType:
-                        return "Monster";
-                    case Saver:
-                        return "Support Unit";
-                }
-            }()
-                 << " has attacked unit of ID:"
-                 << DamagedUnit->getId()
-                 << " " << [&DamagedUnit]() -> string {
-                switch (DamagedUnit->getType()) {
-                    case EarthSoldier:
-                        return "Earth Soldier";
-                    case EarthTank:
-                        return "Earth Tank";
-                    case Gunnery:
-                        return "Gunnery";
-                    case alienSoldier:
-                        return "Alien Soldier";
-                    case DronePair:
-                        return "Drone";
-                    case MonsterType:
-                        return "Monster";
-                    case Healer:
-                        return "Healer";
-                    case Saver:
-                        return "Support Unit";
-                }
-            }() << endl;
-}
+/////@param AttackingUnit: The unit attacking.
+/////@param DamagedUnit: The unit being attacked.
+//void simulationManager::showStats(unit *AttackingUnit, unit *DamagedUnit) const {
+//    if (operationModeVal == Interactive)
+//        if (AttackingUnit && DamagedUnit)
+//            cout << "ID:" << AttackingUnit->getId() << ":" << [&AttackingUnit]() -> string {
+//                switch (AttackingUnit->getType()) {
+//                    case EarthSoldier:
+//                        return "Earth Soldier ";
+//                    case EarthTank:
+//                        return "Earth Tank";
+//                    case Gunnery:
+//                        return "Gunnery";
+//                    case alienSoldier:
+//                        return "Alien Soldier";
+//                    case DronePair:
+//                        return "Drone";
+//                    case MonsterType:
+//                        return "Monster";
+//                    case Saver:
+//                        return "Support Unit";
+//                }
+//            }()
+//                 << " has attacked unit of ID:"
+//                 << DamagedUnit->getId()
+//                 << " " << [&DamagedUnit]() -> string {
+//                switch (DamagedUnit->getType()) {
+//                    case EarthSoldier:
+//                        return "Earth Soldier";
+//                    case EarthTank:
+//                        return "Earth Tank";
+//                    case Gunnery:
+//                        return "Gunnery";
+//                    case alienSoldier:
+//                        return "Alien Soldier";
+//                    case DronePair:
+//                        return "Drone";
+//                    case MonsterType:
+//                        return "Monster";
+//                    case Healer:
+//                        return "Healer";
+//                    case Saver:
+//                        return "Support Unit";
+//                }
+//            }() << endl;
+//}
 
 void simulationManager::manageAdding(int timestep) {
     if (RandomGenerator->creatEarthUnits()) {
@@ -224,8 +233,8 @@ void simulationManager::printKilledList() {
 
 }
 
-void simulationManager::loadtoOutputFile() {
-
+void simulationManager::loadToOutputFile() {
+    ofstream OutputFile("output-" + to_string((time(0) % 3600) / 60) + ".txt", ios::in | ios::out | ios::app);
     int sumOfEDf{0}, EDfcount{0}, sumOfEDd{0}, EDdcount{0}, sumOfEDb{0}, EDbcount{0}, sumOfADf{0}, ADfcount{
             0}, sumOfADd{0}, ADdcount{0}, sumOfADb{0}, ADbcount{
             0}, numofHealedunits = UnitMaintenanceList.getCount(), alienDestructedSoldierCount{0},
@@ -234,13 +243,10 @@ void simulationManager::loadtoOutputFile() {
             earthdestructedGunneryCount{0},
             earthdestructedSoldierCount{0},
             earthdestructedTankCount{0};
-    unit *killedU;
+    unit *killedU{nullptr};
 
-
-    OutputFile.open("output.txt", std::ios::in | std::ios::out);
-    ofstream outputFile("output.txt", std::ofstream::out | std::ofstream::trunc);
     // Check if the file was opened successfully
-    if (!OutputFile) {
+    if (!OutputFile.is_open()) {
         cout << "Unable to open file for writing." << endl;
         // Handle the error appropriately, e.g., by throwing an exception
         throw std::runtime_error("Failed to open output file.");
@@ -399,9 +405,9 @@ void simulationManager::loadtoOutputFile() {
     if (sumOfADb != 0)
         OutputFile << "Dd/Db % ----> " << (double(sumOfADd) / sumOfADb) * 100 << endl;
 
-    outputFile << "======================================== For Bonus =============================\n";
+    OutputFile << "======================================== For Bonus =============================\n";
 
-
+    OutputFile.close();
 }
 
 /// ! When Insert in PriQueue observe that the decleartion was changed for UML
@@ -494,9 +500,6 @@ void simulationManager::ManageHealing() {
 }
 
 simulationManager::~simulationManager() {
-    if (OutputFile.is_open()) {
-        OutputFile.close();
-    }
     alienArmyPtr->~alienArmy();
     earthArmyPtr->~earthArmy();
     delete RandomGenerator;
@@ -541,12 +544,12 @@ void simulationManager::handleUnit(unit *attackingUnit) {
                     if (secondAttackingDrone)
                         secondAttackingDrone->damageEnemy(defendingUnit1);
 
-
-                    if (operationModeVal == Interactive) {
-                        showStats(attackingUnit, defendingUnit1);
-                        if (secondAttackingDrone)
-                            showStats(secondAttackingDrone, defendingUnit1);
-                    }
+//
+//                    if (operationModeVal == Interactive) {
+//                        showStats(attackingUnit, defendingUnit1);
+//                        if (secondAttackingDrone)
+//                            showStats(secondAttackingDrone, defendingUnit1);
+//                    }
 
                     ///@details used to handle the adding of the attacking unit to templist only once
                     if (!enqueuedOnce) {
@@ -565,12 +568,12 @@ void simulationManager::handleUnit(unit *attackingUnit) {
                     if (secondAttackingDrone)
                         secondAttackingDrone->damageEnemy(defendingUnit2);
 
-
-                    if (operationModeVal == Interactive) {
-                        showStats(attackingUnit, defendingUnit2);
-                        if (secondAttackingDrone)
-                            showStats(secondAttackingDrone, defendingUnit2);
-                    }
+//
+//                    if (operationModeVal == Interactive) {
+//                        showStats(attackingUnit, defendingUnit2);
+//                        if (secondAttackingDrone)
+//                            showStats(secondAttackingDrone, defendingUnit2);
+//                    }
 
 
                     ///@details used to handle the adding of the attacking unit to templist only once
@@ -627,7 +630,6 @@ int simulationManager::getCurrentTimeStep() const {
 }
 
 void simulationManager::printCurrentFightInfo(LinkedQueue<unit *> &tempList) {
-    cout << "================= ⚔️units fighting at current step⚔️ =======================\n";
     LinkedQueue<unit *> tempList2;
     unit *unitShot{nullptr}, *secondDrone{nullptr}, *attackedUnit{nullptr};
 
@@ -646,7 +648,6 @@ void simulationManager::printCurrentFightInfo(LinkedQueue<unit *> &tempList) {
         }
         cout << " ]" << endl;
     }
-    cout << endl;
     while (tempList2.dequeue(unitShot))
         tempList.enqueue(unitShot);
 
@@ -870,6 +871,7 @@ void simulationManager::intro() {
     cout <<
          "██▄ █░▀█ ░█░ ██▄ █▀▄   ░█░ █▄█   █▀▀ █▄▄ █▀█ ░█░ ▄";
     Sleep(500);
+    cin.ignore();
     cin.get();
     for (int i = 0; i < 30; ++i) {
         cout << "\x1b[1F"; // Move to the beginning of the previous line
@@ -905,36 +907,35 @@ void simulationManager::infectUnits() {
             unit *tempSoldier{nullptr};
             LinkedQueue<unit *> temp;
             int j{1};
-            if (earthArmyPtr->hasCalledSAVArmy() != CalledSav) {
-                for (; j < idxOfRandomSoldier; ++j) {
-                    tempSoldier = this->earthArmyPtr->getUnit(EarthSoldier);
-                    if (tempSoldier)
-                        temp.enqueue(tempSoldier);
-                }
 
-                Esoldier *soldierToBeInfected{nullptr};
-                soldierToBeInfected = dynamic_cast<Esoldier *>(this->earthArmyPtr->getUnit(EarthSoldier));
-                soldierToBeInfected->setInfected();
-
-                this->returnUnitToArmy(soldierToBeInfected);
-
-                while (temp.dequeue(tempSoldier))
-                    this->returnUnitToArmy(tempSoldier);
+            ///@details if sav is being used, getUnit will return one from the sav instead of normal soldiers
+            for (; j < idxOfRandomSoldier; ++j) {
+                tempSoldier = this->earthArmyPtr->getUnit(EarthSoldier);
+                if (tempSoldier)
+                    temp.enqueue(tempSoldier);
             }
+
+            Esoldier *soldierToBeInfected{nullptr};
+            soldierToBeInfected = dynamic_cast<Esoldier *>(this->earthArmyPtr->getUnit(EarthSoldier));
+            soldierToBeInfected->setInfected();
+
+            this->returnUnitToArmy(soldierToBeInfected);
+
+            while (temp.dequeue(tempSoldier))
+                this->returnUnitToArmy(tempSoldier);
         }
     }
+}
 
-
-};
 
 int simulationManager::getCallSAVPer() const {
     return RandomGenerator->get_probofcallSaver();
 }
-void simulationManager::chooseScenario()
-{
+
+void simulationManager::chooseScenario() {
     int choose;
     cout << "please choose A scenario of fight : \n1- strong Earth & Weak Alien \n"
-        << "2- Weak Earth & strong Alien \n3- Weak Earth & Weak Alien \n4- strong Earth & strong Alien \n";
+            << "2- Weak Earth & strong Alien \n3- Weak Earth & Weak Alien \n4- strong Earth & strong Alien \n";
     cin >> choose;
     if (choose == 1)
         RandomGenerator->set_Scenario("S&W");
@@ -944,5 +945,10 @@ void simulationManager::chooseScenario()
         RandomGenerator->set_Scenario("W&W");
     else
         RandomGenerator->set_Scenario("S&S");
+    system("CLS");
     RandomGenerator->loadInputFile();
+}
+
+string simulationManager::getCurrentScenario() {
+    return RandomGenerator->get_Scenario();
 }

@@ -9,18 +9,19 @@ int main() {
         simManager.chooseScenario();
         simulationManager::intro();
         int timeStep{0};
-        while (timeStep < 900) {
+        while (true) {
             int randNum = rand() % 100;
             system("cls");
             cout << "Current TimeStep is:" << timeStep;
             cout << "\n🔢 Current Random num is " << randNum << "\n";
             cout << "⏩ Press Enter to proceed to the next time step..." << endl;
+            cout << "Selected Scenario: " + simManager.getCurrentScenario().substr(0, 3) << endl;
             if (simManager.updateSimulation(timeStep) != Nan)
                 break;
-            cin.get();
+//            cin.get();
             timeStep++;
         }
-        simManager.loadtoOutputFile();
+        simManager.loadToOutputFile();
 
     } catch (const runtime_error &e) {
         cout << "⚠️ " << e.what() << endl;

@@ -13,7 +13,7 @@ void Esoldier::print() const {
 }
 
 bool Esoldier::damageEnemy(unit *attackedUnit) {
-    if (attackedUnit->getType() == alienSoldier) {
+    if (attackedUnit->getType() == alienSoldier && !Infected) {
         return unit::damageEnemy(attackedUnit);
     }
     return false;
@@ -44,3 +44,4 @@ bool Esoldier::makeImmune() {
 bool Esoldier::isImmune() {
     return Immune;
 }
+

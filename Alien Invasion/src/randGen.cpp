@@ -54,7 +54,7 @@ void randGen::loadInputFile() {
         InfectedProb = stoi(probabilites[1]);
         Saverprob = stoi(probabilites[2]);
         probofcallSaver = stoi(probabilites[3]);
-        //get ranges of health / power / capasity of Earth army
+        //get ranges of health / power / capacity of Earth army units
         getline(*infile, S);
         stringstream ranges(S);
         ranges >> temps;
@@ -146,19 +146,19 @@ unit *randGen::generatUnit(armyType unitType, int timestep) {
 }
 
 unit *randGen::generatSaver(int T) {
-        double healthSunit, powerSunit;
-        int Sattackcap;
-        healthSunit = rand() % int(RangeSH2 - RangeSH1 + 1) + RangeSH1; //randome Health of saver unit
-        powerSunit = rand() % int(RangeSP2 - RangeSP1 + 1) + RangeSP1; //randome power of saver unit
-        Sattackcap = rand() % (RangeSC2 - RangeSC1 + 1) + RangeSC1;    //randome power of saver unit
-        unit* saverU = new SaverUnit(Sid++, T, healthSunit, powerSunit, Sattackcap, simPtr);
-        return saverU;
+    double healthSunit, powerSunit;
+    int Sattackcap;
+    healthSunit = rand() % int(RangeSH2 - RangeSH1 + 1) + RangeSH1; //randome Health of saver unit
+    powerSunit = rand() % int(RangeSP2 - RangeSP1 + 1) + RangeSP1; //randome power of saver unit
+    Sattackcap = rand() % (RangeSC2 - RangeSC1 + 1) + RangeSC1;    //randome power of saver unit
+    unit *saverU = new SaverUnit(Sid++, T, healthSunit, powerSunit, Sattackcap, simPtr);
+    return saverU;
 }
 
 bool randGen::creatEarthUnits() const {
     int num;
     num = rand() % 100;
-    if ( Eid < 1000 && num <= prob) {
+    if (Eid < 1000 && num <= prob) {
         return true;
     }
     return false;
@@ -167,7 +167,7 @@ bool randGen::creatEarthUnits() const {
 bool randGen::creatAlienUnits() const {
     int num;
     num = rand() % 100;
-    if ( Aid < 3000 && num <= prob) {
+    if (Aid < 3000 && num <= prob) {
         return true;
     }
     return false;
@@ -185,7 +185,7 @@ bool randGen::canInfected() const {
 bool randGen::creatSaverUnit() {
     int num;
     num = rand() % 100;
-    if ( Sid < 5000 && num < Saverprob) {
+    if (Sid < 5000 && num < Saverprob) {
         return true;
     }
     return false;
@@ -202,13 +202,18 @@ int randGen::getnumofSaver() {
 int randGen::get_probofcallSaver() const {
     return probofcallSaver;
 }
-void randGen::set_Scenario(string s)
-{
-    scenario += "./src//";
+
+void randGen::set_Scenario(string s) {
+//    scenario += "./src//";
     scenario += s;
     scenario += ".txt";
 }
+
 int randGen::Eid = 1;
 int randGen::Aid = 2000;
 int randGen::Sid = 4000;
+
+string randGen::get_Scenario() {
+    return scenario;
+}
 

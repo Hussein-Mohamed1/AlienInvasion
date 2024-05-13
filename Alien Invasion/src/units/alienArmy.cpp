@@ -110,7 +110,7 @@ unit *alienArmy::getRandomUnit() {
 }
 
 unit *alienArmy::getDronePair() {
-    Drone *drone;
+    Drone *drone{nullptr};
     if (DroneUnits.DoublyDequeue(drone))
         return drone;
     return nullptr;

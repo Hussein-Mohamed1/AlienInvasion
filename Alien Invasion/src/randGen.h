@@ -28,5 +28,7 @@ public:
     bool canInfected() const;
 
     void loadInputFile();
+
+    string get_Scenario();
 };
 

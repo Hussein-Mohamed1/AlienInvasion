@@ -119,14 +119,18 @@ unit::unit(int id, Type type, int joinTime, double health, double power, int att
           simPtr(simPtr), StillInHealingList(false), OriginalHealth(health) {}
 
 bool unit::damageEnemy(unit *Enemy) {
-    if (health <= 0) {
+    if (floor(health) == 0) {
         power = 0;
         return false;
     }
     if (Enemy) {
         double Damage = (getPower() * (getHealth() / 100)) / sqrt(Enemy->getHealth());
         double NewHealth = Enemy->getHealth() - Damage;
-        Enemy->setHealth(NewHealth);
+        if (floor(NewHealth) > 0)
+            Enemy->setHealth(NewHealth);
+        else {
+            Enemy->setHealth(0);
+        }
         if (Enemy->getfirstAttackedTime() == 0)
             Enemy->setfirstAttackedTime(simPtr->getCurrentTimeStep());
         return true;
