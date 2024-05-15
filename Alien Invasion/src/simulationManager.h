@@ -1,6 +1,3 @@
-//
-// Created by youss on 3/30/2024.
-//
 #pragma once
 
 #include "./ds/LinkedQueue.h"
@@ -58,6 +55,8 @@ public:
     void handleUnit(unit *attackingUnit);
 
     void printKilledList();
+
+    void printUnitMaintenanceList();
 
     void returnUnitToArmy(unit *);
 

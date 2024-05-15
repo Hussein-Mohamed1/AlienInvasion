@@ -7,7 +7,7 @@ int main() {
     try {
         simulationManager simManager(Interactive);
         simManager.chooseScenario();
-        simulationManager::intro();
+//        simulationManager::intro();
         int timeStep{0};
         while (true) {
             int randNum = rand() % 100;
@@ -18,7 +18,7 @@ int main() {
             cout << "Selected Scenario: " + simManager.getCurrentScenario().substr(0, 3) << endl;
             if (simManager.updateSimulation(timeStep) != Nan)
                 break;
-//            cin.get();
+            cin.get();
             timeStep++;
         }
         simManager.loadToOutputFile();

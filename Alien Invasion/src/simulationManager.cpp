@@ -75,11 +75,11 @@ armyType simulationManager::updateSimulation(int timestep) {
     handleUnit(alienUnit3);
 
 
-
     if (operationModeVal == Interactive) {
         earthArmyPtr->print();
         alienArmyPtr->print();
         printKilledList();
+        printUnitMaintenanceList();
     }
     return Nan;
 
@@ -435,7 +435,7 @@ void simulationManager::ManageHealing() {
     }
 
     while (0 < Cap && !Soldiers.isEmpty()) {
-        unit *InjSol;
+        unit *InjSol{nullptr};
         int p;
         Soldiers.dequeue(InjSol, p);
 
@@ -446,7 +446,6 @@ void simulationManager::ManageHealing() {
             Healer->damageEnemy(InjSol);
 
             InjSol->UpdateStillHealing();
-            returnUnitToArmy(InjSol);
             Esoldier *tempSoldier = dynamic_cast<Esoldier *>(InjSol);
 
             if (tempSoldier->is_Infected()) {
@@ -454,6 +453,9 @@ void simulationManager::ManageHealing() {
                 tempSoldier->makeImmune();
             }
             Cap--;
+
+            returnUnitToArmy(InjSol);
+
 
         }
     }
@@ -477,7 +479,7 @@ void simulationManager::ManageHealing() {
 
 
     while (!Soldiers.isEmpty()) {
-        unit *S;
+        unit *S{nullptr};
         int p;
         Soldiers.dequeue(S, p);
         UnitMaintenanceList.enqueue(S);
@@ -607,13 +609,16 @@ void simulationManager::returnUnitToArmy(unit *unitPtr) {
     if (unitPtr) {
         if (unitPtr->getHealth() <= 0) {
             addToKilledList(unitPtr);
+            if (unitPtr->getType() == EarthSoldier && dynamic_cast<Esoldier *>(unitPtr)->is_Infected())
+                earthArmyPtr->setEarthInfectedSoldierCount(earthArmyPtr->getEarthInfectedSoldierCount() - 1);
             unitPtr->setDestructionTime(getCurrentTimeStep());
             return;
         }
 
-        if (unitPtr->typeToString() == "EG" && unitPtr->getArmyType() == earthArmyType &&
+        if (unitPtr->typeToString() != "EG" && unitPtr->getArmyType() == earthArmyType &&
             unitPtr->getHealth() <= 0.2 * unitPtr->GetOriginalHealth()) {
-            unitPtr->UpdateStillHealing();
+            if (unitPtr->getType() == EarthSoldier && dynamic_cast<Esoldier *>(unitPtr)->is_Infected())
+                earthArmyPtr->setEarthInfectedSoldierCount(earthArmyPtr->getEarthInfectedSoldierCount() - 1);
             UnitMaintenanceList.enqueue(unitPtr);
             return;
         }
@@ -925,6 +930,7 @@ void simulationManager::infectUnits() {
                 this->returnUnitToArmy(tempSoldier);
         }
     }
+
 }
 
 
@@ -933,22 +939,49 @@ int simulationManager::getCallSAVPer() const {
 }
 
 void simulationManager::chooseScenario() {
-    int choose;
+
+
+    int choice{0};
     cout << "please choose A scenario of fight : \n1- strong Earth & Weak Alien \n"
             << "2- Weak Earth & strong Alien \n3- Weak Earth & Weak Alien \n4- strong Earth & strong Alien \n";
-    cin >> choose;
-    if (choose == 1)
-        RandomGenerator->set_Scenario("S&W");
-    else if (choose == 2)
-        RandomGenerator->set_Scenario("W&S");
-    else if (choose == 3)
-        RandomGenerator->set_Scenario("W&W");
-    else
-        RandomGenerator->set_Scenario("S&S");
+    cin >> choice;
+    switch (choice) {
+        case 1:
+            RandomGenerator->set_Scenario("S&W");
+            break;
+        case 2:
+            RandomGenerator->set_Scenario("W&S");
+            break;
+        case 3:
+            RandomGenerator->set_Scenario("W&W");
+            break;
+        case 4:
+            RandomGenerator->set_Scenario("S&S");
+            break;
+        default:
+            cout << "\nPlease choose one of the options\n";
+            Sleep(1000);
+            system("cls");
+            chooseScenario();
+    }
+
     system("CLS");
     RandomGenerator->loadInputFile();
 }
 
 string simulationManager::getCurrentScenario() {
     return RandomGenerator->get_Scenario();
+}
+
+void simulationManager::printUnitMaintenanceList() {
+    cout << "Maintenance List: [";
+    unit *temp{nullptr};
+    LinkedQueue<unit *> tempQueue;
+    while (UnitMaintenanceList.dequeue(temp)) {
+        cout << to_string(temp->getId()) + " " + temp->typeToString() << (UnitMaintenanceList.isEmpty() ? "" : ", ");
+        tempQueue.enqueue(temp);
+    }
+    cout << "]\n";
+    while (tempQueue.dequeue(temp))
+        UnitMaintenanceList.enqueue(temp);
 }

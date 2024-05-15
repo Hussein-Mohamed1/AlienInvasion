@@ -33,7 +33,6 @@ bool Esoldier::is_Infected() {
 
 bool Esoldier::makeImmune() {
     if (Infected && !Immune) {
-        simPtr->setEarthInfectedSoldierCount(simPtr->getEarthInfectedSoldierCount() - 1);
         Immune = true;
         Infected = false;
         return true;
