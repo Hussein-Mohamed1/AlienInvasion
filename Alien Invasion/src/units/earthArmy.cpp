@@ -123,26 +123,17 @@ void earthArmy::print() {
 unit *earthArmy::getUnit(Type type) {
     switch (type) {
         case EarthSoldier: {
-            if (ESlist.getCount() != 0 &&
-                (SAVStatus == hasntCallSAV &&
-                 double(infectedSoldierCount) / ESlist.getCount() * 100 >= simPtr->getCallSAVPer()) ||
-                    SAVStatus == SAVBeingUsed) {
-                SAVStatus = SAVBeingUsed;
-                if (double(infectedSoldierCount) / ESlist.getCount() * 100 <= 10)
-                    destroySavArmy();
-                SaverUnit *temp{nullptr};
-                if (SaverUnitList.dequeue(temp))
-                    return temp;
-                else return nullptr;
+            if (SAVStatus == SAVBeingUsed) {
+                return getUnit(Saver);
             } else {
                 Esoldier *temp{nullptr};
-
-                if (ESlist.dequeue(temp)) {
+                if (ESlist.dequeue(temp))
                     return temp;
-                }
-                return nullptr;
             }
+
+            return nullptr;
         }
+
         case EarthTank: {
             Tank *temp{nullptr};
             if (TankList.pop(temp)) {
@@ -158,7 +149,12 @@ unit *earthArmy::getUnit(Type type) {
             }
             return nullptr;
         }
-
+        case Saver: {
+            SaverUnit *temp{nullptr};
+            if (SaverUnitList.dequeue(temp))
+                return temp;
+            else return nullptr;
+        }
     };
 
     return nullptr;
@@ -167,7 +163,9 @@ unit *earthArmy::getUnit(Type type) {
 unit *earthArmy::getAnEnemyFor(Type attackersType, int enemyType) {
     switch (attackersType) {
         case alienSoldier:
-            return getUnit(EarthSoldier);
+            if (SAVStatus != SAVBeingUsed)
+                return getUnit(EarthSoldier);
+            else return getUnit(Saver);
         case MonsterType:;
             if (!enemyType)
                 return getUnit(EarthTank);
@@ -211,7 +209,7 @@ void earthArmy::setEarthInfectedSoldierCount(const int earthInfectedSoldierCount
 
 earthArmy::earthArmy(simulationManager *pManager) : Army(pManager) {}
 
-bool earthArmy::hasCalledSAVArmy() const {
+status earthArmy::getSAVstatus() const {
     return SAVStatus;
 }
 
@@ -247,4 +245,16 @@ int earthArmy::getTotalInfectedSoldiers() const {
 
 void earthArmy::incTotalInfectedSoldiersCount() {
     earthArmy::totalInfectedSoldiers++;
+}
+
+void earthArmy::incNumOfHealedUnits() {
+    numOfHealedUnits++;
+}
+
+int earthArmy::getTotalNumOfHealedUnits() const {
+    return numOfHealedUnits;
+}
+
+void earthArmy::setSAVstatus(status status1) {
+    SAVStatus = status1;
 }

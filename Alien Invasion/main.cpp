@@ -7,22 +7,30 @@ int main() {
     try {
         simulationManager simManager(Interactive);
         simManager.chooseScenario();
-//        simulationManager::intro();
-        int timeStep{0};
-        while (true) {
-            int randNum = rand() % 100;
-            system("cls");
-            cout << "Current TimeStep is:" << timeStep;
-            cout << "\n🔢 Current Random num is " << randNum << "\n";
-            cout << "⏩ Press Enter to proceed to the next time step..." << endl;
-            cout << "Selected Scenario: " + simManager.getCurrentScenario().substr(0, 3) << endl;
-            if (simManager.updateSimulation(timeStep) != Nan)
-                break;
-            cin.get();
-            timeStep++;
+        simulationManager::intro();
+        if (simManager.getOperationMode() == Silent) {
+            cout << "🔕🔇 Silent Mode\n"
+                 << "⏩ Battle In Progress.";
+            int timeStep{0};
+            while (true)
+                if (simManager.updateSimulation(timeStep++) != Nan)
+                    break;
+        } else {
+            int timeStep{0};
+            while (true) {
+                if (simManager.getOperationMode() == Interactive) {
+                    system("cls");
+                    cout << "Current TimeStep is:" << timeStep << endl;
+                    cout << "⏩ Press Enter to proceed to the next time step..." << endl;
+                    cout << "Selected Scenario: " + simManager.getCurrentScenario().substr(0, 3) << endl;
+                    if (simManager.updateSimulation(timeStep) != Nan)
+                        break;
+//                    cin.get();
+                }
+                timeStep++;
+            }
         }
         simManager.loadToOutputFile();
-
     } catch (const runtime_error &e) {
         cout << "⚠️ " << e.what() << endl;
         cin.get();

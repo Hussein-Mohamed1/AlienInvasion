@@ -32,17 +32,18 @@ class earthArmy : public Army {
     alienArmy *alienArmyPtr{nullptr};
     int infectedSoldierCount{0};
     int totalInfectedSoldiers{0};
+    int numOfHealedUnits{0};
 public:
     int getTotalInfectedSoldiers() const;
 
     void incTotalInfectedSoldiersCount();
 
-public:
+    void incNumOfHealedUnits();
+
     int getEarthInfectedSoldierCount() const;
 
     void setEarthInfectedSoldierCount(int earthInfectedSoldierCount);
 
-public:
     earthArmy(simulationManager *pManager);
 
 
@@ -64,11 +65,15 @@ public:
 
     unit *getAnEnemyFor(Type attackersType, int enemyType = 0);
 
-    bool hasCalledSAVArmy() const;
+    status getSAVstatus() const;
 
     void destroySavArmy();
 
     virtual ~earthArmy();
+
+    int getTotalNumOfHealedUnits() const;
+
+    void setSAVstatus(status status1);
 };
 
 

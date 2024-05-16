@@ -28,7 +28,7 @@ bool Esoldier::setInfected() {
     } else return false;
 }
 
-bool Esoldier::is_Infected() {
+bool Esoldier::is_Infected() const {
     return Infected;
 }
 
