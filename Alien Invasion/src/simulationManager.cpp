@@ -29,19 +29,19 @@ simulationManager::simulationManager(operationMode operationModeVal) : operation
     RandomGenerator = new randGen(this);
 }
 
-armyType simulationManager::assertWinner() const {
+winner simulationManager::assertWinner() const {
     if (currentTimeStep >= 40)
         if (getAlienArmyUnitsCount() == 0 && getEarthArmyUnitsCount() >= 1)
-            return earthArmyType;
+            return earthWon;
         else if (getEarthArmyUnitsCount() == 0 && getAlienArmyUnitsCount() >= 1)
-            return alienArmyType;
+            return aliensWon;
         else return Nan;
     return Nan;
 }
 
-armyType simulationManager::updateSimulation(int timestep) {
+winner simulationManager::updateSimulation(int timestep) {
     if (getEarthArmyUnitsCount() != 0 &&
-            earthArmyPtr->hasCalledSAVArmy() != SAVBeingUsed)
+            earthArmyPtr->getSAVstatus() != SAVBeingUsed)
         infectUnits();
 
     if (assertWinner() != Nan) {
@@ -53,34 +53,42 @@ armyType simulationManager::updateSimulation(int timestep) {
     currentTimeStep = timestep;
     manageAdding(timestep);
 
+
     ManageHealing();
 
     if (operationModeVal == Interactive) {
         cout << "TimeStep: " << timestep << endl;
         cout << "Earth Army Units: " << getEarthArmyUnitsCount() << endl;
         cout << "Alien Army Units: " << getAlienArmyUnitsCount() << endl;
+        cout << "Total Infected Units: " << getTotalInfectedCount() << endl;
     }
+
     unit *earthUnit1 = earthArmyPtr->getUnit(EarthSoldier);
     unit *earthUnit2 = earthArmyPtr->getUnit(EarthTank);
     unit *earthUnit3 = earthArmyPtr->getUnit(Gunnery);
-    handleUnit(earthUnit1);
-    handleUnit(earthUnit2);
-    handleUnit(earthUnit3);
+    bool b1 = handleUnit(earthUnit1);
+    bool b2 = handleUnit(earthUnit2);
+    bool b3 = handleUnit(earthUnit3);
 
     unit *alienUnit1 = alienArmyPtr->getUnit(alienSoldier);
     unit *alienUnit2 = alienArmyPtr->getUnit(MonsterType);
-    unit *alienUnit3 = alienArmyPtr->getUnit(DronePair);
-    handleUnit(alienUnit1);
-    handleUnit(alienUnit2);
-    handleUnit(alienUnit3);
-
-
+    unit *alienUnit3 = alienArmyPtr->getDronePair();
+    bool b4 = handleUnit(alienUnit1);
+    bool b5 = handleUnit(alienUnit2);
+    bool b6 = handleUnit(alienUnit3);
 
     if (operationModeVal == Interactive) {
         earthArmyPtr->print();
         alienArmyPtr->print();
         printKilledList();
     }
+
+    if (!(b1 || b2 || b3 || b4 || b5 || b6) && currentTimeStep >= 300 && getEarthArmyUnitsCount() &&
+            getAlienArmyUnitsCount()) {
+        printWinner(draw);
+        return draw;
+    }
+
     return Nan;
 
 }
@@ -131,7 +139,8 @@ void simulationManager::addNewUnit(unit *newUnit) {
 /////@param DamagedUnit: The unit being attacked.
 //void simulationManager::showStats(unit *AttackingUnit, unit *DamagedUnit) const {
 //    if (operationModeVal == Interactive)
-//        if (AttackingUnit && DamagedUnit)
+//        if (AttackingUnit && DamagedUnit && AttackingUnit->getType() == DronePair &&
+//            DamagedUnit->getType() == EarthTank)
 //            cout << "ID:" << AttackingUnit->getId() << ":" << [&AttackingUnit]() -> string {
 //                switch (AttackingUnit->getType()) {
 //                    case EarthSoldier:
@@ -185,7 +194,7 @@ void simulationManager::manageAdding(int timestep) {
             addNewUnit(RandomGenerator->generatUnit(alienArmyType, timestep));
         }
     }
-    if (RandomGenerator->creatSaverUnit() && earthArmyPtr->hasCalledSAVArmy() == hasntCallSAV) {
+    if (RandomGenerator->creatSaverUnit() && earthArmyPtr->getSAVstatus() == hasntCallSAV) {
         for (int i{}; i < RandomGenerator->getnumofSaver(); i++) {
             addNewUnit(RandomGenerator->generatSaver(timestep));
         }
@@ -234,10 +243,18 @@ void simulationManager::printKilledList() {
 }
 
 void simulationManager::loadToOutputFile() {
+    unit *temp{nullptr};
+
+    while (UnitMaintenanceList.dequeue(temp)) {
+        temp->setDestructionTime(currentTimeStep);
+        killedList.enqueue(temp);
+    }
+
     ofstream OutputFile("output-" + to_string((time(0) % 3600) / 60) + ".txt", ios::in | ios::out | ios::app);
     int sumOfEDf{0}, EDfcount{0}, sumOfEDd{0}, EDdcount{0}, sumOfEDb{0}, EDbcount{0}, sumOfADf{0}, ADfcount{
             0}, sumOfADd{0}, ADdcount{0}, sumOfADb{0}, ADbcount{
-            0}, numofHealedunits = UnitMaintenanceList.getCount(), alienDestructedSoldierCount{0},
+            0},
+            alienDestructedSoldierCount{0},
             alienDestructedMonsterCount{0},
             alienDestructedDroneCount{0},
             earthdestructedGunneryCount{0},
@@ -303,15 +320,16 @@ void simulationManager::loadToOutputFile() {
             sumOfADf += killedU->getDf();
             sumOfADd += killedU->getDd();
             sumOfADb += killedU->getDb();
-
         }
+
+        delete killedU;
     }
 
     switch (assertWinner()) {
-        case earthArmyType :
+        case earthWon :
             OutputFile << "========================= Earth Win =========================\n";
             break;
-        case alienArmyType:
+        case aliensWon:
             OutputFile << "========================= Alien Win =========================\n";
             break;
         case Nan:
@@ -326,6 +344,12 @@ void simulationManager::loadToOutputFile() {
     OutputFile << "total number of ET---> " << earthArmyPtr->getEarthTankCount() + earthdestructedTankCount << endl;
     OutputFile << "total number of EG---> " << earthArmyPtr->getEarthGunneryCount() + earthdestructedGunneryCount
                << endl;
+
+    OutputFile << "Percentage of Total Infected Units---> "
+               << (earthArmyPtr->getEarthSoldierCount() + earthdestructedSoldierCount ?
+                   (to_string(double(getTotalInfectedCount()) /
+                              (earthArmyPtr->getEarthSoldierCount() +
+                               earthdestructedSoldierCount) * 100)) : "0") << "%" << endl;
     if ((earthdestructedSoldierCount + earthArmyPtr->getEarthSoldierCount()) != 0)
         OutputFile << "percentage of destructed ES----> "
                 << (double(earthdestructedSoldierCount) /
@@ -349,8 +373,9 @@ void simulationManager::loadToOutputFile() {
         OutputFile << "percentage of total destructed Earth units----> "
                 << (double(totaldestructedEarthArmy) / totalEarthArmy) * 100 << endl;
     if (totalEarthArmy != 0)
-        OutputFile << "percentage of total Healed units----> " << (double(numofHealedunits) / totalEarthArmy) * 100
-                << endl;
+        OutputFile << "percentage of total Healed units----> "
+                   << (double(earthArmyPtr->getTotalNumOfHealedUnits()) / totalEarthArmy) * 100
+                   << endl;
     if (EDfcount != 0)
         OutputFile << "Average of Df---> " << sumOfEDf / EDfcount << endl;
     if (EDdcount != 0)
@@ -385,12 +410,11 @@ void simulationManager::loadToOutputFile() {
         OutputFile << "percentage of destructed AM----> " <<
                                                           (double(alienDestructedMonsterCount) /
                                                            (alienArmyPtr->getCurrentMonstersIndex() +
-                                                            alienDestructedMonsterCount + 1)) *
-                                                          100 << endl;
+                                                            alienDestructedMonsterCount + 1)) * 100 << endl;
     int totaldestructedAlienArmy =
             alienDestructedDroneCount + alienDestructedMonsterCount + alienDestructedSoldierCount;
     int totalAlienArmy = alienArmyPtr->getCurrentAlienSoldierCount() + alienArmyPtr->getCurrentAlienDroneCount() +
-            alienArmyPtr->getCurrentMonstersIndex() + totaldestructedAlienArmy;
+            alienArmyPtr->getCurrentMonstersIndex() + totaldestructedAlienArmy + 1;
     if (totalAlienArmy != 0)
         OutputFile << "percentage of total destructed Alien units----> "
                 << (double(totaldestructedAlienArmy) / totalAlienArmy) * 100 << endl;
@@ -435,7 +459,7 @@ void simulationManager::ManageHealing() {
     }
 
     while (0 < Cap && !Soldiers.isEmpty()) {
-        unit *InjSol;
+        unit *InjSol{nullptr};
         int p;
         Soldiers.dequeue(InjSol, p);
 
@@ -443,17 +467,21 @@ void simulationManager::ManageHealing() {
             addToKilledList(InjSol);
 
         else {
-            Healer->damageEnemy(InjSol);
+            if (dynamic_cast<Esoldier *>(InjSol)->is_Infected() && Cap >= 2 ||
+                !dynamic_cast<Esoldier *>(InjSol)->is_Infected()) {
+                Healer->damageEnemy(InjSol);
+                earthArmyPtr->incNumOfHealedUnits();
+                InjSol->UpdateStillHealing();
+                Esoldier *tempSoldier = dynamic_cast<Esoldier *>(InjSol);
 
-            InjSol->UpdateStillHealing();
-            returnUnitToArmy(InjSol);
-            Esoldier *tempSoldier = dynamic_cast<Esoldier *>(InjSol);
-
-            if (tempSoldier->is_Infected()) {
+                if (tempSoldier->is_Infected()) {
+                    Cap--;
+                    tempSoldier->makeImmune();
+                }
                 Cap--;
-                tempSoldier->makeImmune();
-            }
-            Cap--;
+
+                returnUnitToArmy(InjSol);
+            } else UnitMaintenanceList.enqueue(InjSol);
 
         }
     }
@@ -469,6 +497,7 @@ void simulationManager::ManageHealing() {
 
         else {
             Healer->damageEnemy(InjTank);
+            earthArmyPtr->incNumOfHealedUnits();
             InjTank->UpdateStillHealing();
             returnUnitToArmy(InjTank);
             Cap--;
@@ -477,7 +506,7 @@ void simulationManager::ManageHealing() {
 
 
     while (!Soldiers.isEmpty()) {
-        unit *S;
+        unit *S{nullptr};
         int p;
         Soldiers.dequeue(S, p);
         UnitMaintenanceList.enqueue(S);
@@ -489,11 +518,6 @@ void simulationManager::ManageHealing() {
     }
 
 
-    unit *Temp{nullptr};
-    int UMLlength = UnitMaintenanceList.getCount();
-    for (int i = 0; i < UMLlength; ++i) {
-        returnUnitToArmy(Temp);
-    }
     if (Cap != Healer->getAttackCapacity())
         delete Healer;
     else HealList.push(Healer);
@@ -505,15 +529,15 @@ simulationManager::~simulationManager() {
     delete RandomGenerator;
 }
 
-void simulationManager::handleUnit(unit *attackingUnit) {
+bool simulationManager::handleUnit(unit *attackingUnit) {
     LinkedQueue<unit *> tempList;
 
     bool enqueuedOnce = false;
 
+    unit *secondAttackingDrone{nullptr};
 
-    if (!attackingUnit) { return; }
+    if (!attackingUnit) { return false; }
     else {
-        unit *secondAttackingDrone{nullptr};
         unit *defendingUnit1{nullptr};
         unit *defendingUnit2{nullptr};
 
@@ -522,7 +546,7 @@ void simulationManager::handleUnit(unit *attackingUnit) {
             secondAttackingDrone = alienArmyPtr->getDronePair();
             if (!secondAttackingDrone) {
                 alienArmyPtr->addUnit(attackingUnit);
-                return;
+                return false;
             }
         }
 
@@ -544,13 +568,6 @@ void simulationManager::handleUnit(unit *attackingUnit) {
                     if (secondAttackingDrone)
                         secondAttackingDrone->damageEnemy(defendingUnit1);
 
-//
-//                    if (operationModeVal == Interactive) {
-//                        showStats(attackingUnit, defendingUnit1);
-//                        if (secondAttackingDrone)
-//                            showStats(secondAttackingDrone, defendingUnit1);
-//                    }
-
                     ///@details used to handle the adding of the attacking unit to templist only once
                     if (!enqueuedOnce) {
                         enqueuedOnce = true;
@@ -567,13 +584,6 @@ void simulationManager::handleUnit(unit *attackingUnit) {
                 if (attackingUnit->damageEnemy(defendingUnit2)) {
                     if (secondAttackingDrone)
                         secondAttackingDrone->damageEnemy(defendingUnit2);
-
-//
-//                    if (operationModeVal == Interactive) {
-//                        showStats(attackingUnit, defendingUnit2);
-//                        if (secondAttackingDrone)
-//                            showStats(secondAttackingDrone, defendingUnit2);
-//                    }
 
 
                     ///@details used to handle the adding of the attacking unit to templist only once
@@ -592,31 +602,38 @@ void simulationManager::handleUnit(unit *attackingUnit) {
 
     if (!enqueuedOnce) {
         returnUnitToArmy(attackingUnit);
-        return;
+        if (secondAttackingDrone)
+            returnUnitToArmy(secondAttackingDrone);
+        return false;
     }
-
-    printCurrentFightInfo(tempList);
+    if (operationModeVal == Interactive)
+        printCurrentFightInfo(tempList);
     unit *temp{nullptr};
     while (tempList.dequeue(temp))
         returnUnitToArmy(temp);
-
+    return true;
 }
 
 
 void simulationManager::returnUnitToArmy(unit *unitPtr) {
     if (unitPtr) {
-        if (unitPtr->getHealth() <= 0) {
-            addToKilledList(unitPtr);
+        if (floor(unitPtr->getHealth()) <= 0) {
+            if (unitPtr->getType() == EarthSoldier && dynamic_cast<Esoldier *>(unitPtr)->is_Infected())
+                earthArmyPtr->setEarthInfectedSoldierCount(earthArmyPtr->getEarthInfectedSoldierCount() - 1);
             unitPtr->setDestructionTime(getCurrentTimeStep());
+            addToKilledList(unitPtr);
             return;
         }
 
-        if (unitPtr->typeToString() == "EG" && unitPtr->getArmyType() == earthArmyType &&
+        if (unitPtr->typeToString() != "EG" && unitPtr->getArmyType() == earthArmyType &&
             unitPtr->getHealth() <= 0.2 * unitPtr->GetOriginalHealth()) {
-            unitPtr->UpdateStillHealing();
+            if (unitPtr->getType() == EarthSoldier && dynamic_cast<Esoldier *>(unitPtr)->is_Infected())
+                earthArmyPtr->setEarthInfectedSoldierCount(earthArmyPtr->getEarthInfectedSoldierCount() - 1);
             UnitMaintenanceList.enqueue(unitPtr);
             return;
         }
+
+        unitPtr->resetStillHealing();
 
         if ((*getArmyType)(unitPtr) == alienArmyType)
             alienArmyPtr->addUnit(unitPtr);
@@ -653,64 +670,120 @@ void simulationManager::printCurrentFightInfo(LinkedQueue<unit *> &tempList) {
 
 }
 
-void simulationManager::printWinner(armyType type) {
+void simulationManager::printWinner(winner type) {
     system("cls");
     //create an ascii art for the winner
-    if (type == alienArmyType) {
-        auto clearScreen = []() {
-            std::cout << "\033[2J\033[1;1H";
+    if (type == aliensWon) {
+        string alienWinMessage1 = "██████████████████████████████████████████████████████████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████████████████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████████████████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████████████████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████████████████████████████████████████████████\n"
+                                  "████████████████████████████████████████████▓█████████▓███████████████████████████████████\n"
+                                  "██████████████████████████████████████████▓████████▓▓███▓█████████████████████████████████\n"
+                                  "██████████████████████████████████████▓▓██████▓█▓█▓███████████████████████████████████████\n"
+                                  "██████████████████████████████████████████▓████▓▓███▓███▓▓████████████████████████████████\n"
+                                  "███████████████████████████████████████████▒░▒▒▓▓▓████████████████████████████████████████\n"
+                                  "██████████████████████████████████████████▒░░░░░░░▓███████████████████████████████████████\n"
+                                  "█████████████████████████████████████████░░░░░░░░░░███████████████████████████████████████\n"
+                                  "████████████████████████████████████████░░░░░░░░░░░▒██████████████████████████████████████\n"
+                                  "██████████████████████████████████████▓░░░░░░░░░░█▒░▓█████████████████████████████████████\n"
+                                  "█████████████████████████████████████▒░░░░░░░░░░▓██▒░█████████████████████████████████████\n"
+                                  "████████████████████████████████████░░░░░░░░░░░░▓▒▓░░▓████████████████████████████████████\n"
+                                  "███████████████████████████████████▒░░░░░░░░░░░░░░░░░▒████████████████████████████████████\n"
+                                  "████████████████████████████████████▓▒▒░░░░░░░░░░░░░░░████████████████████████████████████\n"
+                                  "███████████████████████████████████████████▓▓▒▒▒▒▒▒▓▓█████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████████████████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████████████████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████▒▓▒█▒▒█▓████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████▒▓▒██▓█▒████████████████████████████████████\n"
+                                  "█████████████████████████████████████████████▓▒▓███▓██████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████████████████████████████████████████████████";
+
+        string alienWinMessage2 = "██████████████████████████████████████████████████████████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████████████████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████████████████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████████████████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████████████████████████████████████████████████\n"
+                                  "████████████████████████████████████████████▓█████████▓███████████████████████████████████\n"
+                                  "██████████████████████████████████████████▓████▓████▓███▓█████████████████████████████████\n"
+                                  "██████████████████████████████████████▓▓██████▓█▓█▓███████████████████████████████████████\n"
+                                  "██████████████████████████████████████████▓▓███▓████▓████▓████████████████████████████████\n"
+                                  "███████████████████████████████████████████████▓▓▓▓▓▓▓████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████▓░░░▒░░░▓███████████████████████████████████\n"
+                                  "██████████████████████████████████████████████░░░▒█▓░░░▒██████████████████████████████████\n"
+                                  "█████████████████████████████████████████████░░░░████░░░░█████████████████████████████████\n"
+                                  "████████████████████████████████████████████▓░░░░▒██░░░░░░████████████████████████████████\n"
+                                  "████████████████████████████████████████████▒░░░░░░░░░░░░░░███████████████████████████████\n"
+                                  "███████████████████████████████████████████▓░░░░░░░░░░░░░░░░▓█████████████████████████████\n"
+                                  "███████████████████████████████████████████░░░░░░░░░░░░░░░░░░▓████████████████████████████\n"
+                                  "██████████████████████████████████████████▓░░░░░░░░░░░░░░░▒▓██████████████████████████████\n"
+                                  "█████████████████████████████████████████████▓▓▓▒▒▒▓▓▓████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████████████████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████████████████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████▒▓▒▓▓▒▓▓████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████░▓▒█▓▓█▓████████████████████████████████████\n"
+                                  "█████████████████████████████████████████████▓▒▓██▓███████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████████████████████████████████████████████████";
+
+        string alienWinMessage3 = "██████████████████████████████████████████████████████████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████████████████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████████████████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████████████████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████████████████████████████████████████████████\n"
+                                  "████████████████████████████████████████████▓█████████▓███████████████████████████████████\n"
+                                  "██████████████████████████████████████████▓█████████▓███▓█████████████████████████████████\n"
+                                  "██████████████████████████████████████▓▓██████▓█▓█▓███████████████████████████████████████\n"
+                                  "██████████████████████████████████████████▓▓███▓████▓████▓████████████████████████████████\n"
+                                  "███████████████████████████████████████████████▓▓███▓▓████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████▓░░▒█▓░░▓███████████████████████████████████\n"
+                                  "██████████████████████████████████████████████░░░▓██▓░░▒██████████████████████████████████\n"
+                                  "█████████████████████████████████████████████░░░░░█▓▒░░░░█████████████████████████████████\n"
+                                  "████████████████████████████████████████████▓░░░░░▒░▒░░░░░████████████████████████████████\n"
+                                  "████████████████████████████████████████████▒░░░░░░░░░░░░░░███████████████████████████████\n"
+                                  "███████████████████████████████████████████▓░░░░░░░░░░░░░░░░▓█████████████████████████████\n"
+                                  "███████████████████████████████████████████░░░░░░░░░░░░░░░░░░▓████████████████████████████\n"
+                                  "██████████████████████████████████████████▓░░░░░░░░░░░░░░░▒▓▓█████████████████████████████\n"
+                                  "█████████████████████████████████████████████▓▓▓▒▒▒▓▓▓████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████████████████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████████████████████████████████████████████████\n"
+                                  "█████████████████████████████████████████████▓▒█░▓▓▒▓▓████████████████████████████████████\n"
+                                  "█████████████████████████████████████████████▓▒▓▒▓▓▓█▒████████████████████████████████████\n"
+                                  "█████████████████████████████████████████████▒░▓██▓███████████████████████████████████████\n"
+                                  "██████████████████████████████████████████████████████████████████████████████████████████";
+        string alienWinMessage4;
+        auto displayDefeatMessage = [alienWinMessage1, alienWinMessage2, alienWinMessage3, alienWinMessage4]() {
+            system("cls");
+            cout << alienWinMessage1;
+            Sleep(500);
+            system("cls");
+
+            cout << alienWinMessage2;
+            Sleep(500);
+            system("cls");
+
+            cout << alienWinMessage3;
+            Sleep(500);
+            system("cls");
+
+            cout << alienWinMessage4;
+            Sleep(500);
+            system("cls");
+
+            cout
+                    << "\n   _____  .__  .__                                                     .__                  __  .__             ___.           __    __  .__        ._.\n"
+                       "  /  _  \\ |  | |__| ____   ____   _____ _______  _____ ___.__. __  _  _|__| ____   ______ _/  |_|  |__   ____   \\_ |__ _____ _/  |__/  |_|  |   ____| |\n"
+                       " /  /_\\  \\|  | |  |/ __ \\ /    \\  \\__  \\\\_  __ \\/     <   |  | \\ \\/ \\/ /  |/    \\ /  ___/ \\   __\\  |  \\_/ __ \\   | __ \\\\__  \\\\   __\\   __\\  | _/ __ \\ |\n"
+                       "/    |    \\  |_|  \\  ___/|   |  \\  / __ \\|  | \\/  Y Y  \\___  |  \\     /|  |   |  \\\\___ \\   |  | |   Y  \\  ___/   | \\_\\ \\/ __ \\|  |  |  | |  |_\\  ___/\\|\n"
+                       "\\____|__  /____/__|\\___  >___|  / (____  /__|  |__|_|  / ____|   \\/\\_/ |__|___|  /____  >  |__| |___|  /\\___  >  |___  (____  /__|  |__| |____/\\___  >_\n"
+                       "        \\/             \\/     \\/       \\/            \\/\\/                      \\/     \\/             \\/     \\/       \\/     \\/                     \\/\\/\n";
         };
+        Sleep(1000);
 
-        // Function to draw the Alien Spaceship
-        auto drawAlienSpaceship = []() {
-            std::cout << "           /\\     /\\             \n";
-            std::cout << "      ____/__\\___/__\\____        \n";
-            std::cout << "     /         \\ /         \\      \n";
-            std::cout << "     | _________V_________ |      \n";
-            std::cout << "     |* * * * * | * * * * *|      \n";
-            std::cout << "     \\* * * * *|* * * * * */      \n";
-            std::cout << "      \\_________|_________/       \n";
-            std::cout << "     /          |          \\      \n";
-            std::cout << "     \\         / \\         /      \n";
-            std::cout << "      \\_______/   \\_______/       \n";
-        };
-
-        // Function to draw the Alien Planet
-        auto drawAlienPlanet = []() {
-            std::cout << "                             \n";
-            std::cout << "           _   _   _          \n";
-            std::cout << "         / / / / / /\\         \n";
-            std::cout << "        / / / / / /  \\        \n";
-            std::cout << "       / / / / / /    \\       \n";
-            std::cout << "      / / / / / /      \\      \n";
-            std::cout << "     / / / / / /        \\     \n";
-            std::cout << "     \\ \\ \\ \\ \\ \\        /     \n";
-            std::cout << "      \\ \\ \\ \\ \\ \\      /      \n";
-            std::cout << "       \\ \\ \\ \\ \\ \\    /       \n";
-            std::cout << "        \\_\\_\\_\\_\\_\\__/        \n";
-            std::cout << "                             \n";
-        };
-
-        // Function to display the defeat message
-        auto displayDefeatMessage = []() {
-            std::cout << "\nAlien army wins the battle!\n";
-        };
-
-        // Animation loop
-        for (int i = 0; i < 10; ++i) {
-            clearScreen(); // Clear screen before drawing
-            drawAlienSpaceship(); // Draw the Alien Spaceship
-            drawAlienPlanet(); // Draw the Alien Planet
-            Sleep(80); // Pause for 1 second
-            clearScreen(); // Clear screen again
-            Sleep(80); // Pause for 1 second
-        }
-
-        // Display defeat message
         displayDefeatMessage();
         return;
 
-    } else if (type == earthArmyType) {
+    } else if (type == earthWon) {
         // Function to clear the console screen
         auto clearScreen = []() {
             std::cout << "\033[2J\033[1;1H";
@@ -763,6 +836,8 @@ void simulationManager::printWinner(armyType type) {
 
         // Display victory message
         displayVictoryMessage();
+
+    } else if (type == draw) {
 
     }
 }
@@ -916,8 +991,12 @@ void simulationManager::infectUnits() {
             }
 
             Esoldier *soldierToBeInfected{nullptr};
-            soldierToBeInfected = dynamic_cast<Esoldier *>(this->earthArmyPtr->getUnit(EarthSoldier));
-            soldierToBeInfected->setInfected();
+            unit *tempEarthSoldier = this->earthArmyPtr->getUnit(EarthSoldier);
+            soldierToBeInfected = dynamic_cast<Esoldier *>(tempEarthSoldier);
+            if (soldierToBeInfected)
+                soldierToBeInfected->setInfected();
+            else
+                throw runtime_error("soldierToBeInfected is null");
 
             this->returnUnitToArmy(soldierToBeInfected);
 
@@ -925,6 +1004,7 @@ void simulationManager::infectUnits() {
                 this->returnUnitToArmy(tempSoldier);
         }
     }
+
 }
 
 
@@ -933,22 +1013,61 @@ int simulationManager::getCallSAVPer() const {
 }
 
 void simulationManager::chooseScenario() {
-    int choose;
+
+
+    int choice{0};
     cout << "please choose A scenario of fight : \n1- strong Earth & Weak Alien \n"
             << "2- Weak Earth & strong Alien \n3- Weak Earth & Weak Alien \n4- strong Earth & strong Alien \n";
-    cin >> choose;
-    if (choose == 1)
-        RandomGenerator->set_Scenario("S&W");
-    else if (choose == 2)
-        RandomGenerator->set_Scenario("W&S");
-    else if (choose == 3)
-        RandomGenerator->set_Scenario("W&W");
-    else
-        RandomGenerator->set_Scenario("S&S");
+    cin >> choice;
+    switch (choice) {
+        case 1:
+            RandomGenerator->set_Scenario("S&W");
+            break;
+        case 2:
+            RandomGenerator->set_Scenario("W&S");
+            break;
+        case 3:
+            RandomGenerator->set_Scenario("W&W");
+            break;
+        case 4:
+            RandomGenerator->set_Scenario("S&S");
+            break;
+        default:
+            cout << "\nPlease choose one of the options\n";
+            Sleep(1000);
+            system("cls");
+            chooseScenario();
+    }
+
     system("CLS");
     RandomGenerator->loadInputFile();
 }
 
 string simulationManager::getCurrentScenario() {
     return RandomGenerator->get_Scenario();
+}
+
+void simulationManager::printUnitMaintenanceList() {
+    cout << "Maintenance List: [";
+    unit *temp{nullptr};
+    LinkedQueue<unit *> tempQueue;
+    while (UnitMaintenanceList.dequeue(temp)) {
+        cout << to_string(temp->getId()) + " " + temp->typeToString() << (UnitMaintenanceList.isEmpty() ? "" : ", ");
+        tempQueue.enqueue(temp);
+    }
+    cout << "]\n";
+    while (tempQueue.dequeue(temp))
+        UnitMaintenanceList.enqueue(temp);
+}
+
+void simulationManager::incTotalInfectCount() {
+    earthArmyPtr->incTotalInfectedSoldiersCount();
+}
+
+int simulationManager::getTotalInfectedCount() const {
+    return earthArmyPtr->getTotalInfectedSoldiers();
+}
+
+operationMode simulationManager::getOperationMode() {
+    return operationModeVal;
 }

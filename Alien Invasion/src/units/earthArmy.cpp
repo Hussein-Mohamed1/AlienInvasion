@@ -47,7 +47,7 @@ void earthArmy::print() {
             if (!soldier->is_Infected())
                 cout << soldier->getId() << (ESlist.isEmpty() ? "" : ", ");
             else
-                cout<<"🤧" << soldier->getId() << (ESlist.isEmpty() ? "" : ", ");
+                cout << "🤧" << soldier->getId() << (ESlist.isEmpty() ? "" : ", ");
             TempESlist.enqueue(soldier);
         }
     }
@@ -211,7 +211,7 @@ void earthArmy::setEarthInfectedSoldierCount(const int earthInfectedSoldierCount
 
 earthArmy::earthArmy(simulationManager *pManager) : Army(pManager) {}
 
-bool earthArmy::hasCalledSAVArmy() const {
+status earthArmy::getSAVstatus() const {
     return SAVStatus;
 }
 
@@ -239,4 +239,20 @@ earthArmy::~earthArmy() {
     SaverUnit *tempSaver{nullptr};
     while (SaverUnitList.dequeue(tempSaver))
         delete tempSaver;
+}
+
+int earthArmy::getTotalInfectedSoldiers() const {
+    return totalInfectedSoldiers;
+}
+
+void earthArmy::incTotalInfectedSoldiersCount() {
+    earthArmy::totalInfectedSoldiers++;
+}
+
+void earthArmy::incNumOfHealedUnits() {
+    numOfHealedUnits++;
+}
+
+int earthArmy::getTotalNumOfHealedUnits() const {
+    return numOfHealedUnits;
 }

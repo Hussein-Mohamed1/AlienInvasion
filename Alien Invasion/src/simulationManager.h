@@ -1,6 +1,3 @@
-//
-// Created by youss on 3/30/2024.
-//
 #pragma once
 
 #include "./ds/LinkedQueue.h"
@@ -39,7 +36,7 @@ public:
 
     simulationManager(operationMode); //initializes the simulation
 
-    armyType updateSimulation(int);
+    winner updateSimulation(int);
     void chooseScenario();
     void addNewUnit(unit *);
 
@@ -55,9 +52,11 @@ public:
 
     int getEarthArmyUnitsCount() const;
 
-    void handleUnit(unit *attackingUnit);
+    bool handleUnit(unit *attackingUnit);
 
     void printKilledList();
+
+    void printUnitMaintenanceList();
 
     void returnUnitToArmy(unit *);
 
@@ -65,9 +64,9 @@ public:
 
     void printCurrentFightInfo(LinkedQueue<unit *> &tempList);
 
-    armyType assertWinner() const;
+    winner assertWinner() const;
 
-    static void printWinner(armyType type);
+    static void printWinner(winner type);
 
     int getAlienSoldiersCount() const;
 
@@ -81,6 +80,10 @@ public:
 
     void setEarthInfectedSoldierCount(const int earthInfectedSoldierCount);
 
+    int getTotalInfectedCount() const;
+
+    void incTotalInfectCount();
+
     void infectUnits();
 
     int getCallSAVPer() const;
@@ -88,4 +91,6 @@ public:
     virtual ~simulationManager();
 
     string getCurrentScenario();
+
+    operationMode getOperationMode();
 };

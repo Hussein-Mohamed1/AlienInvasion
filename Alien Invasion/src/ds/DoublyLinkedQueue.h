@@ -14,7 +14,6 @@ public:
 public:
     bool dequeue(T &Item) {
         ///@note maybe unnecessary but I added this to make sure that a drone is picked from either side using doublyDequeue
-        backOrFront = !backOrFront;
         return LinkedQueue<T>::dequeue(Item);
 
     }

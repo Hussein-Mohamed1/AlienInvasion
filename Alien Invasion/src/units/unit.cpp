@@ -179,3 +179,7 @@ string unit::typeToString() {
             break;
     }
 }
+
+void unit::resetStillHealing() {
+    StillInHealingList = 0;
+}

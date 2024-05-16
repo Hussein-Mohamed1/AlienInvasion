@@ -8,11 +8,15 @@ class simulationManager;
 
 using namespace std;
 enum Type {
-    Gunnery, EarthSoldier, EarthTank, alienSoldier, DronePair, MonsterType, Healer , Saver
+    Gunnery, EarthSoldier, EarthTank, alienSoldier, DronePair, MonsterType, Healer, Saver
 };
 
 enum armyType {
-    earthArmyType, alienArmyType, Nan
+    earthArmyType, alienArmyType
+};
+
+enum winner {
+    earthWon, aliensWon, draw, Nan
 };
 
 class unit {
@@ -89,5 +93,7 @@ public:
     unit();
 
     string typeToString();
+
+    void resetStillHealing();
 };
 
