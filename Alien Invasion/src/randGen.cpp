@@ -111,6 +111,7 @@ unit *randGen::generatUnit(armyType unitType, int timestep) {
 
     switch (unitType) {
         case earthArmyType: {
+            hasGeneratedEarthOnce = true;
             num = rand() % 101;
             if (num <= perES) {
                 unit *soldier = new Esoldier(Eid++, timestep, healthEunit, powerEunit, Eattackcap, simPtr);
@@ -126,6 +127,7 @@ unit *randGen::generatUnit(armyType unitType, int timestep) {
                 return healer;
             }
             case alienArmyType: {
+                hasGeneratedAlienOnce = true;
                 num = rand() % 101;
                 if (num <= perAS) {
                     unit *soldier = new ASolider(Aid++, timestep, healthAunit, powerAunit, Aattackcap, simPtr);
@@ -203,7 +205,7 @@ int randGen::get_probofcallSaver() const {
     return probofcallSaver;
 }
 
-void randGen::set_Scenario(const string& s) {
+void randGen::set_Scenario(const string &s) {
 //   scenario += "./src//";
     scenario += s;
     scenario += ".txt";
@@ -215,5 +217,9 @@ int randGen::Sid = 4000;
 
 string randGen::get_Scenario() {
     return scenario;
+}
+
+bool randGen::generatedOnceForBothArmies() const {
+    return hasGeneratedAlienOnce && hasGeneratedEarthOnce;
 }
 

@@ -30,16 +30,20 @@ simulationManager::simulationManager(operationMode operationModeVal) : operation
 }
 
 winner simulationManager::assertWinner() const {
-    if (currentTimeStep >= 40)
+    if (currentTimeStep >= 40 && RandomGenerator->generatedOnceForBothArmies()) {
         if (getAlienArmyUnitsCount() == 0 && getEarthArmyUnitsCount() >= 1)
             return earthWon;
-        else if (getEarthArmyUnitsCount() == 0 && getAlienArmyUnitsCount() >= 1)
+        if (getEarthArmyUnitsCount() == 0 && getAlienArmyUnitsCount() >= 1)
             return aliensWon;
         else return Nan;
+    }
     return Nan;
 }
 
 winner simulationManager::updateSimulation(int timestep) {
+    if (operationModeVal == Interactive)
+        srand(time(0));
+
     if (earthArmyPtr->getSAVstatus() != SAVBeingUsed)
         infectUnits();
 
@@ -63,7 +67,7 @@ winner simulationManager::updateSimulation(int timestep) {
         earthArmyPtr->destroySavArmy();
 
     currentTimeStep = timestep;
-    manageAdding(timestep);
+    manageAdding(currentTimeStep);
 
 
     ManageHealing();
@@ -237,7 +241,7 @@ int simulationManager::getEarthArmyUnitsCount() const {
 
 void simulationManager::printKilledList() {
     unit *killedUnit = nullptr;
-    LinkedQueue<unit *> temp;
+    LinkedQueue < unit * > temp;
     cout << "================ ☠️Killed Units☠️ ====================\n";
     cout << "💀 " << killedList.getCount() << " Units killed [ ";
     while (!killedList.isEmpty()) {
@@ -263,7 +267,7 @@ void simulationManager::loadToOutputFile() {
         killedList.enqueue(temp);
     }
 
-    ofstream OutputFile("output-" + to_string((time(0) % 3600) / 60) + ".txt", ios::in | ios::out | ios::app);
+    ofstream OutputFile("output-" + to_string((time(0) % 3600) / 60) + ".txt", ios::in | ios::out | ios::trunc);
     int sumOfEDf{0}, EDfcount{0}, sumOfEDd{0}, EDdcount{0}, sumOfEDb{0}, EDbcount{0}, sumOfADf{0}, ADfcount{
             0}, sumOfADd{0}, ADdcount{0}, sumOfADb{0}, ADbcount{
             0},
@@ -283,7 +287,7 @@ void simulationManager::loadToOutputFile() {
     }
 
     // Write data to the file in the constructor
-    OutputFile << "TimeDeath     ID      Tj      Df      Dd      Db" << endl;
+    OutputFile << "TimeDeath     ID      Tj      Df      Dd      Db     Type" << endl;
 
     while (killedList.dequeue(killedU)) {
         if (killedU->getType() == EarthSoldier || killedU->getType() == Gunnery ||
@@ -457,9 +461,9 @@ void simulationManager::ManageHealing() {
     int Cap = Healer->getAttackCapacity();
 
 
-    LinkedQueue<unit *> tank;
+    LinkedQueue < unit * > tank;
 
-    priQueue<unit *> Soldiers;
+    priQueue < unit * > Soldiers;
 
     while (!UnitMaintenanceList.isEmpty()) {
         unit *Inj{nullptr};
@@ -544,7 +548,7 @@ simulationManager::~simulationManager() {
 }
 
 bool simulationManager::handleUnit(unit *attackingUnit) {
-    LinkedQueue<unit *> tempList;
+    LinkedQueue < unit * > tempList;
 
     bool enqueuedOnce = false;
 
@@ -661,7 +665,7 @@ int simulationManager::getCurrentTimeStep() const {
 }
 
 void simulationManager::printCurrentFightInfo(LinkedQueue<unit *> &tempList) {
-    LinkedQueue<unit *> tempList2;
+    LinkedQueue < unit * > tempList2;
     unit *unitShot{nullptr}, *secondDrone{nullptr}, *attackedUnit{nullptr};
 
     while (tempList.dequeue(unitShot)) {
@@ -994,7 +998,7 @@ void simulationManager::infectUnits() {
         if (random <= 2 && getEarthSoldiersCount()) {
             int idxOfRandomSoldier = rand() % this->getEarthSoldiersCount();
             unit *tempSoldier{nullptr};
-            LinkedQueue<unit *> temp;
+            LinkedQueue < unit * > temp;
             int j{0};
 
             ///@details if sav is being used, getUnit will return one from the sav instead of normal soldiers
@@ -1069,7 +1073,7 @@ string simulationManager::getCurrentScenario() {
 void simulationManager::printHealandUnitMaintenanceLists() {
     cout << "💉Heal List: [";
     unit *temp{nullptr};
-    ArrayStack<unit *> tempStack;
+    ArrayStack < unit * > tempStack;
     while (HealList.pop(temp)) {
         cout << to_string(temp->getId()) << (HealList.isEmpty() ? "" : ", ");
         tempStack.push(temp);
@@ -1079,10 +1083,8 @@ void simulationManager::printHealandUnitMaintenanceLists() {
         HealList.push(temp);
 
     cout << "🔧Maintenance List: [";
-    LinkedQueue<unit *> tempQueue;
+    LinkedQueue < unit * > tempQueue;
     while (UnitMaintenanceList.dequeue(temp)) {
-        cout << to_string(temp->getId()) + " " + temp->typeToString()
-             << (UnitMaintenanceList.isEmpty() ? "" : ", ");
         cout << to_string(temp->getId()) << (UnitMaintenanceList.isEmpty() ? "" : ", ");
         tempQueue.enqueue(temp);
     }

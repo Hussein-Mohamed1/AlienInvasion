@@ -31,13 +31,17 @@ protected:
 
     ArrayStack<unit *> HealList;
     LinkedQueue<unit *> UnitMaintenanceList;
+
+
 public:
     static void intro();
 
     simulationManager(operationMode); //initializes the simulation
 
     winner updateSimulation(int);
+
     void chooseScenario();
+
     void addNewUnit(unit *);
 
     void manageAdding(int);
@@ -95,4 +99,5 @@ public:
     operationMode getOperationMode();
 
     void choose_Mode();
+
 };
