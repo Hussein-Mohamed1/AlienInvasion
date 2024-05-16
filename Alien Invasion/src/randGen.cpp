@@ -203,7 +203,7 @@ int randGen::get_probofcallSaver() const {
     return probofcallSaver;
 }
 
-void randGen::set_Scenario(string s) {
+void randGen::set_Scenario(const string &s) {
 //    scenario += "./src//";
     scenario += s;
     scenario += ".txt";

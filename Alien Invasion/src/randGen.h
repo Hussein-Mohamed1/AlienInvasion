@@ -12,7 +12,8 @@ class randGen {
     simulationManager *simPtr{nullptr};
 public:
     randGen(simulationManager *);
-    void set_Scenario(string);
+
+    void set_Scenario(const string &);
 
     unit *generatUnit(armyType, int);
 

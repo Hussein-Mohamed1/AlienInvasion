@@ -23,6 +23,7 @@ bool Esoldier::setInfected() {
     if (!Immune && !Infected) {
         Infected = true;
         simPtr->setEarthInfectedSoldierCount(simPtr->getEarthInfectedSoldierCount() + 1);
+        simPtr->incTotalInfectCount();
         return true;
     } else return false;
 }

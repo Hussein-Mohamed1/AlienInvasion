@@ -31,6 +31,12 @@ class earthArmy : public Army {
     ArrayStack<Tank *> TankList;
     alienArmy *alienArmyPtr{nullptr};
     int infectedSoldierCount{0};
+    int totalInfectedSoldiers{0};
+public:
+    int getTotalInfectedSoldiers() const;
+
+    void incTotalInfectedSoldiersCount();
+
 public:
     int getEarthInfectedSoldierCount() const;
 

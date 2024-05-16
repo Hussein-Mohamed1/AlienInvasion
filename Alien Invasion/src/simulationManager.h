@@ -36,7 +36,7 @@ public:
 
     simulationManager(operationMode); //initializes the simulation
 
-    armyType updateSimulation(int);
+    winner updateSimulation(int);
     void chooseScenario();
     void addNewUnit(unit *);
 
@@ -52,7 +52,7 @@ public:
 
     int getEarthArmyUnitsCount() const;
 
-    void handleUnit(unit *attackingUnit);
+    bool handleUnit(unit *attackingUnit);
 
     void printKilledList();
 
@@ -64,9 +64,9 @@ public:
 
     void printCurrentFightInfo(LinkedQueue<unit *> &tempList);
 
-    armyType assertWinner() const;
+    winner assertWinner() const;
 
-    static void printWinner(armyType type);
+    static void printWinner(winner type);
 
     int getAlienSoldiersCount() const;
 
@@ -79,6 +79,10 @@ public:
     int getEarthInfectedSoldierCount() const;
 
     void setEarthInfectedSoldierCount(const int earthInfectedSoldierCount);
+
+    int getTotalInfectedCount() const;
+
+    void incTotalInfectCount();
 
     void infectUnits();
 

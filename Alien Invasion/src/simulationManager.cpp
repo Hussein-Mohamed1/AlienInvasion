@@ -29,17 +29,17 @@ simulationManager::simulationManager(operationMode operationModeVal) : operation
     RandomGenerator = new randGen(this);
 }
 
-armyType simulationManager::assertWinner() const {
+winner simulationManager::assertWinner() const {
     if (currentTimeStep >= 40)
         if (getAlienArmyUnitsCount() == 0 && getEarthArmyUnitsCount() >= 1)
-            return earthArmyType;
+            return earthWon;
         else if (getEarthArmyUnitsCount() == 0 && getAlienArmyUnitsCount() >= 1)
-            return alienArmyType;
+            return aliensWon;
         else return Nan;
     return Nan;
 }
 
-armyType simulationManager::updateSimulation(int timestep) {
+winner simulationManager::updateSimulation(int timestep) {
     if (getEarthArmyUnitsCount() != 0 &&
             earthArmyPtr->hasCalledSAVArmy() != SAVBeingUsed)
         infectUnits();
@@ -53,27 +53,29 @@ armyType simulationManager::updateSimulation(int timestep) {
     currentTimeStep = timestep;
     manageAdding(timestep);
 
+
     ManageHealing();
 
     if (operationModeVal == Interactive) {
         cout << "TimeStep: " << timestep << endl;
         cout << "Earth Army Units: " << getEarthArmyUnitsCount() << endl;
         cout << "Alien Army Units: " << getAlienArmyUnitsCount() << endl;
+        cout << "Total Infected Units: " << getTotalInfectedCount() << endl;
     }
+
     unit *earthUnit1 = earthArmyPtr->getUnit(EarthSoldier);
     unit *earthUnit2 = earthArmyPtr->getUnit(EarthTank);
     unit *earthUnit3 = earthArmyPtr->getUnit(Gunnery);
-    handleUnit(earthUnit1);
-    handleUnit(earthUnit2);
-    handleUnit(earthUnit3);
+    bool b1 = handleUnit(earthUnit1);
+    bool b2 = handleUnit(earthUnit2);
+    bool b3 = handleUnit(earthUnit3);
 
     unit *alienUnit1 = alienArmyPtr->getUnit(alienSoldier);
     unit *alienUnit2 = alienArmyPtr->getUnit(MonsterType);
     unit *alienUnit3 = alienArmyPtr->getUnit(DronePair);
-    handleUnit(alienUnit1);
-    handleUnit(alienUnit2);
-    handleUnit(alienUnit3);
-
+    bool b4 = handleUnit(alienUnit1);
+    bool b5 = handleUnit(alienUnit2);
+    bool b6 = handleUnit(alienUnit3);
 
     if (operationModeVal == Interactive) {
         earthArmyPtr->print();
@@ -81,6 +83,11 @@ armyType simulationManager::updateSimulation(int timestep) {
         printKilledList();
         printUnitMaintenanceList();
     }
+
+    if (!(b1 || b2 || b3 || b4 || b5 || b6) && currentTimeStep >= 300 && getEarthArmyUnitsCount() &&
+        getAlienArmyUnitsCount())
+        return draw;
+
     return Nan;
 
 }
@@ -308,13 +315,13 @@ void simulationManager::loadToOutputFile() {
     }
 
     switch (assertWinner()) {
-        case earthArmyType :
+        case earthWon :
             OutputFile << "========================= Earth Win =========================\n";
             break;
-        case alienArmyType:
+        case aliensWon:
             OutputFile << "========================= Alien Win =========================\n";
             break;
-        case Nan:
+        case draw:
             OutputFile << "========================= Draw =========================\n";
             break;
         default:
@@ -326,6 +333,12 @@ void simulationManager::loadToOutputFile() {
     OutputFile << "total number of ET---> " << earthArmyPtr->getEarthTankCount() + earthdestructedTankCount << endl;
     OutputFile << "total number of EG---> " << earthArmyPtr->getEarthGunneryCount() + earthdestructedGunneryCount
                << endl;
+
+    OutputFile << "Percentage of Total Infected Units---> "
+               << (earthArmyPtr->getEarthSoldierCount() + earthdestructedSoldierCount ?
+                   (to_string(double(getTotalInfectedCount()) /
+                              (earthArmyPtr->getEarthSoldierCount() +
+                               earthdestructedSoldierCount) * 100)) : "0") << "%" << endl;
     if ((earthdestructedSoldierCount + earthArmyPtr->getEarthSoldierCount()) != 0)
         OutputFile << "percentage of destructed ES----> "
                 << (double(earthdestructedSoldierCount) /
@@ -443,19 +456,21 @@ void simulationManager::ManageHealing() {
             addToKilledList(InjSol);
 
         else {
-            Healer->damageEnemy(InjSol);
+            if (dynamic_cast<Esoldier *>(InjSol)->is_Infected() && Cap >= 2 ||
+                !dynamic_cast<Esoldier *>(InjSol)->is_Infected()) {
+                Healer->damageEnemy(InjSol);
 
-            InjSol->UpdateStillHealing();
-            Esoldier *tempSoldier = dynamic_cast<Esoldier *>(InjSol);
+                InjSol->UpdateStillHealing();
+                Esoldier *tempSoldier = dynamic_cast<Esoldier *>(InjSol);
 
-            if (tempSoldier->is_Infected()) {
+                if (tempSoldier->is_Infected()) {
+                    Cap--;
+                    tempSoldier->makeImmune();
+                }
                 Cap--;
-                tempSoldier->makeImmune();
-            }
-            Cap--;
 
-            returnUnitToArmy(InjSol);
-
+                returnUnitToArmy(InjSol);
+            } else UnitMaintenanceList.enqueue(InjSol);
 
         }
     }
@@ -491,11 +506,6 @@ void simulationManager::ManageHealing() {
     }
 
 
-    unit *Temp{nullptr};
-    int UMLlength = UnitMaintenanceList.getCount();
-    for (int i = 0; i < UMLlength; ++i) {
-        returnUnitToArmy(Temp);
-    }
     if (Cap != Healer->getAttackCapacity())
         delete Healer;
     else HealList.push(Healer);
@@ -507,13 +517,13 @@ simulationManager::~simulationManager() {
     delete RandomGenerator;
 }
 
-void simulationManager::handleUnit(unit *attackingUnit) {
+bool simulationManager::handleUnit(unit *attackingUnit) {
     LinkedQueue<unit *> tempList;
 
     bool enqueuedOnce = false;
 
 
-    if (!attackingUnit) { return; }
+    if (!attackingUnit) { return false; }
     else {
         unit *secondAttackingDrone{nullptr};
         unit *defendingUnit1{nullptr};
@@ -524,7 +534,7 @@ void simulationManager::handleUnit(unit *attackingUnit) {
             secondAttackingDrone = alienArmyPtr->getDronePair();
             if (!secondAttackingDrone) {
                 alienArmyPtr->addUnit(attackingUnit);
-                return;
+                return false;
             }
         }
 
@@ -594,14 +604,14 @@ void simulationManager::handleUnit(unit *attackingUnit) {
 
     if (!enqueuedOnce) {
         returnUnitToArmy(attackingUnit);
-        return;
+        return false;
     }
 
     printCurrentFightInfo(tempList);
     unit *temp{nullptr};
     while (tempList.dequeue(temp))
         returnUnitToArmy(temp);
-
+    return true;
 }
 
 
@@ -622,7 +632,7 @@ void simulationManager::returnUnitToArmy(unit *unitPtr) {
             UnitMaintenanceList.enqueue(unitPtr);
             return;
         }
-
+        unitPtr->resetStillHealing();
         if ((*getArmyType)(unitPtr) == alienArmyType)
             alienArmyPtr->addUnit(unitPtr);
         else earthArmyPtr->addUnit(unitPtr);
@@ -658,10 +668,10 @@ void simulationManager::printCurrentFightInfo(LinkedQueue<unit *> &tempList) {
 
 }
 
-void simulationManager::printWinner(armyType type) {
+void simulationManager::printWinner(winner type) {
     system("cls");
     //create an ascii art for the winner
-    if (type == alienArmyType) {
+    if (type == aliensWon) {
         auto clearScreen = []() {
             std::cout << "\033[2J\033[1;1H";
         };
@@ -715,7 +725,7 @@ void simulationManager::printWinner(armyType type) {
         displayDefeatMessage();
         return;
 
-    } else if (type == earthArmyType) {
+    } else if (type == earthWon) {
         // Function to clear the console screen
         auto clearScreen = []() {
             std::cout << "\033[2J\033[1;1H";
@@ -984,4 +994,12 @@ void simulationManager::printUnitMaintenanceList() {
     cout << "]\n";
     while (tempQueue.dequeue(temp))
         UnitMaintenanceList.enqueue(temp);
+}
+
+void simulationManager::incTotalInfectCount() {
+    earthArmyPtr->incTotalInfectedSoldiersCount();
+}
+
+int simulationManager::getTotalInfectedCount() const {
+    return earthArmyPtr->getTotalInfectedSoldiers();
 }
