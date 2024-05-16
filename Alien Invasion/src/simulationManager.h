@@ -93,4 +93,6 @@ public:
     string getCurrentScenario();
 
     operationMode getOperationMode();
+
+    void choose_Mood();
 };
