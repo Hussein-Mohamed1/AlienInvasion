@@ -129,7 +129,7 @@ unit *alienArmy::getAnEnemyFor(Type attackersType, int enemyType) {
             return getUnit(alienSoldier);
         case Gunnery:
             if (!enemyType)
-                return getDronePair();
+                return getUnit(DronePair);
             else
                 return getUnit(MonsterType);
     }

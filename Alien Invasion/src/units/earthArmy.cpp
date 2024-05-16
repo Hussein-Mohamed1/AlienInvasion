@@ -211,7 +211,7 @@ void earthArmy::setEarthInfectedSoldierCount(const int earthInfectedSoldierCount
 
 earthArmy::earthArmy(simulationManager *pManager) : Army(pManager) {}
 
-bool earthArmy::hasCalledSAVArmy() const {
+status earthArmy::getSAVstatus() const {
     return SAVStatus;
 }
 
@@ -247,4 +247,12 @@ int earthArmy::getTotalInfectedSoldiers() const {
 
 void earthArmy::incTotalInfectedSoldiersCount() {
     earthArmy::totalInfectedSoldiers++;
+}
+
+void earthArmy::incNumOfHealedUnits() {
+    numOfHealedUnits++;
+}
+
+int earthArmy::getTotalNumOfHealedUnits() const {
+    return numOfHealedUnits;
 }

@@ -91,4 +91,6 @@ public:
     virtual ~simulationManager();
 
     string getCurrentScenario();
+
+    operationMode getOperationMode();
 };
