@@ -6,6 +6,7 @@ int main() {
     SetConsoleOutputCP(CP_UTF8);
     try {
         simulationManager simManager(Interactive);
+        simManager.choose_Mode();
         simManager.chooseScenario();
         simulationManager::intro();
         if (simManager.getOperationMode() == Silent) {
@@ -25,7 +26,7 @@ int main() {
                     cout << "Selected Scenario: " + simManager.getCurrentScenario().substr(0, 3) << endl;
                     if (simManager.updateSimulation(timeStep) != Nan)
                         break;
-//                    cin.get();
+                    cin.get();
                 }
                 timeStep++;
             }

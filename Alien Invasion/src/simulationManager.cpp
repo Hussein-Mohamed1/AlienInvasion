@@ -91,6 +91,7 @@ winner simulationManager::updateSimulation(int timestep) {
 
     if (operationModeVal == Interactive) {
         earthArmyPtr->print();
+        printHealandUnitMaintenanceLists();
         alienArmyPtr->print();
         printKilledList();
     }
@@ -357,11 +358,6 @@ void simulationManager::loadToOutputFile() {
     OutputFile << "total number of EG---> " << earthArmyPtr->getEarthGunneryCount() + earthdestructedGunneryCount
                << endl;
 
-    OutputFile << "Percentage of Total Infected Units---> "
-               << (earthArmyPtr->getEarthSoldierCount() + earthdestructedSoldierCount ?
-                   (to_string(double(getTotalInfectedCount()) /
-                              (earthArmyPtr->getEarthSoldierCount() +
-                               earthdestructedSoldierCount) * 100)) : "0") << "%" << endl;
     if ((earthdestructedSoldierCount + earthArmyPtr->getEarthSoldierCount()) != 0)
         OutputFile << "percentage of destructed ES----> "
                 << (double(earthdestructedSoldierCount) /
@@ -442,6 +438,12 @@ void simulationManager::loadToOutputFile() {
         OutputFile << "Dd/Db % ----> " << (double(sumOfADd) / sumOfADb) * 100 << endl;
 
     OutputFile << "======================================== For Bonus =============================\n";
+
+    OutputFile << "Percentage of Total Infected Units---> "
+               << (earthArmyPtr->getEarthSoldierCount() + earthdestructedSoldierCount ?
+                   (to_string(double(getTotalInfectedCount()) /
+                              (earthArmyPtr->getEarthSoldierCount() +
+                               earthdestructedSoldierCount) * 100)) : "0") << "%" << endl;
 
     OutputFile.close();
 }
@@ -1026,8 +1028,9 @@ void simulationManager::chooseScenario() {
 
 
     int choice{0};
-    cout << "please choose A scenario of fight : \n1- strong Earth & Weak Alien \n"
-            << "2- Weak Earth & strong Alien \n3- Weak Earth & Weak Alien \n4- strong Earth & strong Alien \n";
+    cout << "please choose A scenario of fight : \n1- strong Earth & weak Alien \n"
+         << "2- weak Earth & strong Alien \n3- weak Earth & weak Alien \n4- strong Earth & strong Alien \n"
+         << "5- weak Earth & moderate Alien \n6- strong Earth & moderate Alien \n ";
     cin >> choice;
     switch (choice) {
         case 1:
@@ -1041,6 +1044,12 @@ void simulationManager::chooseScenario() {
             break;
         case 4:
             RandomGenerator->set_Scenario("S&S");
+            break;
+        case 5:
+            RandomGenerator->set_Scenario("W&M");
+            break;
+        case 6:
+            RandomGenerator->set_Scenario("S&M");
             break;
         default:
             cout << "\nPlease choose one of the options\n";
@@ -1057,12 +1066,24 @@ string simulationManager::getCurrentScenario() {
     return RandomGenerator->get_Scenario();
 }
 
-void simulationManager::printUnitMaintenanceList() {
-    cout << "Maintenance List: [";
+void simulationManager::printHealandUnitMaintenanceLists() {
+    cout << "💉Heal List: [";
     unit *temp{nullptr};
+    ArrayStack<unit *> tempStack;
+    while (HealList.pop(temp)) {
+        cout << to_string(temp->getId()) << (HealList.isEmpty() ? "" : ", ");
+        tempStack.push(temp);
+    }
+    cout << "]\n";
+    while (tempStack.pop(temp))
+        HealList.push(temp);
+
+    cout << "🔧Maintenance List: [";
     LinkedQueue<unit *> tempQueue;
     while (UnitMaintenanceList.dequeue(temp)) {
-        cout << to_string(temp->getId()) + " " + temp->typeToString() << (UnitMaintenanceList.isEmpty() ? "" : ", ");
+        cout << to_string(temp->getId()) + " " + temp->typeToString()
+             << (UnitMaintenanceList.isEmpty() ? "" : ", ");
+        cout << to_string(temp->getId()) << (UnitMaintenanceList.isEmpty() ? "" : ", ");
         tempQueue.enqueue(temp);
     }
     cout << "]\n";
@@ -1080,4 +1101,21 @@ int simulationManager::getTotalInfectedCount() const {
 
 operationMode simulationManager::getOperationMode() {
     return operationModeVal;
+}
+
+void simulationManager::choose_Mode() {
+    cout << "choose Mode of fight \n1- Interactive Mood \n2- Silent Mode \n";
+    int choice{0};
+    cin >> choice;
+    switch (choice) {
+        case 1:
+            operationModeVal = Interactive;
+            break;
+        case 2:
+            operationModeVal = Silent;
+            break;
+        default:
+            break;
+    }
+    system("CLS");
 }
