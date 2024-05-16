@@ -204,7 +204,7 @@ int randGen::get_probofcallSaver() const {
 }
 
 void randGen::set_Scenario(string s) {
-//    scenario += "./src//";
+   scenario += "./src//";
     scenario += s;
     scenario += ".txt";
 }
