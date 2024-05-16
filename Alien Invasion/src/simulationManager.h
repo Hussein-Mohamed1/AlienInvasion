@@ -56,7 +56,7 @@ public:
 
     void printKilledList();
 
-    void printUnitMaintenanceList();
+    void printHealandUnitMaintenanceLists();
 
     void returnUnitToArmy(unit *);
 
@@ -93,4 +93,5 @@ public:
     string getCurrentScenario();
 
     operationMode getOperationMode();
+    void choose_Mood();
 };
